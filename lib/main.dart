@@ -16,14 +16,21 @@ const religion = '☪️ Islam';
 const github = 'github.com/Hamza5';
 const linkedin = 'linkedin.com/in/hamza-abbad/';
 
-const tabTitles = [
-  'Basic',
-  'Education',
-];
-const tabIcons = [
-  Icons.person,
-  Icons.school,
-];
+
+const university1 = 'University of Science and Technology Houari Boumediene (USTHB)';
+const university1Logo = 'images/university1_logo.png';
+const university2 = 'Wuhan University of Technology (WHUT)';
+const university2Logo = 'images/university2_logo.jpg';
+const specialities = [
+  'Bachelor in Computer Science', 'Master in Artificial Intelligence', 'Mandarin Chinese',
+  'PhD in Arabic Natural Language Processing using Deep Learning'
+] ;
+const universityNames = [university1, university1, university2, university2];
+const universityLogos = [university1Logo, university1Logo, university2Logo, university2Logo];
+const studyYears = ['2012-2015', '2015-2017', '2017-2018', '2018-2024'];
+
+const tabTitles = ['Basic', 'Education'];
+const tabIcons = [Icons.person, Icons.school];
 
 void main() {
   runApp(const InteractiveCV());
@@ -63,46 +70,70 @@ class MainPage extends StatelessWidget {
           tabs: [for (var i=0; i<tabTitles.length; i++) Tab(text: tabTitles[i], icon: Icon(tabIcons[i]),)],
         ),
       ),
-      body: const TabBarView(
-        children: [BasicInfo(), Placeholder()],
+      body: TabBarView(
+        children: [
+          const BasicInfo(
+            icons: [
+              Icons.email, Icons.phone, Icons.phone, Icons.location_pin, Icons.flag_circle, Icons.book,
+              FontAwesomeIcons.github, FontAwesomeIcons.linkedin
+            ],
+            texts: [email, phone1, phone2, '$city, $province, $country', nationality, religion, github, linkedin],
+          ),
+          EducationView(
+            logos: universityLogos.map((e) => Image.asset(e).image).toList(growable: false), specialities: specialities,
+            institutions: universityNames, years: studyYears
+          )
+        ],
       ),
     );
   }
 }
 
-class InfoItem extends StatelessWidget {
+class BasicInfoItem extends StatelessWidget {
   final IconData iconName;
   final String text;
-  const InfoItem({super.key, required this.iconName, required this.text});
+  const BasicInfoItem({super.key, required this.iconName, required this.text});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        child: InkWell(
-            onTap: () {},
-            child: ListTile(leading: FaIcon(iconName), title: Text(text))
-        )
-    );
+    return Card(child: ListTile(leading: FaIcon(iconName), title: Text(text), onTap: (){}));
   }
 }
 
 
 class BasicInfo extends StatelessWidget {
-  const BasicInfo({super.key});
+  final List<IconData> icons;
+  final List<String> texts;
+
+  const BasicInfo({super.key, required this.icons, required this.texts});
 
   @override
   Widget build(BuildContext context) {
     return GridView(
       gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 400, mainAxisExtent: 50),
-      children: const [
-        InfoItem(iconName: Icons.email, text: email),
-        InfoItem(iconName: Icons.phone, text: phone1),
-        InfoItem(iconName: Icons.phone, text: phone2),
-        InfoItem(iconName: Icons.location_pin, text: '$city, $province, $country'),
-        InfoItem(iconName: Icons.flag_circle, text: nationality),
-        InfoItem(iconName: Icons.book, text: religion),
-        InfoItem(iconName: FontAwesomeIcons.github, text: github),
-        InfoItem(iconName: FontAwesomeIcons.linkedin, text: linkedin),
+      children: [for (var i=0; i<icons.length; i++) BasicInfoItem(iconName: icons[i], text: texts[i])]
+    );
+  }
+}
+
+class EducationView extends StatelessWidget {
+  final List<ImageProvider> logos;
+  final List<String> specialities;
+  final List<String> institutions;
+  final List<String> years;
+  const EducationView({
+    super.key, required this.logos, required this.specialities, required this.institutions, required this.years
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: [
+        for (var i=0; i<logos.length; i++)
+        ListTile(
+          leading: Image(image: logos[i]), title: Text(specialities[i]),
+          subtitle: Text(institutions[i]), trailing: Text(years[i]),
+        ),
       ],
     );
   }
@@ -125,8 +156,6 @@ class CirclePhoto extends StatelessWidget {
     );
   }
 }
-
-
 
 class Header extends StatelessWidget {
   final String name;

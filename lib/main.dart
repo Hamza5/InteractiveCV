@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
 
 const firstName = 'Hamza';
 const lastName = 'Abbad';
@@ -9,9 +12,12 @@ const photoPath = 'images/Photo.jpg';
 const email = 'hamza.abbad@gmail.com';
 const phone1 = '🇨🇳 +86 139 7165 4983';
 const phone2 = '🇩🇿 +213 659 41 84 69';
+const streetAddress = 'DaYouWen garden';
 const city = 'Dalian';
 const province = 'Liaoning';
 const country = 'China';
+const geoPosition = LatLng(38.8820, 121.5022);
+const mapLink = 'https://map.baidu.com/@13527705.46,4678954.75,18z';
 const nationality = '🇩🇿 Algerian';
 const religion = '☪️ Islam';
 const github = 'github.com/Hamza5';
@@ -122,6 +128,46 @@ class SectionTile extends StatelessWidget {
   }
 }
 
+class LocationItem extends StatelessWidget {
+  final LatLng geoPosition;
+  final String country;
+  final String province;
+  final String city;
+  final String streetAddress;
+  const LocationItem({
+    super.key, required this.geoPosition, required this.country, required this.province, required this.city,
+    required this.streetAddress 
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return LimitedBox(
+      maxHeight: 500,
+      child: Padding(
+        padding: const EdgeInsets.all(10),
+        child: FlutterMap(
+            options: MapOptions(initialCenter: geoPosition, initialZoom: 16),
+            children: [
+              TileLayer(
+                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                tileProvider: CancellableNetworkTileProvider(),
+              ),
+              const SimpleAttributionWidget(source: Text('OpenStreetMap')),
+              Align(
+                alignment: Alignment.topCenter,
+                child: BasicInfoItem(
+                  icon: Icons.location_pin, text: '$streetAddress, $city, $province, $country',
+                  url: Uri.parse(mapLink),
+                ),
+              )
+            ]
+        ),
+      ),
+    );
+  }
+}
+
+
 class BasicInfoView extends StatelessWidget {
 
   const BasicInfoView({super.key});
@@ -141,10 +187,17 @@ class BasicInfoView extends StatelessWidget {
         SectionTile(icon: Icons.web, text: 'Web presence',
             items: [
               BasicInfoItem(icon: FontAwesomeIcons.github, text: github, url: Uri.parse('https://$github'),),
-              BasicInfoItem(icon: FontAwesomeIcons.stackOverflow, text: stackOverflow, url: Uri.parse('https://$stackOverflow'),),
+              BasicInfoItem(
+                icon: FontAwesomeIcons.stackOverflow, text: stackOverflow, url: Uri.parse('https://$stackOverflow'),
+              ),
               BasicInfoItem(icon: FontAwesomeIcons.linkedin, text: linkedin, url: Uri.parse('https://$linkedin'),),
             ]
-        )
+        ),
+        const SectionTile(icon: Icons.location_city, text: 'Physical presence', items: [
+          LocationItem(
+              geoPosition: geoPosition, country: country, province: province, city: city, streetAddress: streetAddress
+          )
+        ])
       ],
     );
   }

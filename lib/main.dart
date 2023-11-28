@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const firstName = 'Hamza';
 const lastName = 'Abbad';
@@ -85,11 +86,17 @@ class MainPage extends StatelessWidget {
 class BasicInfoItem extends StatelessWidget {
   final IconData icon;
   final String text;
-  const BasicInfoItem({super.key, required this.icon, required this.text});
+  final Uri? url;
+  const BasicInfoItem({super.key, required this.icon, required this.text, this.url});
 
   @override
   Widget build(BuildContext context) {
-    return Card(child: ListTile(leading: FaIcon(icon), title: Text(text)));
+    return Card(
+        child: ListTile(
+          leading: FaIcon(icon), title: Text(text),
+          onTap: url != null ? () => launchUrl(url!) : null,
+        )
+    );
   }
 }
 
@@ -122,20 +129,20 @@ class BasicInfoView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ListView(
-      children: const [
+      children: [
         SectionTile(
           icon: Icons.contacts, text: 'Contact information',
           items: [
-            BasicInfoItem(icon: Icons.email, text: email),
-            BasicInfoItem(icon: Icons.phone, text: phone1),
-            BasicInfoItem(icon: Icons.phone, text: phone2),
+            BasicInfoItem(icon: Icons.email, text: email, url: Uri.parse('mailto:$email')),
+            BasicInfoItem(icon: Icons.phone, text: phone1, url: Uri.parse('tel:$phone1'),),
+            BasicInfoItem(icon: Icons.phone, text: phone2, url: Uri.parse('tel:$phone2'),),
           ],
         ),
         SectionTile(icon: Icons.web, text: 'Web presence',
             items: [
-              BasicInfoItem(icon: FontAwesomeIcons.github, text: github),
-              BasicInfoItem(icon: FontAwesomeIcons.stackOverflow, text: stackOverflow),
-              BasicInfoItem(icon: FontAwesomeIcons.linkedin, text: linkedin),
+              BasicInfoItem(icon: FontAwesomeIcons.github, text: github, url: Uri.parse('https://$github'),),
+              BasicInfoItem(icon: FontAwesomeIcons.stackOverflow, text: stackOverflow, url: Uri.parse('https://$stackOverflow'),),
+              BasicInfoItem(icon: FontAwesomeIcons.linkedin, text: linkedin, url: Uri.parse('https://$linkedin'),),
             ]
         )
       ],

@@ -15,7 +15,7 @@ const nationality = '🇩🇿 Algerian';
 const religion = '☪️ Islam';
 const github = 'github.com/Hamza5';
 const linkedin = 'linkedin.com/in/hamza-abbad/';
-
+const stackOverflow = 'stackoverflow.com/users/5008968/hamza-abbad';
 
 const university1 = 'University of Science and Technology Houari Boumediene (USTHB)';
 const university1Logo = 'images/university1_logo.png';
@@ -61,8 +61,7 @@ class MainPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: Header(
-            name: '$firstName $lastName', description: shortDescription,
-            photoProvider: Image.asset(photoPath).image
+            name: '$firstName $lastName', description: shortDescription, photoProvider: Image.asset(photoPath).image
         ),
         toolbarHeight: 200,
         centerTitle: true,
@@ -72,17 +71,11 @@ class MainPage extends StatelessWidget {
       ),
       body: TabBarView(
         children: [
-          const BasicInfo(
-            icons: [
-              Icons.email, Icons.phone, Icons.phone, Icons.location_pin, Icons.flag_circle, Icons.book,
-              FontAwesomeIcons.github, FontAwesomeIcons.linkedin
-            ],
-            texts: [email, phone1, phone2, '$city, $province, $country', nationality, religion, github, linkedin],
-          ),
+          const BasicInfoView(),
           EducationView(
             logos: universityLogos.map((e) => Image.asset(e).image).toList(growable: false), specialities: specialities,
             institutions: universityNames, years: studyYears
-          )
+          ),
         ],
       ),
     );
@@ -90,28 +83,62 @@ class MainPage extends StatelessWidget {
 }
 
 class BasicInfoItem extends StatelessWidget {
-  final IconData iconName;
+  final IconData icon;
   final String text;
-  const BasicInfoItem({super.key, required this.iconName, required this.text});
+  const BasicInfoItem({super.key, required this.icon, required this.text});
 
   @override
   Widget build(BuildContext context) {
-    return Card(child: ListTile(leading: FaIcon(iconName), title: Text(text), onTap: (){}));
+    return Card(child: ListTile(leading: FaIcon(icon), title: Text(text)));
   }
 }
 
-
-class BasicInfo extends StatelessWidget {
-  final List<IconData> icons;
-  final List<String> texts;
-
-  const BasicInfo({super.key, required this.icons, required this.texts});
+class SectionTile extends StatelessWidget {
+  final IconData icon;
+  final String text;
+  final List<Widget> items;
+  const SectionTile({super.key, required this.icon, required this.text, required this.items});
 
   @override
   Widget build(BuildContext context) {
-    return GridView(
-      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(maxCrossAxisExtent: 400, mainAxisExtent: 50),
-      children: [for (var i=0; i<icons.length; i++) BasicInfoItem(iconName: icons[i], text: texts[i])]
+    return Card(
+      child: ExpansionTile(
+        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
+        textColor: Theme.of(context).colorScheme.onSurfaceVariant,
+        leading: FaIcon(icon),
+        title: Text(text, style: Theme.of(context).textTheme.titleLarge),
+        iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
+        initiallyExpanded: true,
+        children: items,
+      ),
+    );
+  }
+}
+
+class BasicInfoView extends StatelessWidget {
+
+  const BasicInfoView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: const [
+        SectionTile(
+          icon: Icons.contacts, text: 'Contact information',
+          items: [
+            BasicInfoItem(icon: Icons.email, text: email),
+            BasicInfoItem(icon: Icons.phone, text: phone1),
+            BasicInfoItem(icon: Icons.phone, text: phone2),
+          ],
+        ),
+        SectionTile(icon: Icons.web, text: 'Web presence',
+            items: [
+              BasicInfoItem(icon: FontAwesomeIcons.github, text: github),
+              BasicInfoItem(icon: FontAwesomeIcons.stackOverflow, text: stackOverflow),
+              BasicInfoItem(icon: FontAwesomeIcons.linkedin, text: linkedin),
+            ]
+        )
+      ],
     );
   }
 }

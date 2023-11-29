@@ -27,7 +27,7 @@ const stackOverflow = 'stackoverflow.com/users/5008968/hamza-abbad';
 const university1 = 'University of Science and Technology Houari Boumediene (USTHB)';
 const university1Logo = 'images/university1_logo.png';
 const university2 = 'Wuhan University of Technology (WHUT)';
-const university2Logo = 'images/university2_logo.jpg';
+const university2Logo = 'images/university2_logo.png';
 const specialities = [
   'Bachelor in Computer Science', 'Master in Artificial Intelligence', 'Mandarin Chinese',
   'PhD in Arabic Natural Language Processing using Deep Learning'
@@ -55,7 +55,7 @@ class InteractiveCV extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         // useMaterial3: true,
       ),
-      home: DefaultTabController(length: tabTitles.length, child: const MainPage()),
+      home: DefaultTabController(length: tabTitles.length, initialIndex: 1, child: const MainPage()),
     );
   }
 }
@@ -93,14 +93,19 @@ class BasicInfoItem extends StatelessWidget {
   final IconData icon;
   final String text;
   final Uri? url;
-  const BasicInfoItem({super.key, required this.icon, required this.text, this.url});
+  final String? trailing;
+  const BasicInfoItem({super.key, required this.icon, required this.text, this.url, this.trailing});
 
   @override
   Widget build(BuildContext context) {
     return Card(
         child: ListTile(
-          leading: FaIcon(icon), title: Text(text),
+          leading: FaIcon(icon),
+          title: Text(text),
+          trailing: trailing != null ? Text(trailing!) : null,
           onTap: url != null ? () => launchUrl(url!) : null,
+          tileColor: Theme.of(context).colorScheme.secondaryContainer,
+          textColor: Theme.of(context).colorScheme.onSecondaryContainer,
         )
     );
   }
@@ -116,11 +121,11 @@ class SectionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ExpansionTile(
-        backgroundColor: Theme.of(context).colorScheme.surfaceVariant,
-        textColor: Theme.of(context).colorScheme.onSurfaceVariant,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        textColor: Theme.of(context).colorScheme.onPrimaryContainer,
         leading: FaIcon(icon),
         title: Text(text, style: Theme.of(context).textTheme.titleLarge),
-        iconColor: Theme.of(context).colorScheme.onSurfaceVariant,
+        iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
         initiallyExpanded: true,
         children: items,
       ),
@@ -167,7 +172,6 @@ class LocationItem extends StatelessWidget {
   }
 }
 
-
 class BasicInfoView extends StatelessWidget {
 
   const BasicInfoView({super.key});
@@ -203,6 +207,48 @@ class BasicInfoView extends StatelessWidget {
   }
 }
 
+class InstitutionItem extends StatelessWidget {
+  final ImageProvider logo;
+  final String title;
+  final List<Widget> items;
+  final Uri? url;
+  const InstitutionItem({super.key, required this.logo, required this.title, required this.items, this.url});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: ExpansionTile(
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        title: GestureDetector(onTap: url != null ? () => launchUrl(url!) : null, child: ImageIcon(logo, size: 128)),
+        subtitle: Text(title, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
+        initiallyExpanded: true,
+        children: items,
+      ),
+    );
+  }
+}
+
+class CertificationItem extends StatelessWidget {
+  final String title;
+  final String trailing;
+  final List<Widget> items;
+  const CertificationItem({super.key, required this.title, required this.trailing, this.items = const []});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+        child: ExpansionTile(
+          title: Text(title),
+          trailing: Text(trailing),
+          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
+          textColor: Theme.of(context).colorScheme.onSecondaryContainer,
+          children: items,
+        )
+    );
+  }
+}
+
+
 class EducationView extends StatelessWidget {
   final List<ImageProvider> logos;
   final List<String> specialities;
@@ -216,10 +262,19 @@ class EducationView extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        for (var i=0; i<logos.length; i++)
-        ListTile(
-          leading: Image(image: logos[i]), title: Text(specialities[i]),
-          subtitle: Text(institutions[i]), trailing: Text(years[i]),
+        InstitutionItem(
+            logo: Image.asset(university1Logo).image, title: university1, url: Uri.parse('https://www.usthb.dz/'),
+            items: [
+              CertificationItem(title: specialities[0], trailing: years[0]),
+              CertificationItem(title: specialities[1], trailing: years[1])
+            ]
+        ),
+        InstitutionItem(
+            logo: Image.asset(university2Logo).image, title: university2, url: Uri.parse('https://www.whut.edu.cn/'),
+            items: [
+              CertificationItem(title: specialities[2], trailing: years[2]),
+              CertificationItem(title: specialities[3], trailing: years[3])
+            ]
         ),
       ],
     );

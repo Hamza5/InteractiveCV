@@ -1,3 +1,4 @@
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -25,16 +26,24 @@ const linkedin = 'linkedin.com/in/hamza-abbad/';
 const stackOverflow = 'stackoverflow.com/users/5008968/hamza-abbad';
 
 const university1 = 'University of Science and Technology Houari Boumediene (USTHB)';
-const university1Logo = 'images/university1_logo.png';
+const university1Logo = 'images/usthb_logo.png';
+const university1Url = 'https://www.usthb.dz/';
 const university2 = 'Wuhan University of Technology (WHUT)';
-const university2Logo = 'images/university2_logo.png';
+const university2Logo = 'images/whut_logo.png';
+const university2Url = 'https://www.whut.edu.cn/';
+const institution3 = 'International Education Specialists (IDP)';
+const institution3Logo = 'images/idp_logo.png';
+const institution3Url = 'https://www.idp.com/';
+const institution3Certification = 'images/IELTS_TRF.jpg';
 const specialities = [
   'Bachelor in Computer Science', 'Master in Artificial Intelligence', 'Mandarin Chinese',
-  'PhD in Arabic Natural Language Processing using Deep Learning'
+  'PhD in Arabic Natural Language Processing using Deep Learning',
+  'International English Language Testing System (IELTS)'
 ] ;
 const universityNames = [university1, university1, university2, university2];
 const universityLogos = [university1Logo, university1Logo, university2Logo, university2Logo];
-const studyYears = ['2012-2015', '2015-2017', '2017-2018', '2018-2024'];
+const studyYears = ['2012-2015', '2015-2017', '2017-2018', '2018-2024', '2018'];
+const bachelorCertifications = ['images/Bachelor-1.jpg', 'images/Master-2.jpg'];
 
 const tabTitles = ['Basic', 'Education'];
 const tabIcons = [Icons.person, Icons.school];
@@ -141,7 +150,7 @@ class LocationItem extends StatelessWidget {
   final String streetAddress;
   const LocationItem({
     super.key, required this.geoPosition, required this.country, required this.province, required this.city,
-    required this.streetAddress 
+    required this.streetAddress
   });
 
   @override
@@ -219,7 +228,13 @@ class InstitutionItem extends StatelessWidget {
     return Card(
       child: ExpansionTile(
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        title: GestureDetector(onTap: url != null ? () => launchUrl(url!) : null, child: ImageIcon(logo, size: 128)),
+        title: GestureDetector(
+          onTap: url != null ? () => launchUrl(url!) : null,
+          child: Padding(
+            padding: const EdgeInsets.all(5),
+            child: ImageIcon(logo, size: 128),
+          ),
+        ),
         subtitle: Text(title, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
         initiallyExpanded: true,
         children: items,
@@ -228,11 +243,11 @@ class InstitutionItem extends StatelessWidget {
   }
 }
 
-class CertificationItem extends StatelessWidget {
+class StudyItem extends StatelessWidget {
   final String title;
   final String trailing;
   final List<Widget> items;
-  const CertificationItem({super.key, required this.title, required this.trailing, this.items = const []});
+  const StudyItem({super.key, required this.title, required this.trailing, this.items = const []});
 
   @override
   Widget build(BuildContext context) {
@@ -248,6 +263,34 @@ class CertificationItem extends StatelessWidget {
   }
 }
 
+class CertificationList extends StatelessWidget {
+  final List<ImageProvider> certifications;
+  const CertificationList({super.key, required this.certifications});
+
+  @override
+  Widget build(BuildContext context) {
+    return Wrap(
+      alignment: WrapAlignment.spaceEvenly,
+      spacing: 10,
+      runSpacing: 10,
+      children: [
+        for (var image in certifications) SizedBox(
+            height: 300,
+            child: OutlinedButton(
+              style: const ButtonStyle(
+                  padding: MaterialStatePropertyAll(EdgeInsets.symmetric(vertical: 15, horizontal: 5))
+              ),
+              onPressed: () async {
+                final imageProvider = MultiImageProvider(certifications);
+                await showImageViewerPager(context, imageProvider, swipeDismissible: true, doubleTapZoomable: true);
+              },
+              child: Image(image: image),
+            )
+        )
+      ],
+    );
+  }
+}
 
 class EducationView extends StatelessWidget {
   final List<ImageProvider> logos;
@@ -263,19 +306,46 @@ class EducationView extends StatelessWidget {
     return ListView(
       children: [
         InstitutionItem(
-            logo: Image.asset(university1Logo).image, title: university1, url: Uri.parse('https://www.usthb.dz/'),
+            logo: Image.asset(university1Logo).image, title: university1, url: Uri.parse(university1Url),
             items: [
-              CertificationItem(title: specialities[0], trailing: years[0]),
-              CertificationItem(title: specialities[1], trailing: years[1])
+              StudyItem(
+                title: specialities[0], trailing: years[0],
+                items: [
+                  CertificationList(
+                      certifications: [
+                        for (var fileName in ['Bachelor-1.jpg', 'Bachelor-2.jpg']) Image.asset('images/$fileName').image
+                      ]
+                  )
+                ],
+              ),
+              StudyItem(
+                title: specialities[1], trailing: years[1],
+                items: [
+                  CertificationList(
+                    certifications: [
+                      for (var fileName in ['Master-1.jpg', 'Master-2.jpg']) Image.asset('images/$fileName').image
+                    ]
+                  )
+                ],
+              )
             ]
         ),
         InstitutionItem(
-            logo: Image.asset(university2Logo).image, title: university2, url: Uri.parse('https://www.whut.edu.cn/'),
+            logo: Image.asset(university2Logo).image, title: university2, url: Uri.parse(university2Url),
             items: [
-              CertificationItem(title: specialities[2], trailing: years[2]),
-              CertificationItem(title: specialities[3], trailing: years[3])
+              StudyItem(title: specialities[2], trailing: years[2]),
+              StudyItem(title: specialities[3], trailing: years[3])
             ]
         ),
+        InstitutionItem(
+          logo: Image.asset(institution3Logo).image, title: institution3, url: Uri.parse(institution3Url),
+          items: [
+            StudyItem(
+              title: specialities[4], trailing: years[4],
+              items: [CertificationList(certifications: [Image.asset(institution3Certification).image])],
+            )
+          ],
+        )
       ],
     );
   }

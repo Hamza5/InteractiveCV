@@ -86,13 +86,10 @@ class MainPage extends StatelessWidget {
           tabs: [for (var i=0; i<tabTitles.length; i++) Tab(text: tabTitles[i], icon: Icon(tabIcons[i]),)],
         ),
       ),
-      body: TabBarView(
+      body: const TabBarView(
         children: [
-          const BasicInfoView(),
-          EducationView(
-            logos: universityLogos.map((e) => Image.asset(e).image).toList(growable: false), specialities: specialities,
-            institutions: universityNames, years: studyYears
-          ),
+          BasicInfoView(),
+          EducationView(),
         ],
       ),
     );
@@ -103,8 +100,7 @@ class BasicInfoItem extends StatelessWidget {
   final IconData icon;
   final String text;
   final Uri? url;
-  final String? trailing;
-  const BasicInfoItem({super.key, required this.icon, required this.text, this.url, this.trailing});
+  const BasicInfoItem({super.key, required this.icon, required this.text, this.url});
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +108,6 @@ class BasicInfoItem extends StatelessWidget {
         child: ListTile(
           leading: FaIcon(icon),
           title: Text(text),
-          trailing: trailing != null ? Text(trailing!) : null,
           onTap: url != null ? () => launchUrl(url!) : null,
         )
     );
@@ -123,7 +118,8 @@ class SectionTile extends StatelessWidget {
   final IconData icon;
   final String text;
   final List<Widget> items;
-  const SectionTile({super.key, required this.icon, required this.text, required this.items});
+  final bool wrapped;
+  const SectionTile({super.key, required this.icon, required this.text, required this.items, this.wrapped = false});
 
   @override
   Widget build(BuildContext context) {
@@ -133,7 +129,9 @@ class SectionTile extends StatelessWidget {
         title: Text(text, style: Theme.of(context).textTheme.titleLarge),
         iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
         initiallyExpanded: true,
-        children: items,
+        children: wrapped ?
+        [Wrap(spacing: 10, runSpacing: 10, alignment: WrapAlignment.center, children: items)] :
+        items,
       ),
     );
   }
@@ -262,7 +260,6 @@ class LanguageItem extends StatelessWidget {
   }
 }
 
-
 class BasicInfoView extends StatelessWidget {
 
   const BasicInfoView({super.key});
@@ -289,38 +286,29 @@ class BasicInfoView extends StatelessWidget {
         SectionTile(
           icon: Icons.language, text: 'Spoken languages',
           items: [
-            Padding(
-              padding: const EdgeInsets.all(5),
-              child: Wrap(
-                spacing: 10,
-                runSpacing: 10,
-                alignment: WrapAlignment.center,
-                children: [
-                  LanguageItem(
-                    flag: Image.asset('images/arab-league.png').image, name: 'العَرَبِيَّة',
-                    description: 'Standard Arabic and most dialects',
-                    progress: 0.95,
-                  ),
-                  LanguageItem(
-                    flag: Image.asset('images/united-states.png').image, name: 'English',
-                    description: 'American accent', progress: 0.85,
-                  ),
-                  LanguageItem(
-                    flag: Image.asset('images/france.png').image, name: 'Français',
-                    description: 'Metropolitan French', progress: 0.8,
-                  ),
-                  LanguageItem(
-                    flag: Image.asset('images/china.png').image, name: '中文',
-                    description: 'Mandarin Chinese', progress: 0.6,
-                  ),
-                  LanguageItem(
-                    flag: Image.asset('images/russia.png').image, name: 'Русский',
-                    description: 'Basic words and sentences', progress: 0.1,
-                  ),
-                ],
-              ),
+            LanguageItem(
+              flag: Image.asset('images/arab-league.png').image, name: 'العَرَبِيَّة',
+              description: 'Standard Arabic and most dialects',
+              progress: 0.95,
+            ),
+            LanguageItem(
+              flag: Image.asset('images/united-states.png').image, name: 'English',
+              description: 'American accent', progress: 0.85,
+            ),
+            LanguageItem(
+              flag: Image.asset('images/france.png').image, name: 'Français',
+              description: 'Metropolitan French', progress: 0.8,
+            ),
+            LanguageItem(
+              flag: Image.asset('images/china.png').image, name: '中文',
+              description: 'Mandarin Chinese', progress: 0.6,
+            ),
+            LanguageItem(
+              flag: Image.asset('images/russia.png').image, name: 'Русский',
+              description: 'Basic words and sentences', progress: 0.1,
             )
           ],
+          wrapped: true,
         ),
         SectionTile(icon: Icons.web, text: 'Web presence',
             items: [
@@ -367,11 +355,11 @@ class InstitutionItem extends StatelessWidget {
   }
 }
 
-class StudyItem extends StatelessWidget {
+class ExperienceItem extends StatelessWidget {
   final String title;
   final String trailing;
   final List<Widget> items;
-  const StudyItem({super.key, required this.title, required this.trailing, this.items = const []});
+  const ExperienceItem({super.key, required this.title, required this.trailing, this.items = const []});
 
   @override
   Widget build(BuildContext context) {
@@ -392,7 +380,7 @@ class CertificationList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Wrap(
-      alignment: WrapAlignment.spaceEvenly,
+      alignment: WrapAlignment.center,
       spacing: 10,
       runSpacing: 10,
       children: [
@@ -415,13 +403,7 @@ class CertificationList extends StatelessWidget {
 }
 
 class EducationView extends StatelessWidget {
-  final List<ImageProvider> logos;
-  final List<String> specialities;
-  final List<String> institutions;
-  final List<String> years;
-  const EducationView({
-    super.key, required this.logos, required this.specialities, required this.institutions, required this.years
-  });
+  const EducationView({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -430,8 +412,8 @@ class EducationView extends StatelessWidget {
         InstitutionItem(
             logo: Image.asset(university1Logo).image, title: university1, url: Uri.parse(university1Url),
             items: [
-              StudyItem(
-                title: specialities[0], trailing: years[0],
+              ExperienceItem(
+                title: specialities[0], trailing: studyYears[0],
                 items: [
                   CertificationList(
                       certifications: [
@@ -440,8 +422,8 @@ class EducationView extends StatelessWidget {
                   )
                 ],
               ),
-              StudyItem(
-                title: specialities[1], trailing: years[1],
+              ExperienceItem(
+                title: specialities[1], trailing: studyYears[1],
                 items: [
                   CertificationList(
                     certifications: [
@@ -455,15 +437,15 @@ class EducationView extends StatelessWidget {
         InstitutionItem(
             logo: Image.asset(university2Logo).image, title: university2, url: Uri.parse(university2Url),
             items: [
-              StudyItem(title: specialities[2], trailing: years[2]),
-              StudyItem(title: specialities[3], trailing: years[3])
+              ExperienceItem(title: specialities[2], trailing: studyYears[2]),
+              ExperienceItem(title: specialities[3], trailing: studyYears[3])
             ]
         ),
         InstitutionItem(
           logo: Image.asset(institution3Logo).image, title: institution3, url: Uri.parse(institution3Url),
           items: [
-            StudyItem(
-              title: specialities[4], trailing: years[4],
+            ExperienceItem(
+              title: specialities[4], trailing: studyYears[4],
               items: [CertificationList(certifications: [Image.asset(institution3Certification).image])],
             )
           ],

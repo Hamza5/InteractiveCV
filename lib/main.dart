@@ -2,6 +2,7 @@ import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
@@ -64,7 +65,7 @@ class InteractiveCV extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         // useMaterial3: true,
       ),
-      home: DefaultTabController(length: tabTitles.length, initialIndex: 1, child: const MainPage()),
+      home: DefaultTabController(length: tabTitles.length, child: const MainPage()),
     );
   }
 }
@@ -113,8 +114,6 @@ class BasicInfoItem extends StatelessWidget {
           title: Text(text),
           trailing: trailing != null ? Text(trailing!) : null,
           onTap: url != null ? () => launchUrl(url!) : null,
-          tileColor: Theme.of(context).colorScheme.secondaryContainer,
-          textColor: Theme.of(context).colorScheme.onSecondaryContainer,
         )
     );
   }
@@ -130,8 +129,6 @@ class SectionTile extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ExpansionTile(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        textColor: Theme.of(context).colorScheme.onPrimaryContainer,
         leading: FaIcon(icon),
         title: Text(text, style: Theme.of(context).textTheme.titleLarge),
         iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
@@ -181,6 +178,91 @@ class LocationItem extends StatelessWidget {
   }
 }
 
+class LanguageItem extends StatelessWidget {
+  final ImageProvider flag;
+  final String name;
+  final String description;
+  final double progress;
+  const LanguageItem({
+    super.key, required this.flag, required this.name, required this.description, required this.progress
+  });
+
+  int get _totalSteps => 5;
+  int get _currentStep => (progress * 5).round();
+  Color get _progressColor {
+    switch (_currentStep) {
+      case 1:
+        return Colors.red;
+      case 2:
+        return Colors.orange;
+      case 3:
+        return Colors.yellow;
+      case 4:
+        return Colors.blue;
+      case 5:
+        return Colors.green;
+    }
+    return Colors.black;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(5),
+        child: Column(
+          children: [
+            Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  decoration: BoxDecoration(
+                    boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.shadow, blurRadius: 1)],
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  clipBehavior: Clip.antiAlias,
+                  child: Image(image: flag, fit: BoxFit.fill, width: 65, height: 50),
+                ),
+                const SizedBox(width: 5),
+                SizedBox(
+                  width: 120,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Container(
+                        alignment: Alignment.center,
+                        height: 35,
+                        child: Text(name, style: Theme.of(context).textTheme.titleLarge),
+                      ),
+                      Container(
+                        alignment: Alignment.center,
+                        height: 35,
+                        child: Text(description, textAlign: TextAlign.center),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(
+              width: 190,
+              child: StepProgressIndicator(
+                totalSteps: _totalSteps,
+                size: 10,
+                roundedEdges: const Radius.circular(5),
+                customColor: (i) {
+                  return i < _currentStep ? _progressColor : Theme.of(context).colorScheme.surfaceVariant;
+                },
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
 class BasicInfoView extends StatelessWidget {
 
   const BasicInfoView({super.key});
@@ -195,6 +277,49 @@ class BasicInfoView extends StatelessWidget {
             BasicInfoItem(icon: Icons.email, text: email, url: Uri.parse('mailto:$email')),
             BasicInfoItem(icon: Icons.phone, text: phone1, url: Uri.parse('tel:$phone1'),),
             BasicInfoItem(icon: Icons.phone, text: phone2, url: Uri.parse('tel:$phone2'),),
+          ],
+        ),
+        const SectionTile(
+            icon: Icons.person_2, text: 'Personal',
+            items: [
+              BasicInfoItem(icon: FontAwesomeIcons.book, text: religion),
+              BasicInfoItem(icon: FontAwesomeIcons.flag, text: nationality),
+            ]
+        ),
+        SectionTile(
+          icon: Icons.language, text: 'Spoken languages',
+          items: [
+            Padding(
+              padding: const EdgeInsets.all(5),
+              child: Wrap(
+                spacing: 10,
+                runSpacing: 10,
+                alignment: WrapAlignment.center,
+                children: [
+                  LanguageItem(
+                    flag: Image.asset('images/arab-league.png').image, name: 'العَرَبِيَّة',
+                    description: 'Standard Arabic and most dialects',
+                    progress: 0.95,
+                  ),
+                  LanguageItem(
+                    flag: Image.asset('images/united-states.png').image, name: 'English',
+                    description: 'American accent', progress: 0.85,
+                  ),
+                  LanguageItem(
+                    flag: Image.asset('images/france.png').image, name: 'Français',
+                    description: 'Metropolitan French', progress: 0.8,
+                  ),
+                  LanguageItem(
+                    flag: Image.asset('images/china.png').image, name: '中文',
+                    description: 'Mandarin Chinese', progress: 0.6,
+                  ),
+                  LanguageItem(
+                    flag: Image.asset('images/russia.png').image, name: 'Русский',
+                    description: 'Basic words and sentences', progress: 0.1,
+                  ),
+                ],
+              ),
+            )
           ],
         ),
         SectionTile(icon: Icons.web, text: 'Web presence',
@@ -227,7 +352,6 @@ class InstitutionItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ExpansionTile(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: GestureDetector(
           onTap: url != null ? () => launchUrl(url!) : null,
           child: Padding(
@@ -255,8 +379,6 @@ class StudyItem extends StatelessWidget {
         child: ExpansionTile(
           title: Text(title),
           trailing: Text(trailing),
-          backgroundColor: Theme.of(context).colorScheme.secondaryContainer,
-          textColor: Theme.of(context).colorScheme.onSecondaryContainer,
           children: items,
         )
     );

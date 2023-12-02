@@ -340,11 +340,14 @@ class InstitutionItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: ExpansionTile(
-        title: GestureDetector(
-          onTap: url != null ? () => launchUrl(url!) : null,
-          child: Padding(
-            padding: const EdgeInsets.all(5),
-            child: ImageIcon(logo, size: 128),
+        title: Padding(
+          padding: const EdgeInsets.all(5),
+          child: Center(
+            child: IconButton(
+              icon: ImageIcon(logo),
+              iconSize: 128,
+              onPressed: url != null ? () => launchUrl(url!) : null,
+            ),
           ),
         ),
         subtitle: Text(title, textAlign: TextAlign.center, style: Theme.of(context).textTheme.titleLarge),
@@ -375,29 +378,35 @@ class ExperienceItem extends StatelessWidget {
 
 class CertificationList extends StatelessWidget {
   final List<ImageProvider> certifications;
-  const CertificationList({super.key, required this.certifications});
+  final double? height;
+  final double? width;
+  const CertificationList({super.key, required this.certifications, this.height, this.width});
 
   @override
   Widget build(BuildContext context) {
-    return Wrap(
-      alignment: WrapAlignment.center,
-      spacing: 10,
-      runSpacing: 10,
-      children: [
-        for (var image in certifications) SizedBox(
-            height: 300,
-            child: OutlinedButton(
-              style: const ButtonStyle(
-                  padding: MaterialStatePropertyAll(EdgeInsets.symmetric(vertical: 15, horizontal: 5))
-              ),
-              onPressed: () async {
-                final imageProvider = MultiImageProvider(certifications);
-                await showImageViewerPager(context, imageProvider, swipeDismissible: true, doubleTapZoomable: true);
-              },
-              child: Image(image: image),
-            )
-        )
-      ],
+    return Padding(
+      padding: const EdgeInsets.all(5),
+      child: Wrap(
+        alignment: WrapAlignment.center,
+        spacing: 10,
+        runSpacing: 10,
+        children: [
+          for (var image in certifications) SizedBox(
+              height: height,
+              width: width,
+              child: OutlinedButton(
+                style: const ButtonStyle(
+                    padding: MaterialStatePropertyAll(EdgeInsets.symmetric(vertical: 15, horizontal: 5))
+                ),
+                onPressed: () async {
+                  final imageProvider = MultiImageProvider(certifications);
+                  await showImageViewerPager(context, imageProvider, swipeDismissible: true, doubleTapZoomable: true);
+                },
+                child: Image(image: image),
+              )
+          )
+        ],
+      ),
     );
   }
 }
@@ -416,9 +425,10 @@ class EducationView extends StatelessWidget {
                 title: specialities[0], trailing: studyYears[0],
                 items: [
                   CertificationList(
-                      certifications: [
-                        for (var fileName in ['Bachelor-1.jpg', 'Bachelor-2.jpg']) Image.asset('images/$fileName').image
-                      ]
+                    certifications: [
+                      for (var fileName in ['Bachelor-1.jpg', 'Bachelor-2.jpg']) Image.asset('images/$fileName').image
+                    ],
+                    height: 300,
                   )
                 ],
               ),
@@ -428,7 +438,8 @@ class EducationView extends StatelessWidget {
                   CertificationList(
                     certifications: [
                       for (var fileName in ['Master-1.jpg', 'Master-2.jpg']) Image.asset('images/$fileName').image
-                    ]
+                    ],
+                    height: 300,
                   )
                 ],
               )
@@ -446,10 +457,44 @@ class EducationView extends StatelessWidget {
           items: [
             ExperienceItem(
               title: specialities[4], trailing: studyYears[4],
-              items: [CertificationList(certifications: [Image.asset(institution3Certification).image])],
+              items: [
+                CertificationList(
+                  certifications: [Image.asset(institution3Certification).image],
+                  height: 500,
+                ),
+              ],
             )
           ],
-        )
+        ),
+        InstitutionItem(
+          logo: Image.asset('images/coursera_logo.png').image, title: 'Coursera',
+          url: Uri.parse('https://www.coursera.org/'),
+          items: [
+            ExperienceItem(
+              title: 'Machine Learning', trailing: '2018',
+              items: [
+                CertificationList(
+                  certifications: [Image.asset('images/Coursera-congrats.png').image],
+                  height: 200,
+                ),
+              ],
+            )
+          ],
+        ),
+        InstitutionItem(
+          logo: Image.asset('images/edx_logo.png').image, title: 'EdX', url: Uri.parse('https://www.edx.org/'),
+          items: [
+            ExperienceItem(
+              title: 'Reinforcement Learning', trailing: '2019',
+              items: [
+                CertificationList(
+                  certifications: [Image.asset('images/Reinforcement_learning_certificate.jpg').image],
+                  height: 400,
+                )
+              ],
+            )
+          ],
+        ),
       ],
     );
   }

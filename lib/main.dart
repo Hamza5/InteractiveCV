@@ -7,8 +7,9 @@ const lastName = 'Abbad';
 const shortDescription = 'PhD student in computer science and artificial intelligence';
 const photoPath = 'images/Photo.jpg';
 
-const tabTitles = ['Basic', 'Education'];
-const tabIcons = [Icons.person, Icons.school];
+const tabTitles = ['Basic', 'Education', 'Work'];
+const tabIcons = [Icons.person, Icons.school, Icons.work];
+const tabs = [BasicInfoView(), EducationView(), WorkView()];
 
 void main() {
   runApp(const InteractiveCV());
@@ -48,10 +49,7 @@ class MainPage extends StatelessWidget {
         ),
       ),
       body: const TabBarView(
-        children: [
-          BasicInfoView(),
-          EducationView(),
-        ],
+        children: tabs,
       ),
     );
   }

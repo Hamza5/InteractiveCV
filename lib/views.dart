@@ -195,3 +195,39 @@ class EducationView extends StatelessWidget {
     );
   }
 }
+
+class WorkView extends StatelessWidget {
+  const WorkView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: [
+        InstitutionItem(
+          logo: Image.asset('images/albaraka_logo.png').image, title: 'AlBaraka Bank',
+          url: Uri.parse('https://www.albaraka-bank.dz/'),
+          items: [
+            ExperienceItem(
+              title: 'Internship in IT', trailing: '2014',
+              items: [
+                CertificationList(
+                  certifications: [Image.asset('images/Internship_2014.jpg').image],
+                  height: 500,
+                )
+              ],
+            ),
+          ],
+        ),
+        InstitutionItem(
+          logo: Image.asset('images/dataimpact_logo.png').image, title: 'Data Impact',
+          url: Uri.parse('https://www.dataimpact.io/'),
+          items: const [
+            ExperienceItem(
+              title: 'Web scraping for digital shelf', trailing: '2022',
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}

@@ -212,11 +212,11 @@ class ExperienceItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
         child: items.isNotEmpty ? ExpansionTile(
-          title: Text(title),
+          title: Text(title, textAlign: TextAlign.center),
           trailing: Text(trailing),
           children: items,
         ) : ListTile(
-          title: Text(title),
+          title: Text(title, textAlign: TextAlign.center),
           trailing: Text(trailing),
         )
     );

@@ -62,26 +62,26 @@ class BasicInfoView extends StatelessWidget {
         SectionTile(
           icon: Icons.language, text: 'Spoken languages',
           items: [
-            LanguageItem(
-              flag: Image.asset('images/logos/arab-league.png').image, name: 'العَرَبِيَّة',
-              description: 'Standard Arabic and most dialects',
-              progress: 0.95,
+            KnowledgeItem(
+              image: Image.asset('images/logos/arab-league.png').image, name: 'العَرَبِيَّة', dropShadow: true,
+              description: 'Standard Arabic and most dialects', rectangularImage: true,
+              progress: 0.9,
             ),
-            LanguageItem(
-              flag: Image.asset('images/logos/united-states.png').image, name: 'English',
-              description: 'American accent', progress: 0.85,
+            KnowledgeItem(
+              image: Image.asset('images/logos/united-states.png').image, name: 'English', dropShadow: true,
+              description: 'American accent', progress: 0.8, rectangularImage: true,
             ),
-            LanguageItem(
-              flag: Image.asset('images/logos/france.png').image, name: 'Français',
-              description: 'Metropolitan French', progress: 0.8,
+            KnowledgeItem(
+              image: Image.asset('images/logos/france.png').image, name: 'Français', dropShadow: true,
+              description: 'Metropolitan French', progress: 0.7, rectangularImage: true,
             ),
-            LanguageItem(
-              flag: Image.asset('images/logos/china.png').image, name: '中文',
-              description: 'Mandarin Chinese', progress: 0.6,
+            KnowledgeItem(
+              image: Image.asset('images/logos/china.png').image, name: '中文', dropShadow: true,
+              description: 'Mandarin Chinese', progress: 0.6, rectangularImage: true,
             ),
-            LanguageItem(
-              flag: Image.asset('images/logos/russia.png').image, name: 'Русский',
-              description: 'Basic words and sentences', progress: 0.1,
+            KnowledgeItem(
+              image: Image.asset('images/logos/russia.png').image, name: 'Русский', dropShadow: true,
+              description: 'Basic words and sentences', progress: 0.1, rectangularImage: true,
             )
           ],
           wrapped: true,
@@ -99,7 +99,7 @@ class BasicInfoView extends StatelessWidget {
           LocationItem(
               geoPosition: geoPosition, country: country, province: province, city: city, streetAddress: streetAddress
           )
-        ])
+        ]),
       ],
     );
   }
@@ -116,7 +116,7 @@ class EducationView extends StatelessWidget {
         InstitutionItem(
             logo: Image.asset(university1Logo).image, title: university1, url: Uri.parse(university1Url),
             items: [
-              ExperienceItem(
+              FieldItem(
                 title: specialities[0], trailing: studyYears[0],
                 items: [
                   CertificationList(
@@ -128,7 +128,7 @@ class EducationView extends StatelessWidget {
                   )
                 ],
               ),
-              ExperienceItem(
+              FieldItem(
                 title: specialities[1], trailing: studyYears[1],
                 items: [
                   CertificationList(
@@ -145,14 +145,14 @@ class EducationView extends StatelessWidget {
         InstitutionItem(
             logo: Image.asset(university2Logo).image, title: university2, url: Uri.parse(university2Url),
             items: [
-              ExperienceItem(title: specialities[2], trailing: studyYears[2]),
-              ExperienceItem(title: specialities[3], trailing: studyYears[3])
+              FieldItem(title: specialities[2], trailing: studyYears[2]),
+              FieldItem(title: specialities[3], trailing: studyYears[3])
             ]
         ),
         InstitutionItem(
           logo: Image.asset(institution3Logo).image, title: institution3, url: Uri.parse(institution3Url),
           items: [
-            ExperienceItem(
+            FieldItem(
               title: specialities[4], trailing: studyYears[4],
               items: [
                 CertificationList(
@@ -167,7 +167,7 @@ class EducationView extends StatelessWidget {
           logo: Image.asset('images/logos/coursera_logo.png').image, title: 'Coursera',
           url: Uri.parse('https://www.coursera.org/'),
           items: [
-            ExperienceItem(
+            FieldItem(
               title: 'Machine Learning', trailing: '2018',
               items: [
                 CertificationList(
@@ -181,7 +181,7 @@ class EducationView extends StatelessWidget {
         InstitutionItem(
           logo: Image.asset('images/logos/edx_logo.png').image, title: 'EdX', url: Uri.parse('https://www.edx.org/'),
           items: [
-            ExperienceItem(
+            FieldItem(
               title: 'Reinforcement Learning', trailing: '2019',
               items: [
                 CertificationList(
@@ -208,7 +208,7 @@ class WorkView extends StatelessWidget {
           logo: Image.asset('images/logos/albaraka_logo.png').image, title: 'AlBaraka Bank',
           url: Uri.parse('https://www.albaraka-bank.dz/'),
           items: [
-            ExperienceItem(
+            FieldItem(
               title: 'Internship in IT', trailing: '2014',
               items: [
                 CertificationList(
@@ -223,11 +223,77 @@ class WorkView extends StatelessWidget {
           logo: Image.asset('images/logos/dataimpact_logo.png').image, title: 'Data Impact',
           url: Uri.parse('https://www.dataimpact.io/'),
           items: const [
-            ExperienceItem(
+            FieldItem(
               title: 'Web scraping for digital shelf', trailing: '2022',
             ),
           ],
         ),
+      ],
+    );
+  }
+}
+
+class ExperienceView extends StatelessWidget {
+  const ExperienceView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: [
+        SectionTile(
+          icon: FontAwesomeIcons.computer, text: 'Operating systems', wrapped: true,
+          items: [
+            KnowledgeItem(
+              image: Image.asset('images/logos/Windows_logo.png').image, name: 'Windows',
+              description: 'Dell Laptop', progress: 0.8,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Kubuntu_logo.png').image, name: 'Kubuntu',
+              description: 'Dell Laptop', progress: 0.7,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/archlinux_logo.png').image, name: 'Arch Linux',
+              description: 'Dell laptop', progress: 0.6,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/macOS_logo.png').image, name: 'Mac OS',
+              description: 'Apple Macbook', progress: 0.3,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Android_logo.png').image, name: 'Android',
+              description: 'OnePlus Smartphone', progress: 0.7,
+            ),
+          ],
+        ),
+        SectionTile(
+          icon: Icons.app_settings_alt, text: 'Programming languages', wrapped: true,
+          items: [
+            KnowledgeItem(
+              image: Image.asset('images/logos/Python_logo.png').image, name: 'Python',
+              description: 'Backend development', progress: 0.95,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Flutter_logo.png').image, name: 'Dart/Flutter',
+              description: 'Frontend development', progress: 0.7,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/JavaScript_logo.png').image, name: 'JavaScript',
+              description: 'Browser environment', progress: 0.5,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Markdown_logo.png').image, name: 'Markdown',
+              description: 'Documentation writing', progress: 0.95,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/HTML5_logo.png').image, name: 'HTML/CSS',
+              description: 'Basic markup', progress: 0.5,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/LaTeX_project_logo.png').image, name: 'LaTeX',
+              description: 'Scientific publication', progress: 0.6,
+            ),
+          ],
+        )
       ],
     );
   }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 import 'views.dart';
 
@@ -7,9 +8,9 @@ const lastName = 'Abbad';
 const shortDescription = 'PhD student in computer science and artificial intelligence';
 const photoPath = 'images/Photo.jpg';
 
-const tabTitles = ['Basic', 'Education', 'Work'];
-const tabIcons = [Icons.person, Icons.school, Icons.work];
-const tabs = [BasicInfoView(), EducationView(), WorkView()];
+const List<String> tabTitles = ['Basic', 'Education', 'Work', 'Experience'];
+const List<IconData> tabIcons = [Icons.person, Icons.school, Icons.work, FontAwesomeIcons.screwdriverWrench];
+const List<Widget> tabs = [BasicInfoView(), EducationView(), WorkView(), ExperienceView()];
 
 void main() {
   runApp(const InteractiveCV());
@@ -45,7 +46,7 @@ class MainPage extends StatelessWidget {
         toolbarHeight: 200,
         centerTitle: true,
         bottom: TabBar(
-          tabs: [for (var i=0; i<tabTitles.length; i++) Tab(text: tabTitles[i], icon: Icon(tabIcons[i]),)],
+          tabs: [for (var i=0; i<tabTitles.length; i++) Tab(text: tabTitles[i], icon: FaIcon(tabIcons[i]))],
         ),
       ),
       body: const TabBarView(

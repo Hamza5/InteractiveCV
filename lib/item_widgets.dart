@@ -89,29 +89,42 @@ class LocationItem extends StatelessWidget {
   }
 }
 
-class LanguageItem extends StatelessWidget {
-  final ImageProvider flag;
+class KnowledgeItem extends StatelessWidget {
+  final ImageProvider image;
   final String name;
   final String description;
   final double progress;
-  const LanguageItem({
-    super.key, required this.flag, required this.name, required this.description, required this.progress
+  final bool dropShadow;
+  final bool rectangularImage;
+  const KnowledgeItem({
+    super.key, required this.image, required this.name, required this.description, required this.progress,
+    this.dropShadow = false, this.rectangularImage = false
   });
 
-  int get _totalSteps => 5;
-  int get _currentStep => (progress * 5).round();
+  int get _totalSteps => 10;
+  int get _currentStep => (progress * 10).round();
   Color get _progressColor {
     switch (_currentStep) {
       case 1:
         return Colors.red;
       case 2:
-        return Colors.orange;
+        return Colors.deepOrange;
       case 3:
-        return Colors.yellow;
+        return Colors.orange;
       case 4:
-        return Colors.blue;
+        return Colors.orangeAccent;
       case 5:
+        return Colors.yellow;
+      case 6:
+        return Colors.lime;
+      case 7:
+        return Colors.lightGreen;
+      case 8:
         return Colors.green;
+      case 9:
+        return Colors.green.shade700;
+      case 10:
+        return Colors.green.shade900;
     }
     return Colors.black;
   }
@@ -128,11 +141,12 @@ class LanguageItem extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.shadow, blurRadius: 1)],
+                    boxShadow: dropShadow ?
+                    [BoxShadow(color: Theme.of(context).colorScheme.shadow, blurRadius: 1)] : null,
                     borderRadius: BorderRadius.circular(5),
                   ),
                   clipBehavior: Clip.antiAlias,
-                  child: Image(image: flag, fit: BoxFit.fill, width: 65, height: 50),
+                  child: Image(image: image, fit: BoxFit.fill, width: rectangularImage ? 65 : 50, height: 50),
                 ),
                 const SizedBox(width: 5),
                 SizedBox(
@@ -202,11 +216,11 @@ class InstitutionItem extends StatelessWidget {
   }
 }
 
-class ExperienceItem extends StatelessWidget {
+class FieldItem extends StatelessWidget {
   final String title;
   final String trailing;
   final List<Widget> items;
-  const ExperienceItem({super.key, required this.title, required this.trailing, this.items = const []});
+  const FieldItem({super.key, required this.title, required this.trailing, this.items = const []});
 
   @override
   Widget build(BuildContext context) {

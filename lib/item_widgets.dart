@@ -161,7 +161,7 @@ class KnowledgeItem extends StatelessWidget {
                       ),
                       Container(
                         alignment: Alignment.center,
-                        height: 35,
+                        height: 40,
                         child: Text(description, textAlign: TextAlign.center),
                       ),
                     ],

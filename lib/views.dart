@@ -293,6 +293,23 @@ class ExperienceView extends StatelessWidget {
               description: 'Scientific publication', progress: 0.6,
             ),
           ],
+        ),
+        SectionTile(
+          icon: Icons.design_services, text: 'Graphic tools', wrapped: true,
+          items: [
+            KnowledgeItem(
+              image: Image.asset('images/logos/Inkscape_logo.png').image, name: 'Inkscape',
+              description: 'Vector graphics design', progress: 0.7,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/GIMP_logo.png').image, name: 'GIMP',
+              description: 'Image editing', progress: 0.6,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Blender_logo.png').image, name: 'Blender',
+              description: '3D modeling and rendering', progress: 0.4,
+            ),
+          ],
         )
       ],
     );

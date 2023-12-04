@@ -182,7 +182,7 @@ class EducationView extends StatelessWidget {
           logo: Image.asset('images/logos/edx_logo.png').image, title: 'EdX', url: Uri.parse('https://www.edx.org/'),
           items: [
             FieldItem(
-              title: 'Reinforcement Learning', trailing: '2019',
+              title: 'Reinforcement Learning Explained', trailing: '2019',
               items: [
                 CertificationList(
                   certifications: [Image.asset('images/certificates/Reinforcement_learning_certificate.jpg').image],
@@ -266,7 +266,7 @@ class ExperienceView extends StatelessWidget {
           ],
         ),
         SectionTile(
-          icon: Icons.app_settings_alt, text: 'Programming languages', wrapped: true,
+          icon: Icons.app_settings_alt, text: 'Programming & markup languages', wrapped: true,
           items: [
             KnowledgeItem(
               image: Image.asset('images/logos/Python_logo.png').image, name: 'Python',
@@ -278,7 +278,7 @@ class ExperienceView extends StatelessWidget {
             ),
             KnowledgeItem(
               image: Image.asset('images/logos/JavaScript_logo.png').image, name: 'JavaScript',
-              description: 'Browser environment', progress: 0.5,
+              description: 'Web browser environment', progress: 0.5,
             ),
             KnowledgeItem(
               image: Image.asset('images/logos/Markdown_logo.png').image, name: 'Markdown',
@@ -290,7 +290,44 @@ class ExperienceView extends StatelessWidget {
             ),
             KnowledgeItem(
               image: Image.asset('images/logos/LaTeX_project_logo.png').image, name: 'LaTeX',
-              description: 'Scientific publication', progress: 0.6,
+              description: 'Document publishing', progress: 0.6,
+            ),
+          ],
+        ),
+        SectionTile(
+          icon: Icons.library_books, text: 'Frameworks and libraries', wrapped: true,
+          items: [
+            KnowledgeItem(
+              image: Image.asset('images/logos/Jupyter_logo.png').image, name: 'Jupyter',
+              description: 'Interactive programming', progress: 0.9,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Matplotlib_logo.png').image, name: 'Matplotlib',
+              description: 'Visualization and charting', progress: 0.6,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Tensorflow_logo.png').image, name: 'TensorFlow',
+              description: 'Deep learning', progress: 0.8,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Poetry_logo.png').image, name: 'Poetry',
+              description: 'Python packaging', progress: 0.8,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Scrapy_logo.png').image, name: 'Scrapy',
+              description: 'Web crawling', progress: 0.8,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Django_logo.png').image, name: 'Django',
+              description: 'Backend web development', progress: 0.7,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Flet_logo.png').image, name: 'Flet',
+              description: 'Web app development', progress: 0.9,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/PyQt_logo.png').image, name: 'PyQt',
+              description: 'Desktop GUI development', progress: 0.8,
             ),
           ],
         ),

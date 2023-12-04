@@ -47,6 +47,7 @@ class MainPage extends StatelessWidget {
         centerTitle: true,
         bottom: TabBar(
           tabs: [for (var i=0; i<tabTitles.length; i++) Tab(text: tabTitles[i], icon: FaIcon(tabIcons[i]))],
+          isScrollable: MediaQuery.of(context).size.width < 500,
         ),
       ),
       body: const TabBarView(

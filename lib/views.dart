@@ -332,6 +332,23 @@ class ExperienceView extends StatelessWidget {
           ],
         ),
         SectionTile(
+          icon: Icons.design_services, text: 'Databases', wrapped: true,
+          items: [
+            KnowledgeItem(
+              image: Image.asset('images/logos/SQLite_logo.png').image, name: 'SQLite',
+              description: 'File-based simple database', progress: 0.9,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Postgresql_logo.png').image, name: 'Postgresql',
+              description: 'Fully-featured relational database', progress: 0.4,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/MongoDB_logo.png').image, name: 'MongoDB',
+              description: 'Advanced NoSQL database', progress: 0.6,
+            ),
+          ],
+        ),
+        SectionTile(
           icon: Icons.design_services, text: 'Graphic tools', wrapped: true,
           items: [
             KnowledgeItem(
@@ -347,7 +364,7 @@ class ExperienceView extends StatelessWidget {
               description: '3D modeling and rendering', progress: 0.4,
             ),
           ],
-        )
+        ),
       ],
     );
   }

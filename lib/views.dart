@@ -6,7 +6,7 @@ import 'item_widgets.dart';
 const email = 'hamza.abbad@gmail.com';
 const phone1 = '🇨🇳 +86 139 7165 4983';
 const phone2 = '🇩🇿 +213 659 41 84 69';
-const streetAddress = 'Dayouwen garden';
+const streetAddress = 'Dayou Wenyuan';
 const city = 'Dalian';
 const province = 'Liaoning';
 const country = 'China';
@@ -63,24 +63,24 @@ class BasicInfoView extends StatelessWidget {
           icon: Icons.language, text: 'Spoken languages',
           items: [
             KnowledgeItem(
-              image: Image.asset('images/logos/arab-league.png').image, name: 'العَرَبِيَّة', dropImageShadow: true,
+              image: Image.asset('images/flags/arab-league.png').image, name: 'العَرَبِيَّة', dropImageShadow: true,
               description: 'Standard Arabic and most dialects', rectangularImage: true,
               progress: 0.9,
             ),
             KnowledgeItem(
-              image: Image.asset('images/logos/united-states.png').image, name: 'English', dropImageShadow: true,
+              image: Image.asset('images/flags/united-states.png').image, name: 'English', dropImageShadow: true,
               description: 'American accent', progress: 0.8, rectangularImage: true,
             ),
             KnowledgeItem(
-              image: Image.asset('images/logos/france.png').image, name: 'Français', dropImageShadow: true,
+              image: Image.asset('images/flags/france.png').image, name: 'Français', dropImageShadow: true,
               description: 'Metropolitan French', progress: 0.7, rectangularImage: true,
             ),
             KnowledgeItem(
-              image: Image.asset('images/logos/china.png').image, name: '中文', dropImageShadow: true,
+              image: Image.asset('images/flags/china.png').image, name: '中文', dropImageShadow: true,
               description: 'Mandarin Chinese', progress: 0.6, rectangularImage: true,
             ),
             KnowledgeItem(
-              image: Image.asset('images/logos/russia.png').image, name: 'Русский', dropImageShadow: true,
+              image: Image.asset('images/flags/russia.png').image, name: 'Русский', dropImageShadow: true,
               description: 'Basic words and sentences', progress: 0.1, rectangularImage: true,
             )
           ],

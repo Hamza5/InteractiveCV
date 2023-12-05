@@ -6,7 +6,7 @@ import 'item_widgets.dart';
 const email = 'hamza.abbad@gmail.com';
 const phone1 = '🇨🇳 +86 139 7165 4983';
 const phone2 = '🇩🇿 +213 659 41 84 69';
-const streetAddress = 'DaYouWen garden';
+const streetAddress = 'Dayouwen garden';
 const city = 'Dalian';
 const province = 'Liaoning';
 const country = 'China';

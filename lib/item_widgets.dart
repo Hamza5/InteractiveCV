@@ -7,8 +7,6 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 
-const mapLink = 'https://map.baidu.com/@13527705.46,4678954.75,18z';
-
 class BasicInfoItem extends StatelessWidget {
   final IconData icon;
   final String text;
@@ -43,7 +41,7 @@ class SectionTile extends StatelessWidget {
         iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
         initiallyExpanded: true,
         children: wrapped ?
-        [Wrap(spacing: 10, runSpacing: 10, alignment: WrapAlignment.center, children: items)] :
+        [Wrap(spacing: 5, runSpacing: 5, alignment: WrapAlignment.center, children: items)] :
         items,
       ),
     );
@@ -63,27 +61,33 @@ class LocationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return LimitedBox(
-      maxHeight: 500,
-      child: Padding(
-        padding: const EdgeInsets.all(10),
-        child: FlutterMap(
-            options: MapOptions(initialCenter: geoPosition, initialZoom: 16),
-            children: [
-              TileLayer(
-                urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                tileProvider: CancellableNetworkTileProvider(),
+    final addressBar = BasicInfoItem(
+      icon: Icons.location_pin, text: '$streetAddress, $city, $province, $country',
+    );
+    final map = FlutterMap(
+        options: MapOptions(initialCenter: geoPosition, initialZoom: 14, maxZoom: 17, minZoom: 9),
+        children: [
+          TileLayer(
+            urlTemplate: 'https://webrd01.is.autonavi.com/appmaptile?lang=en&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+            tileProvider: CancellableNetworkTileProvider(),
+          ),
+          addressBar,
+          Align(
+            alignment: AlignmentDirectional.bottomEnd,
+            child: Card(
+              child: Padding(
+                padding: const EdgeInsets.all(3),
+                child: TextSourceAttribution('Amap.com', onTap: () => launchUrl(Uri.parse('https://amap.com/'))),
               ),
-              const SimpleAttributionWidget(source: Text('OpenStreetMap')),
-              Align(
-                alignment: Alignment.topCenter,
-                child: BasicInfoItem(
-                  icon: Icons.location_pin, text: '$streetAddress, $city, $province, $country',
-                  url: Uri.parse(mapLink),
-                ),
-              )
-            ]
-        ),
+            ),
+          ),
+        ],
+    );
+    return LimitedBox(
+      maxHeight: 400,
+      child: Padding(
+        padding: const EdgeInsets.all(5),
+        child: map,
       ),
     );
   }
@@ -249,8 +253,8 @@ class CertificationList extends StatelessWidget {
       padding: const EdgeInsets.all(5),
       child: Wrap(
         alignment: WrapAlignment.center,
-        spacing: 10,
-        runSpacing: 10,
+        spacing: 5,
+        runSpacing: 5,
         children: [
           for (var image in certifications) SizedBox(
               height: height,

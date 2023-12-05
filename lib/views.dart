@@ -63,24 +63,24 @@ class BasicInfoView extends StatelessWidget {
           icon: Icons.language, text: 'Spoken languages',
           items: [
             KnowledgeItem(
-              image: Image.asset('images/logos/arab-league.png').image, name: 'العَرَبِيَّة', dropShadow: true,
+              image: Image.asset('images/logos/arab-league.png').image, name: 'العَرَبِيَّة', dropImageShadow: true,
               description: 'Standard Arabic and most dialects', rectangularImage: true,
               progress: 0.9,
             ),
             KnowledgeItem(
-              image: Image.asset('images/logos/united-states.png').image, name: 'English', dropShadow: true,
+              image: Image.asset('images/logos/united-states.png').image, name: 'English', dropImageShadow: true,
               description: 'American accent', progress: 0.8, rectangularImage: true,
             ),
             KnowledgeItem(
-              image: Image.asset('images/logos/france.png').image, name: 'Français', dropShadow: true,
+              image: Image.asset('images/logos/france.png').image, name: 'Français', dropImageShadow: true,
               description: 'Metropolitan French', progress: 0.7, rectangularImage: true,
             ),
             KnowledgeItem(
-              image: Image.asset('images/logos/china.png').image, name: '中文', dropShadow: true,
+              image: Image.asset('images/logos/china.png').image, name: '中文', dropImageShadow: true,
               description: 'Mandarin Chinese', progress: 0.6, rectangularImage: true,
             ),
             KnowledgeItem(
-              image: Image.asset('images/logos/russia.png').image, name: 'Русский', dropShadow: true,
+              image: Image.asset('images/logos/russia.png').image, name: 'Русский', dropImageShadow: true,
               description: 'Basic words and sentences', progress: 0.1, rectangularImage: true,
             )
           ],
@@ -310,10 +310,6 @@ class ExperienceView extends StatelessWidget {
               description: 'Deep learning', progress: 0.8,
             ),
             KnowledgeItem(
-              image: Image.asset('images/logos/Poetry_logo.png').image, name: 'Poetry',
-              description: 'Python packaging', progress: 0.8,
-            ),
-            KnowledgeItem(
               image: Image.asset('images/logos/Scrapy_logo.png').image, name: 'Scrapy',
               description: 'Web crawling', progress: 0.8,
             ),
@@ -332,7 +328,7 @@ class ExperienceView extends StatelessWidget {
           ],
         ),
         SectionTile(
-          icon: Icons.design_services, text: 'Databases', wrapped: true,
+          icon: FontAwesomeIcons.database, text: 'Databases', wrapped: true,
           items: [
             KnowledgeItem(
               image: Image.asset('images/logos/SQLite_logo.png').image, name: 'SQLite',
@@ -345,6 +341,31 @@ class ExperienceView extends StatelessWidget {
             KnowledgeItem(
               image: Image.asset('images/logos/MongoDB_logo.png').image, name: 'MongoDB',
               description: 'Advanced NoSQL database', progress: 0.6,
+            ),
+          ],
+        ),
+        SectionTile(
+          icon: FontAwesomeIcons.screwdriver, text: 'DevOps', wrapped: true,
+          items: [
+            KnowledgeItem(
+              image: Image.asset('images/logos/Git_logo.png').image, name: 'Git',
+              description: 'Version control system', progress: 0.8,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Poetry_logo.png').image, name: 'Poetry',
+              description: 'Python packaging', progress: 0.8,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Docker_logo.png').image, name: 'Docker',
+              description: 'Container building tool', progress: 0.6,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/GitHub_logo.png').image, name: 'GH Actions',
+              description: 'CI/CD workflows', progress: 0.7,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Gnupg_logo.png').image, name: 'GnuPG',
+              description: 'Encryption and signing', progress: 0.4,
             ),
           ],
         ),

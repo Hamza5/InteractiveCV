@@ -41,7 +41,7 @@ class SectionTile extends StatelessWidget {
         iconColor: Theme.of(context).colorScheme.onPrimaryContainer,
         initiallyExpanded: true,
         children: wrapped ?
-        [Wrap(spacing: 5, runSpacing: 5, alignment: WrapAlignment.center, children: items)] :
+        [Wrap(alignment: WrapAlignment.center, children: items)] :
         items,
       ),
     );
@@ -65,7 +65,7 @@ class LocationItem extends StatelessWidget {
       icon: Icons.location_pin, text: '$streetAddress, $city, $province, $country',
     );
     final map = FlutterMap(
-        options: MapOptions(initialCenter: geoPosition, initialZoom: 14, maxZoom: 17, minZoom: 9),
+        options: MapOptions(initialCenter: geoPosition, initialZoom: 15, maxZoom: 17, minZoom: 9),
         children: [
           TileLayer(
             urlTemplate: 'https://webrd01.is.autonavi.com/appmaptile?lang=en&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
@@ -98,11 +98,11 @@ class KnowledgeItem extends StatelessWidget {
   final String name;
   final String description;
   final double progress;
-  final bool dropShadow;
+  final bool dropImageShadow;
   final bool rectangularImage;
   const KnowledgeItem({
     super.key, required this.image, required this.name, required this.description, required this.progress,
-    this.dropShadow = false, this.rectangularImage = false
+    this.dropImageShadow = false, this.rectangularImage = false
   });
 
   int get _totalSteps => 10;
@@ -137,7 +137,7 @@ class KnowledgeItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.all(3),
         child: Column(
           children: [
             Row(
@@ -145,7 +145,7 @@ class KnowledgeItem extends StatelessWidget {
               children: [
                 Container(
                   decoration: BoxDecoration(
-                    boxShadow: dropShadow ?
+                    boxShadow: dropImageShadow ?
                     [BoxShadow(color: Theme.of(context).colorScheme.shadow, blurRadius: 1)] : null,
                     borderRadius: BorderRadius.circular(5),
                   ),
@@ -253,8 +253,6 @@ class CertificationList extends StatelessWidget {
       padding: const EdgeInsets.all(5),
       child: Wrap(
         alignment: WrapAlignment.center,
-        spacing: 5,
-        runSpacing: 5,
         children: [
           for (var image in certifications) SizedBox(
               height: height,

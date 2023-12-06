@@ -95,7 +95,7 @@ class BasicInfoView extends StatelessWidget {
               BasicInfoItem(icon: FontAwesomeIcons.linkedin, text: linkedin, url: Uri.parse('https://$linkedin'),),
             ]
         ),
-        const SectionTile(icon: Icons.location_city, text: 'Physical presence', items: [
+        SectionTile(icon: Icons.location_city, text: 'Physical presence', items: [
           LocationItem(
               geoPosition: geoPosition, country: country, province: province, city: city, streetAddress: streetAddress
           )

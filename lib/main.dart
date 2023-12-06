@@ -26,7 +26,7 @@ class InteractiveCV extends StatelessWidget {
       title: 'Interactive CV',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        cardTheme: const CardTheme(margin: EdgeInsets.all(3))
+        cardTheme: const CardTheme(margin: EdgeInsets.all(3), elevation: 2),
         // useMaterial3: true,
       ),
       home: DefaultTabController(length: tabTitles.length, child: const MainPage()),

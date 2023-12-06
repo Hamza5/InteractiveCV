@@ -6,6 +6,7 @@ import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:weather/weather.dart';
 
 class BasicInfoItem extends StatelessWidget {
   final IconData icon;
@@ -54,15 +55,103 @@ class LocationItem extends StatelessWidget {
   final String province;
   final String city;
   final String streetAddress;
-  const LocationItem({
+  final WeatherFactory weatherFactory;
+  LocationItem({
     super.key, required this.geoPosition, required this.country, required this.province, required this.city,
     required this.streetAddress
-  });
+  }) : weatherFactory = WeatherFactory(const String.fromEnvironment('OWM_API_KEY'));
 
   @override
   Widget build(BuildContext context) {
     final addressBar = BasicInfoItem(
       icon: Icons.location_pin, text: '$streetAddress, $city, $province, $country',
+    );
+    final weatherSection = FutureBuilder(
+      future: weatherFactory.currentWeatherByLocation(geoPosition.latitude, geoPosition.longitude),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return const SizedBox.shrink();
+        } else if (snapshot.hasData) {
+          final weather = snapshot.requireData;
+          return Opacity(
+            opacity: 0.75,
+            child: Container(
+                decoration: BoxDecoration(
+                  borderRadius: const BorderRadiusDirectional.only(topEnd: Radius.circular(5)),
+                  color: Theme.of(context).colorScheme.background,
+                ),
+                height: 100,
+                width: 200,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Image.network(
+                          'https://openweathermap.org/img/wn/${weather.weatherIcon}@2x.png', height: 64, width: 64,
+                          fit: BoxFit.fill,
+                        ),
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                          children: [
+                            Text(weather.weatherMain ?? '', style: Theme.of(context).textTheme.titleLarge),
+                            Text(weather.weatherDescription ?? ''),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const FaIcon(FontAwesomeIcons.temperatureHalf),
+                            const SizedBox(width: 2),
+                            Text('${weather.temperature?.celsius?.round()}°C'),
+                          ],
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(Icons.face),
+                            const SizedBox(width: 2),
+                            Text('${weather.tempFeelsLike?.celsius?.round()}°C'),
+                          ],
+                        ),
+                        Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Transform.rotate(
+                              angle: degToRadian((weather.windDegree ?? 45) - 45),
+                              child: const FaIcon(FontAwesomeIcons.locationArrow),
+                            ),
+                            const SizedBox(width: 2),
+                            Text('${weather.windSpeed?.round()}m/s'),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ],
+                )
+            ),
+          );
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
+    );
+    final attributionWatermark = Opacity(
+      opacity: 0.5,
+      child: Container(
+        padding: const EdgeInsets.all(3),
+        decoration: BoxDecoration(
+            borderRadius: const BorderRadiusDirectional.only(topStart: Radius.circular(5)),
+            color: Theme.of(context).colorScheme.background
+        ),
+        child: TextSourceAttribution('Amap.com', onTap: () => launchUrl(Uri.parse('https://amap.com/'))),
+      ),
     );
     final map = FlutterMap(
         options: MapOptions(initialCenter: geoPosition, initialZoom: 15, maxZoom: 17, minZoom: 9),
@@ -72,15 +161,8 @@ class LocationItem extends StatelessWidget {
             tileProvider: CancellableNetworkTileProvider(),
           ),
           addressBar,
-          Align(
-            alignment: AlignmentDirectional.bottomEnd,
-            child: Card(
-              child: Padding(
-                padding: const EdgeInsets.all(3),
-                child: TextSourceAttribution('Amap.com', onTap: () => launchUrl(Uri.parse('https://amap.com/'))),
-              ),
-            ),
-          ),
+          Align(alignment: AlignmentDirectional.bottomStart, child: weatherSection),
+          Align(alignment: AlignmentDirectional.bottomEnd, child: attributionWatermark),
         ],
     );
     return LimitedBox(

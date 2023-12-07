@@ -417,7 +417,7 @@ class ProjectsView extends StatelessWidget {
           icon: FontAwesomeIcons.computer, text: 'Programming',
           items: [
             BasicInfoItem(
-              title: 'DNA translator',
+              title: 'DNA translator (Arabic)',
               description: 'Classic AutoIt and HTML/CSS/JS app to translate between the DNA and RNA sequences',
               url: Uri.parse('https://github.com/Hamza5/DNA-translator_AR/'),
             ),
@@ -434,10 +434,20 @@ class ProjectsView extends StatelessWidget {
             ),
             BasicInfoItem(
               title: 'Multilevel diacritizer',
-              description: 'Flask/Flutter/TensorFlow web application allowing the restoration of diacritics from an'
-                  ' Arabic text. Contains a Deep Learning model. Published as a research demo.',
+              description: 'Flask/Flutter/TensorFlow web application acting as a GUI to a Deep Learning model developed'
+                  ' for research work',
               url: Uri.parse('https://github.com/Hamza5/multilevel-diacritizer'),
             ),
+          ],
+        ),
+        SectionTile(
+          icon: FontAwesomeIcons.pen, text: 'Writing',
+          items: [
+            BasicInfoItem(
+              title: 'Learn to program with C (Arabic)',
+              description: 'Translation of a French book teaching the C programming language to Arabic',
+              url: Uri.parse('https://github.com/Hamza5/Learn-to-program-with-C_AR'),
+            )
           ],
         )
       ],

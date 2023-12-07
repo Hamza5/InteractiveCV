@@ -2,6 +2,7 @@ import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:one_clock/one_clock.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:latlong2/latlong.dart';
@@ -75,84 +76,86 @@ class LocationItem extends StatelessWidget {
           return const SizedBox.shrink();
         } else if (snapshot.hasData) {
           final weather = snapshot.requireData;
-          return Opacity(
-            opacity: 0.75,
-            child: Container(
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadiusDirectional.only(topEnd: Radius.circular(5)),
-                  color: Theme.of(context).colorScheme.background,
-                ),
-                height: 100,
-                width: 200,
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Image.network(
-                          'https://openweathermap.org/img/wn/${weather.weatherIcon}@2x.png', height: 64, width: 64,
-                          fit: BoxFit.fill,
-                        ),
-                        Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                          children: [
-                            Text(weather.weatherMain ?? '', style: Theme.of(context).textTheme.titleLarge),
-                            Text(weather.weatherDescription ?? ''),
-                          ],
-                        ),
-                      ],
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const FaIcon(FontAwesomeIcons.temperatureHalf),
-                            const SizedBox(width: 2),
-                            Text('${weather.temperature?.celsius?.round()}°C'),
-                          ],
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.face),
-                            const SizedBox(width: 2),
-                            Text('${weather.tempFeelsLike?.celsius?.round()}°C'),
-                          ],
-                        ),
-                        Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Transform.rotate(
-                              angle: degToRadian((weather.windDegree ?? 45) - 45),
-                              child: const FaIcon(FontAwesomeIcons.locationArrow),
-                            ),
-                            const SizedBox(width: 2),
-                            Text('${weather.windSpeed?.round()}m/s'),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ],
-                )
-            ),
+          return Container(
+              decoration: BoxDecoration(
+                borderRadius: const BorderRadiusDirectional.only(topEnd: Radius.circular(5)),
+                color: Theme.of(context).colorScheme.background.withOpacity(0.75),
+              ),
+              height: 100,
+              width: 200,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Image.network(
+                        'https://openweathermap.org/img/wn/${weather.weatherIcon}@2x.png', height: 64, width: 64,
+                        fit: BoxFit.fill,
+                      ),
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: [
+                          Text(weather.weatherMain ?? '', style: Theme.of(context).textTheme.titleLarge),
+                          Text(weather.weatherDescription ?? ''),
+                        ],
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const FaIcon(FontAwesomeIcons.temperatureHalf),
+                          const SizedBox(width: 5),
+                          Text('${weather.temperature?.celsius?.round()}°C'),
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Icon(Icons.face),
+                          const SizedBox(width: 5),
+                          Text('${weather.tempFeelsLike?.celsius?.round()}°C'),
+                        ],
+                      ),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Transform.rotate(
+                            angle: degToRadian((weather.windDegree ?? 45) - 45),
+                            child: const FaIcon(FontAwesomeIcons.locationArrow),
+                          ),
+                          const SizedBox(width: 5),
+                          Text('${weather.windSpeed?.round()}m/s'),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              )
           );
         } else {
           return const CircularProgressIndicator();
         }
       },
     );
-    final attributionWatermark = Opacity(
-      opacity: 0.5,
-      child: Container(
-        padding: const EdgeInsets.all(3),
-        decoration: BoxDecoration(
-            borderRadius: const BorderRadiusDirectional.only(topStart: Radius.circular(5)),
-            color: Theme.of(context).colorScheme.background
-        ),
-        child: TextSourceAttribution('Amap.com', onTap: () => launchUrl(Uri.parse('https://amap.com/'))),
+    final attributionWatermark = Container(
+      padding: const EdgeInsets.all(3),
+      decoration: BoxDecoration(
+          borderRadius: const BorderRadiusDirectional.only(topStart: Radius.circular(5)),
+          color: Theme.of(context).colorScheme.background.withOpacity(0.5)
+      ),
+      child: TextSourceAttribution('Amap.com', onTap: () => launchUrl(Uri.parse('https://amap.com/'))),
+    );
+    final clock = AnalogClock(
+      height: 150, width: 150, isLive: true, showDigitalClock: true, showAllNumbers: true,
+      datetime: DateTime.now().toUtc().add(const Duration(hours: 8)), textScaleFactor: 1.5,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.background.withOpacity(0.75),
+        borderRadius: const BorderRadiusDirectional.horizontal(end: Radius.circular(5))
       ),
     );
     final map = FlutterMap(
@@ -163,6 +166,7 @@ class LocationItem extends StatelessWidget {
             tileProvider: CancellableNetworkTileProvider(),
           ),
           addressBar,
+          Padding(padding: const EdgeInsets.only(top: 60), child: clock),
           Align(alignment: AlignmentDirectional.bottomStart, child: weatherSection),
           Align(alignment: AlignmentDirectional.bottomEnd, child: attributionWatermark),
         ],

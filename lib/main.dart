@@ -8,9 +8,11 @@ const lastName = 'Abbad';
 const shortDescription = 'PhD student in computer science and artificial intelligence';
 const photoPath = 'images/Photo.jpg';
 
-const List<String> tabTitles = ['Basic', 'Education', 'Work', 'Experience'];
-const List<IconData> tabIcons = [Icons.person, Icons.school, Icons.work, FontAwesomeIcons.screwdriverWrench];
-const List<Widget> tabs = [BasicInfoView(), EducationView(), WorkView(), ExperienceView()];
+const List<String> tabTitles = ['Basic', 'Education', 'Work', 'Experience', 'Projects'];
+const List<IconData> tabIcons = [
+  Icons.person, Icons.school, Icons.work, FontAwesomeIcons.screwdriverWrench, FontAwesomeIcons.toolbox,
+];
+const List<Widget> tabs = [BasicInfoView(), EducationView(), WorkView(), ExperienceView(), ProjectsView()];
 
 void main() {
   runApp(const InteractiveCV());

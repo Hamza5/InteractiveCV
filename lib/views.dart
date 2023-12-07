@@ -47,16 +47,16 @@ class BasicInfoView extends StatelessWidget {
         SectionTile(
           icon: Icons.contacts, text: 'Contact information',
           items: [
-            BasicInfoItem(icon: Icons.email, text: email, url: Uri.parse('mailto:$email')),
-            BasicInfoItem(icon: Icons.phone, text: phone1, url: Uri.parse('tel:$phone1'),),
-            BasicInfoItem(icon: Icons.phone, text: phone2, url: Uri.parse('tel:$phone2'),),
+            BasicInfoItem(icon: Icons.email, title: email, url: Uri.parse('mailto:$email')),
+            BasicInfoItem(icon: Icons.phone, title: phone1, url: Uri.parse('tel:$phone1'),),
+            BasicInfoItem(icon: Icons.phone, title: phone2, url: Uri.parse('tel:$phone2'),),
           ],
         ),
         const SectionTile(
             icon: Icons.person_2, text: 'Personal',
             items: [
-              BasicInfoItem(icon: FontAwesomeIcons.book, text: religion),
-              BasicInfoItem(icon: FontAwesomeIcons.flag, text: nationality),
+              BasicInfoItem(icon: FontAwesomeIcons.book, title: religion),
+              BasicInfoItem(icon: FontAwesomeIcons.flag, title: nationality),
             ]
         ),
         SectionTile(
@@ -88,11 +88,11 @@ class BasicInfoView extends StatelessWidget {
         ),
         SectionTile(icon: Icons.web, text: 'Web presence',
             items: [
-              BasicInfoItem(icon: FontAwesomeIcons.github, text: github, url: Uri.parse('https://$github'),),
+              BasicInfoItem(icon: FontAwesomeIcons.github, title: github, url: Uri.parse('https://$github'),),
               BasicInfoItem(
-                icon: FontAwesomeIcons.stackOverflow, text: stackOverflow, url: Uri.parse('https://$stackOverflow'),
+                icon: FontAwesomeIcons.stackOverflow, title: stackOverflow, url: Uri.parse('https://$stackOverflow'),
               ),
-              BasicInfoItem(icon: FontAwesomeIcons.linkedin, text: linkedin, url: Uri.parse('https://$linkedin'),),
+              BasicInfoItem(icon: FontAwesomeIcons.linkedin, title: linkedin, url: Uri.parse('https://$linkedin'),),
             ]
         ),
         SectionTile(icon: Icons.location_city, text: 'Physical presence', items: [
@@ -146,7 +146,18 @@ class EducationView extends StatelessWidget {
             logo: Image.asset(university2Logo).image, title: university2, url: Uri.parse(university2Url),
             items: [
               FieldItem(title: specialities[2], trailing: studyYears[2]),
-              FieldItem(title: specialities[3], trailing: studyYears[3])
+              FieldItem(
+                title: specialities[3], trailing: studyYears[3],
+                items: [
+                  CertificationList(
+                    height: 500,
+                    certifications: [
+                      Image.asset('images/certificates/2020-paper.jpg').image,
+                      Image.asset('images/certificates/2022-paper.jpg').image,
+                    ],
+                  )
+                ],
+              )
             ]
         ),
         InstitutionItem(
@@ -266,19 +277,23 @@ class ExperienceView extends StatelessWidget {
           ],
         ),
         SectionTile(
-          icon: Icons.app_settings_alt, text: 'Programming & markup languages', wrapped: true,
+          icon: Icons.app_settings_alt, text: 'Programming and markup languages', wrapped: true,
           items: [
             KnowledgeItem(
               image: Image.asset('images/logos/Python_logo.png').image, name: 'Python',
-              description: 'Backend development', progress: 0.95,
+              description: 'Backend and scripting', progress: 0.95,
             ),
             KnowledgeItem(
               image: Image.asset('images/logos/Flutter_logo.png').image, name: 'Dart/Flutter',
-              description: 'Frontend development', progress: 0.7,
+              description: 'Multiplatform development', progress: 0.7,
             ),
             KnowledgeItem(
               image: Image.asset('images/logos/JavaScript_logo.png').image, name: 'JavaScript',
               description: 'Web browser environment', progress: 0.5,
+            ),
+            KnowledgeItem(
+              image: Image.asset('images/logos/Java_logo.png').image, name: 'Java',
+              description: 'Desktop development', progress: 0.5,
             ),
             KnowledgeItem(
               image: Image.asset('images/logos/Markdown_logo.png').image, name: 'Markdown',
@@ -299,7 +314,7 @@ class ExperienceView extends StatelessWidget {
           items: [
             KnowledgeItem(
               image: Image.asset('images/logos/Jupyter_logo.png').image, name: 'Jupyter',
-              description: 'Interactive programming', progress: 0.9,
+              description: 'Interactive programming', progress: 0.8,
             ),
             KnowledgeItem(
               image: Image.asset('images/logos/Matplotlib_logo.png').image, name: 'Matplotlib',
@@ -386,6 +401,45 @@ class ExperienceView extends StatelessWidget {
             ),
           ],
         ),
+      ],
+    );
+  }
+}
+
+class ProjectsView extends StatelessWidget {
+  const ProjectsView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(
+      children: [
+        SectionTile(
+          icon: FontAwesomeIcons.computer, text: 'Programming',
+          items: [
+            BasicInfoItem(
+              title: 'DNA translator',
+              description: 'Classic AutoIt and HTML/CSS/JS app to translate between the DNA and RNA sequences',
+              url: Uri.parse('https://github.com/Hamza5/DNA-translator_AR/'),
+            ),
+            BasicInfoItem(
+              title: 'Basic Regular Expression Tester',
+              description: 'Python3/PyQt4 application to test regular expressions functions on a text',
+              url: Uri.parse('https://github.com/Hamza5/Basic-Regular-Expressions-Tester'),
+            ),
+            BasicInfoItem(
+              title: 'Periodical File Sender',
+              description: 'Python3/PyQt5 application that allows sending emails with attachment periodically using an '
+                  'SMTP server',
+              url: Uri.parse('https://github.com/Hamza5/Periodical-File-Sender/'),
+            ),
+            BasicInfoItem(
+              title: 'Multilevel diacritizer',
+              description: 'Flask/Flutter/TensorFlow web application allowing the restoration of diacritics from an'
+                  ' Arabic text. Contains a Deep Learning model. Published as a research demo.',
+              url: Uri.parse('https://github.com/Hamza5/multilevel-diacritizer'),
+            ),
+          ],
+        )
       ],
     );
   }

@@ -9,17 +9,19 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:weather/weather.dart';
 
 class BasicInfoItem extends StatelessWidget {
-  final IconData icon;
-  final String text;
+  final IconData? icon;
+  final String title;
+  final String? description;
   final Uri? url;
-  const BasicInfoItem({super.key, required this.icon, required this.text, this.url});
+  const BasicInfoItem({super.key, this.icon, required this.title, this.description, this.url});
 
   @override
   Widget build(BuildContext context) {
     return Card(
         child: ListTile(
-          leading: FaIcon(icon),
-          title: Text(text),
+          leading: icon != null ? FaIcon(icon) : null,
+          title: Text(title),
+          subtitle: description != null ? Text(description!) : null,
           onTap: url != null ? () => launchUrl(url!) : null,
         )
     );
@@ -64,7 +66,7 @@ class LocationItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final addressBar = BasicInfoItem(
-      icon: Icons.location_pin, text: '$streetAddress, $city, $province, $country',
+      icon: Icons.location_pin, title: '$streetAddress, $city, $province, $country',
     );
     final weatherSection = FutureBuilder(
       future: weatherFactory.currentWeatherByLocation(geoPosition.latitude, geoPosition.longitude),
@@ -176,15 +178,16 @@ class LocationItem extends StatelessWidget {
 }
 
 class KnowledgeItem extends StatelessWidget {
-  final ImageProvider image;
+  final ImageProvider? image;
   final String name;
   final String description;
   final double progress;
   final bool dropImageShadow;
   final bool rectangularImage;
+  final Uri? url;
   const KnowledgeItem({
-    super.key, required this.image, required this.name, required this.description, required this.progress,
-    this.dropImageShadow = false, this.rectangularImage = false
+    super.key, this.image, required this.name, required this.description, required this.progress,
+    this.dropImageShadow = false, this.rectangularImage = false, this.url
   });
 
   int get _totalSteps => 10;
@@ -220,53 +223,58 @@ class KnowledgeItem extends StatelessWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(3),
-        child: Column(
-          children: [
-            Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    boxShadow: dropImageShadow ?
-                    [BoxShadow(color: Theme.of(context).colorScheme.shadow, blurRadius: 1)] : null,
-                    borderRadius: BorderRadius.circular(5),
-                  ),
-                  clipBehavior: Clip.antiAlias,
-                  child: Image(image: image, fit: BoxFit.fill, width: rectangularImage ? 65 : 50, height: 50),
-                ),
-                const SizedBox(width: 5),
-                SizedBox(
-                  width: 120,
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Container(
-                        alignment: Alignment.center,
-                        height: 35,
-                        child: Text(name, style: Theme.of(context).textTheme.titleLarge),
+        child: GestureDetector(
+          onTap: url != null ? () => launchUrl(url!) : null,
+          child: Column(
+            children: [
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (image != null) ...[
+                    Container(
+                      decoration: BoxDecoration(
+                        boxShadow: dropImageShadow ?
+                        [BoxShadow(color: Theme.of(context).colorScheme.shadow, blurRadius: 1)] : null,
+                        borderRadius: BorderRadius.circular(5),
                       ),
-                      Container(
-                        alignment: Alignment.center,
-                        height: 40,
-                        child: Text(description, textAlign: TextAlign.center),
-                      ),
-                    ],
+                      clipBehavior: Clip.antiAlias,
+                      child: Image(image: image!, fit: BoxFit.fill, width: rectangularImage ? 65 : 50, height: 50),
+                    ),
+                    const SizedBox(width: 5)
+                  ],
+                  SizedBox(
+                    width: 120,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          alignment: Alignment.center,
+                          height: 35,
+                          child: Text(name, style: Theme.of(context).textTheme.titleLarge),
+                        ),
+                        Container(
+                          alignment: Alignment.center,
+                          height: 40,
+                          child: Text(description, textAlign: TextAlign.center),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
-              ],
-            ),
-            SizedBox(
-              width: 190,
-              child: StepProgressIndicator(
-                totalSteps: _totalSteps,
-                size: 10,
-                roundedEdges: const Radius.circular(5),
-                customColor: (i) {
-                  return i < _currentStep ? _progressColor : Theme.of(context).colorScheme.surfaceVariant;
-                },
+                ],
               ),
-            )
-          ],
+              SizedBox(
+                width: 190,
+                child: StepProgressIndicator(
+                  totalSteps: _totalSteps,
+                  size: 10,
+                  roundedEdges: const Radius.circular(5),
+                  customColor: (i) {
+                    return i < _currentStep ? _progressColor : Theme.of(context).colorScheme.surfaceVariant;
+                  },
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );
@@ -335,6 +343,8 @@ class CertificationList extends StatelessWidget {
       padding: const EdgeInsets.all(5),
       child: Wrap(
         alignment: WrapAlignment.center,
+        spacing: 5,
+        runSpacing: 5,
         children: [
           for (var image in certifications) SizedBox(
               height: height,

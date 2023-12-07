@@ -346,7 +346,7 @@ class CertificationList extends StatelessWidget {
         spacing: 5,
         runSpacing: 5,
         children: [
-          for (var image in certifications) SizedBox(
+          for (var (index, image) in certifications.indexed) SizedBox(
               height: height,
               width: width,
               child: OutlinedButton(
@@ -354,8 +354,11 @@ class CertificationList extends StatelessWidget {
                     padding: MaterialStatePropertyAll(EdgeInsets.symmetric(vertical: 15, horizontal: 5))
                 ),
                 onPressed: () async {
-                  final imageProvider = MultiImageProvider(certifications);
-                  await showImageViewerPager(context, imageProvider, swipeDismissible: true, doubleTapZoomable: true);
+                  final imageProvider = MultiImageProvider(certifications, initialIndex: index);
+                  await showImageViewerPager(
+                    context, imageProvider, swipeDismissible: true, doubleTapZoomable: true,
+                    backgroundColor: Theme.of(context).colorScheme.background,
+                  );
                 },
                 child: Image(image: image),
               )

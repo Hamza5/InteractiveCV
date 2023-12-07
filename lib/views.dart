@@ -449,6 +449,34 @@ class ProjectsView extends StatelessWidget {
               url: Uri.parse('https://github.com/Hamza5/Learn-to-program-with-C_AR'),
             )
           ],
+        ),
+        SectionTile(
+          icon: FontAwesomeIcons.image, text: '2D graphics',
+          items: [
+            CertificationList(
+              height: 200,
+              certifications: [
+                for (var imageName in [
+                  'effects_background.png', 'scissors.png', 'BrainGlassesLogo.png', 'Laptop_front_view.png',
+                  'learn.png', 'myself_light_circles.png', 'personal_stamp.png'
+                ]) Image.asset('images/artwork/$imageName').image
+              ],
+            ),
+          ],
+        ),
+        SectionTile(
+          icon: FontAwesomeIcons.cube, text: '3D graphics',
+          items: [
+            CertificationList(
+              height: 200,
+              certifications: [
+                for (var imageName in [
+                  'arrows.jpg', 'BooksCover.png', 'HamzaLogo3D.png', 'HamzaMulti.png', 'piKey.png',
+                  'ProgrammingKeyboard.jpg'
+                ]) Image.asset('images/artwork/$imageName').image
+              ],
+            )
+          ],
         )
       ],
     );

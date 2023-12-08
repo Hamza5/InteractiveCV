@@ -14,18 +14,18 @@ class BasicInfoItem extends StatelessWidget {
   final String title;
   final String? description;
   final Uri? url;
-  const BasicInfoItem({super.key, this.icon, required this.title, this.description, this.url});
+  final bool shrink;
+  const BasicInfoItem({super.key, this.icon, required this.title, this.description, this.url, this.shrink = false});
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        child: ListTile(
-          leading: icon != null ? FaIcon(icon) : null,
-          title: Text(title),
-          subtitle: description != null ? Text(description!) : null,
-          onTap: url != null ? () => launchUrl(url!) : null,
-        )
+    final listTile = ListTile(
+      leading: icon != null ? FaIcon(icon) : null,
+      title: Text(title),
+      subtitle: description != null ? Text(description!) : null,
+      onTap: url != null ? () => launchUrl(url!) : null,
     );
+    return Card(child: shrink ? IntrinsicWidth(child: listTile) : listTile);
   }
 }
 
@@ -79,7 +79,7 @@ class LocationItem extends StatelessWidget {
           return Container(
               decoration: BoxDecoration(
                 borderRadius: const BorderRadiusDirectional.only(topEnd: Radius.circular(5)),
-                color: Theme.of(context).colorScheme.background.withOpacity(0.75),
+                color: Theme.of(context).colorScheme.surface.withOpacity(0.75),
               ),
               height: 100,
               width: 200,
@@ -93,13 +93,7 @@ class LocationItem extends StatelessWidget {
                         'https://openweathermap.org/img/wn/${weather.weatherIcon}@2x.png', height: 64, width: 64,
                         fit: BoxFit.fill,
                       ),
-                      Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Text(weather.weatherMain ?? '', style: Theme.of(context).textTheme.titleLarge),
-                          Text(weather.weatherDescription ?? ''),
-                        ],
-                      ),
+                      Text(weather.weatherMain ?? '', style: Theme.of(context).textTheme.titleLarge),
                     ],
                   ),
                   Row(
@@ -142,19 +136,25 @@ class LocationItem extends StatelessWidget {
         }
       },
     );
-    final attributionWatermark = Container(
-      padding: const EdgeInsets.all(3),
-      decoration: BoxDecoration(
-          borderRadius: const BorderRadiusDirectional.only(topStart: Radius.circular(5)),
-          color: Theme.of(context).colorScheme.background.withOpacity(0.5)
-      ),
-      child: TextSourceAttribution('Amap.com', onTap: () => launchUrl(Uri.parse('https://amap.com/'))),
+    final attributionWatermark = RichAttributionWidget(
+      attributions: [
+        TextSourceAttribution('Amap', onTap: () => launchUrl(Uri.parse('https://amap.com/'))),
+        TextSourceAttribution('OpenWeatherMap', onTap: () => launchUrl(Uri.parse('https://openweathermap.org/'))),
+      ],
     );
+    // Container(
+    //   padding: const EdgeInsets.all(3),
+    //   decoration: BoxDecoration(
+    //       borderRadius: const BorderRadiusDirectional.only(topStart: Radius.circular(5)),
+    //       color: Theme.of(context).colorScheme.surface.withOpacity(0.5)
+    //   ),
+    //   child: att,
+    // );
     final clock = AnalogClock(
       height: 150, width: 150, isLive: true, showDigitalClock: true, showAllNumbers: true,
       datetime: DateTime.now().toUtc().add(const Duration(hours: 8)), textScaleFactor: 1.5,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.background.withOpacity(0.75),
+        color: Theme.of(context).colorScheme.surface.withOpacity(0.75),
         borderRadius: const BorderRadiusDirectional.horizontal(end: Radius.circular(5))
       ),
     );

@@ -29,6 +29,7 @@ class InteractiveCV extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         cardTheme: const CardTheme(margin: EdgeInsets.all(3), elevation: 2),
+        listTileTheme: const ListTileThemeData(horizontalTitleGap: 0, contentPadding: EdgeInsets.all(5))
         // useMaterial3: true,
       ),
       home: DefaultTabController(length: tabTitles.length, child: const MainPage()),

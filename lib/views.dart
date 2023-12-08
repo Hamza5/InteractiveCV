@@ -42,21 +42,22 @@ class BasicInfoView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final large = MediaQuery.of(context).size.width >= 500;
     return ListView(
       children: [
         SectionTile(
-          icon: Icons.contacts, text: 'Contact information',
+          icon: Icons.contacts, text: 'Contact information', wrapped: large,
           items: [
-            BasicInfoItem(icon: Icons.email, title: email, url: Uri.parse('mailto:$email')),
-            BasicInfoItem(icon: Icons.phone, title: phone1, url: Uri.parse('tel:$phone1'),),
-            BasicInfoItem(icon: Icons.phone, title: phone2, url: Uri.parse('tel:$phone2'),),
+            BasicInfoItem(icon: Icons.email, title: email, url: Uri.parse('mailto:$email'), shrink: large),
+            BasicInfoItem(icon: Icons.phone, title: phone1, url: Uri.parse('tel:$phone1'), shrink: large),
+            BasicInfoItem(icon: Icons.phone, title: phone2, url: Uri.parse('tel:$phone2'), shrink: large),
           ],
         ),
-        const SectionTile(
-            icon: Icons.person_2, text: 'Personal',
+        SectionTile(
+            icon: Icons.person_2, text: 'Personal', wrapped: large,
             items: [
-              BasicInfoItem(icon: FontAwesomeIcons.book, title: religion),
-              BasicInfoItem(icon: FontAwesomeIcons.flag, title: nationality),
+              BasicInfoItem(icon: FontAwesomeIcons.book, title: religion, shrink: large),
+              BasicInfoItem(icon: FontAwesomeIcons.flag, title: nationality, shrink: large),
             ]
         ),
         SectionTile(
@@ -86,13 +87,18 @@ class BasicInfoView extends StatelessWidget {
           ],
           wrapped: true,
         ),
-        SectionTile(icon: Icons.web, text: 'Web presence',
+        SectionTile(icon: Icons.web, text: 'Web presence', wrapped: large,
             items: [
-              BasicInfoItem(icon: FontAwesomeIcons.github, title: github, url: Uri.parse('https://$github'),),
+              BasicInfoItem(
+                icon: FontAwesomeIcons.github, title: github, url: Uri.parse('https://$github'), shrink: large,
+              ),
               BasicInfoItem(
                 icon: FontAwesomeIcons.stackOverflow, title: stackOverflow, url: Uri.parse('https://$stackOverflow'),
+                shrink: large,
               ),
-              BasicInfoItem(icon: FontAwesomeIcons.linkedin, title: linkedin, url: Uri.parse('https://$linkedin'),),
+              BasicInfoItem(
+                icon: FontAwesomeIcons.linkedin, title: linkedin, url: Uri.parse('https://$linkedin'), shrink: large,
+              ),
             ]
         ),
         SectionTile(icon: Icons.location_city, text: 'Physical presence', items: [

@@ -112,6 +112,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "10.6.0"
+  format:
+    dependency: "direct main"
+    description:
+      name: format
+      sha256: "8829452e1f01321dabe734a082674fe32bb0224caacb08d6d2d4b33f7eca3bdd"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.4.0"
   http:
     dependency: transitive
     description:
@@ -301,6 +309,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.0"
+  time_machine:
+    dependency: "direct main"
+    description:
+      name: time_machine
+      sha256: b39511bf66cc8553d86c1242c43dbf67a17c594d5d7124727c1fdbf331e3989d
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.9.17"
   typed_data:
     dependency: transitive
     description:

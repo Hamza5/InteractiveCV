@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:format/format.dart';
 import 'package:latlong2/latlong.dart';
+import 'package:time_machine/time_machine.dart';
+
 import 'item_widgets.dart';
 
 const email = 'hamza.abbad@gmail.com';
@@ -36,6 +39,13 @@ const universityNames = [university1, university1, university2, university2];
 const universityLogos = [university1Logo, university1Logo, university2Logo, university2Logo];
 const studyYears = ['2012-2015', '2015-2017', '2017-2018', '2018-2024', '2018'];
 
+List<int> timePassedSince(DateTime date) {
+  final from = LocalDate.dateTime(date);
+  final to = LocalDate.today();
+  final diff = to.periodSince(from);
+  return [diff.years, diff.months, diff.days];
+}
+
 class BasicInfoView extends StatelessWidget {
 
   const BasicInfoView({super.key});
@@ -56,6 +66,10 @@ class BasicInfoView extends StatelessWidget {
         SectionTile(
             icon: Icons.person_2, text: 'Personal', wrapped: large,
             items: [
+              BasicInfoItem(
+                icon: FontAwesomeIcons.baby, shrink: large,
+                title: format('{} years, {} months, and {} days', timePassedSince(DateTime(1994, 5, 13))),
+              ),
               BasicInfoItem(icon: FontAwesomeIcons.book, title: religion, shrink: large),
               BasicInfoItem(icon: FontAwesomeIcons.flag, title: nationality, shrink: large),
             ]

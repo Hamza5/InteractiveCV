@@ -14,7 +14,7 @@ jobs:
       - id: pages
         uses: actions/configure-pages@v4
         with:
-          enablement: ${{ secrets.PAGES_TOKEN }}
+          token: ${{ secrets.PAGES_TOKEN }}
       - run: flutter build web --base-href="${{ steps.pages.outputs.base_url }}/"
       - uses: actions/upload-pages-artifact@v2
         with:

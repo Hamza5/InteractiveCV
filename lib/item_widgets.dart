@@ -52,6 +52,14 @@ class SectionTile extends StatelessWidget {
   }
 }
 
+Widget imageLoadingBuilder(BuildContext context, Widget child, ImageChunkEvent? loadingProgress) {
+  if (loadingProgress?.cumulativeBytesLoaded == loadingProgress?.expectedTotalBytes) {
+    return child;
+  } else {
+    return const Center(child: CircularProgressIndicator());
+  }
+}
+
 class LocationItem extends StatelessWidget {
   final LatLng geoPosition;
   final String country;
@@ -91,7 +99,7 @@ class LocationItem extends StatelessWidget {
                     children: [
                       Image.network(
                         'https://openweathermap.org/img/wn/${weather.weatherIcon}@2x.png', height: 64, width: 64,
-                        fit: BoxFit.fill,
+                        fit: BoxFit.fill, loadingBuilder: imageLoadingBuilder,
                       ),
                       Text(weather.weatherMain ?? '', style: Theme.of(context).textTheme.titleLarge),
                     ],
@@ -242,7 +250,10 @@ class KnowledgeItem extends StatelessWidget {
                         borderRadius: BorderRadius.circular(5),
                       ),
                       clipBehavior: Clip.antiAlias,
-                      child: Image(image: image!, fit: BoxFit.fill, width: rectangularImage ? 65 : 50, height: 50),
+                      child: Image(
+                        image: image!, fit: BoxFit.fill, width: rectangularImage ? 65 : 50, height: 50,
+                        loadingBuilder: imageLoadingBuilder,
+                      ),
                     ),
                     const SizedBox(width: 5)
                   ],
@@ -364,7 +375,7 @@ class CertificationList extends StatelessWidget {
                     backgroundColor: Theme.of(context).colorScheme.background,
                   );
                 },
-                child: Image(image: image),
+                child: Image(image: image, loadingBuilder: imageLoadingBuilder),
               )
           )
         ],

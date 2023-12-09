@@ -49,8 +49,8 @@ class BasicInfoView extends StatelessWidget {
           icon: Icons.contacts, text: 'Contact information', wrapped: large,
           items: [
             BasicInfoItem(icon: Icons.email, title: email, url: Uri.parse('mailto:$email'), shrink: large),
-            BasicInfoItem(icon: Icons.phone, title: phone1, url: Uri.parse('tel:$phone1'), shrink: large),
-            BasicInfoItem(icon: Icons.phone, title: phone2, url: Uri.parse('tel:$phone2'), shrink: large),
+            BasicInfoItem(icon: Icons.phone, title: phone1, url: Uri.parse('tel:+8613971654983'), shrink: large),
+            BasicInfoItem(icon: Icons.phone, title: phone2, url: Uri.parse('tel:+213659418469'), shrink: large),
           ],
         ),
         SectionTile(

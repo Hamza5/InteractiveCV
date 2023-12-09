@@ -12,6 +12,8 @@ jobs:
         with:
           flutter-version: '3.13.x'
           channel: 'stable'
+          cache: true
+          cache-key: 'flutter-:os:-:channel:-:version:-:arch:'
       - name: Install Flutter packages
         run: flutter pub get
       - name: Configure GitHub Pages

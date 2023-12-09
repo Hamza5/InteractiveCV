@@ -29,7 +29,7 @@ class InteractiveCV extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         cardTheme: const CardTheme(margin: EdgeInsets.all(3), elevation: 2),
-        listTileTheme: const ListTileThemeData(horizontalTitleGap: 0, contentPadding: EdgeInsets.all(5))
+        listTileTheme: const ListTileThemeData(horizontalTitleGap: 0, contentPadding: EdgeInsets.all(5)),
         // useMaterial3: true,
       ),
       home: DefaultTabController(length: tabTitles.length, child: const MainPage()),
@@ -42,20 +42,27 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Header(
-            name: '$firstName $lastName', description: shortDescription, photoProvider: Image.asset(photoPath).image
+    return Container(
+      color: Theme.of(context).colorScheme.surface,
+      alignment: Alignment.center,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 900),
+        child: Scaffold(
+          appBar: AppBar(
+            title: Header(
+                name: '$firstName $lastName', description: shortDescription, photoProvider: Image.asset(photoPath).image
+            ),
+            toolbarHeight: 200,
+            centerTitle: true,
+            bottom: TabBar(
+              tabs: [for (var i=0; i<tabTitles.length; i++) Tab(text: tabTitles[i], icon: FaIcon(tabIcons[i]))],
+              isScrollable: MediaQuery.of(context).size.width < 500,
+            ),
+          ),
+          body: const TabBarView(
+            children: tabs,
+          ),
         ),
-        toolbarHeight: 200,
-        centerTitle: true,
-        bottom: TabBar(
-          tabs: [for (var i=0; i<tabTitles.length; i++) Tab(text: tabTitles[i], icon: FaIcon(tabIcons[i]))],
-          isScrollable: MediaQuery.of(context).size.width < 500,
-        ),
-      ),
-      body: const TabBarView(
-        children: tabs,
       ),
     );
   }

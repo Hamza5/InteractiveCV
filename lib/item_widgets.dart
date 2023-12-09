@@ -56,7 +56,11 @@ Widget imageLoadingBuilder(BuildContext context, Widget child, ImageChunkEvent? 
   if (loadingProgress?.cumulativeBytesLoaded == loadingProgress?.expectedTotalBytes) {
     return child;
   } else {
-    return const Center(child: CircularProgressIndicator());
+    return Center(
+      child: CircularProgressIndicator(
+        value: (loadingProgress?.cumulativeBytesLoaded ?? 0) / (loadingProgress?.expectedTotalBytes ?? 1),
+      ),
+    );
   }
 }
 
@@ -373,6 +377,7 @@ class CertificationList extends StatelessWidget {
                   await showImageViewerPager(
                     context, imageProvider, swipeDismissible: true, doubleTapZoomable: true,
                     backgroundColor: Theme.of(context).colorScheme.background,
+                    closeButtonColor: Theme.of(context).colorScheme.onBackground,
                   );
                 },
                 child: Image(image: image, loadingBuilder: imageLoadingBuilder),

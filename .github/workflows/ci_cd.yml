@@ -13,11 +13,13 @@ jobs:
       - run: flutter pub get
       - id: pages
         uses: actions/configure-pages@v4
+        with:
+          enablement: ${{ secrets.PAGES_TOKEN }}
       - run: flutter build web --base-href="${{ steps.pages.outputs.base_url }}/"
       - uses: actions/upload-pages-artifact@v2
         with:
           path: ./build/web
-
+          if-no-files-found: error
   Deploy:
     runs-on: ubuntu-latest
     needs: Build
@@ -25,6 +27,9 @@ jobs:
       contents: read
       pages: write
       id-token: write
+    concurrency:
+      group: "pages"
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{steps.deployment.outputs.page_url}}

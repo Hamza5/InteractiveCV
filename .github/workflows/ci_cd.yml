@@ -20,7 +20,7 @@ jobs:
         with:
           token: ${{ secrets.PAGES_TOKEN }}
       - name: Build the Web app
-        run: flutter build web --base-href="${{ steps.pages.outputs.base_path }}/"
+        run: flutter build web --base-href="${{ steps.pages.outputs.base_path }}/" --dart-define=OWM_API_KEY=${{ secrets.OWM_API_KEY }}
       - name: Upload the Web app
         uses: actions/upload-pages-artifact@v2
         with:

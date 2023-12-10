@@ -53,7 +53,7 @@ class BasicInfoView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final large = MediaQuery.of(context).size.width >= 500;
-    return ListView(
+    return SliverList.list(
       children: [
         SectionTile(
           icon: Icons.contacts, text: 'Contact information', wrapped: large,
@@ -131,7 +131,7 @@ class EducationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return SliverList.list(
       children: [
         InstitutionItem(
             logo: Image.asset(university1Logo).image, title: university1, url: Uri.parse(university1Url),
@@ -233,7 +233,7 @@ class WorkView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return SliverList.list(
       children: [
         InstitutionItem(
           logo: Image.asset('images/logos/albaraka_logo.png').image, title: 'AlBaraka Bank',
@@ -269,7 +269,7 @@ class ExperienceView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return SliverList.list(
       children: [
         SectionTile(
           icon: FontAwesomeIcons.computer, text: 'Operating systems', wrapped: true,
@@ -431,7 +431,7 @@ class ProjectsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ListView(
+    return SliverList.list(
       children: [
         SectionTile(
           icon: FontAwesomeIcons.computer, text: 'Programming',

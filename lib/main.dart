@@ -8,12 +8,6 @@ const lastName = 'Abbad';
 const shortDescription = 'PhD student in computer science and artificial intelligence';
 const photoPath = 'images/Photo.jpg';
 
-const List<String> tabTitles = ['Basic', 'Education', 'Work', 'Experience', 'Projects'];
-const List<IconData> tabIcons = [
-  Icons.person, Icons.school, Icons.work, FontAwesomeIcons.screwdriverWrench, FontAwesomeIcons.toolbox,
-];
-const List<Widget> tabs = [BasicInfoView(), EducationView(), WorkView(), ExperienceView(), ProjectsView()];
-
 void main() {
   runApp(const InteractiveCV());
 }
@@ -32,12 +26,18 @@ class InteractiveCV extends StatelessWidget {
         listTileTheme: const ListTileThemeData(horizontalTitleGap: 0, contentPadding: EdgeInsets.all(5)),
         // useMaterial3: true,
       ),
-      home: DefaultTabController(length: tabTitles.length, child: const MainPage()),
+      home: const MainPage(),
     );
   }
 }
 
 class MainPage extends StatelessWidget {
+  static const List<String> tabTitles = ['Basic', 'Education', 'Work', 'Experience', 'Projects'];
+  static const List<IconData> tabIcons = [
+    Icons.person, Icons.school, Icons.work, FontAwesomeIcons.screwdriverWrench, FontAwesomeIcons.toolbox,
+  ];
+  static const List<Widget> tabs = [BasicInfoView(), EducationView(), WorkView(), ExperienceView(), ProjectsView()];
+
   const MainPage({super.key});
 
   @override
@@ -47,20 +47,61 @@ class MainPage extends StatelessWidget {
       alignment: Alignment.center,
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 900),
-        child: Scaffold(
-          appBar: AppBar(
-            title: Header(
-                name: '$firstName $lastName', description: shortDescription, photoProvider: Image.asset(photoPath).image
+        child: DefaultTabController(
+          length: tabs.length,
+          child: Scaffold(
+            body: NestedScrollView(
+              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) => [
+                SliverOverlapAbsorber(
+                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                  sliver: SliverAppBar(
+                    pinned: true,
+                    expandedHeight: 200,
+                    forceElevated: innerBoxIsScrolled,
+                    flexibleSpace: FlexibleSpaceBar(
+                      titlePadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                      background: Align(
+                        alignment: const Alignment(0.33, 0.6),
+                        child: Text(
+                          shortDescription,
+                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                            color: Theme.of(context).colorScheme.onPrimary,
+                          ),
+                        ),
+                      ),
+                      title: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          CirclePhoto(photo: Image.asset(photoPath).image),
+                          const SizedBox(width: 5),
+                          const Text('$firstName $lastName'),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+              body: TabBarView(
+                children: [
+                  for(var tab in tabs) Builder(
+                    builder: (context) => CustomScrollView(
+                      slivers: [
+                        SliverOverlapInjector(handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
+                        tab,
+                      ],
+                    ),
+                  ),
+                ]
+              ),
             ),
-            toolbarHeight: 200,
-            centerTitle: true,
-            bottom: TabBar(
-              tabs: [for (var i=0; i<tabTitles.length; i++) Tab(text: tabTitles[i], icon: FaIcon(tabIcons[i]))],
-              isScrollable: MediaQuery.of(context).size.width < 500,
+            bottomNavigationBar: Material(
+              color: Theme.of(context).colorScheme.primary,
+              elevation: Theme.of(context).bottomAppBarTheme.elevation ?? 0,
+              child: TabBar(
+                tabs: [for (var i=0; i<tabTitles.length; i++) Tab(text: tabTitles[i], icon: FaIcon(tabIcons[i]))],
+                isScrollable: MediaQuery.of(context).size.width < 500,
+              ),
             ),
-          ),
-          body: const TabBarView(
-            children: tabs,
           ),
         ),
       ),
@@ -69,45 +110,21 @@ class MainPage extends StatelessWidget {
 }
 
 class CirclePhoto extends StatelessWidget {
-  final ImageProvider photoProvider;
+  final ImageProvider photo;
 
-  const CirclePhoto({super.key, required this.photoProvider});
+  const CirclePhoto({super.key, required this.photo});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(5),
-      decoration: BoxDecoration(
-          shape: BoxShape.circle, color: Theme.of(context).primaryColor,
-          boxShadow: [BoxShadow(color: Theme.of(context).primaryColor.withOpacity(0.5), blurRadius: 5)]
+    return FittedBox(
+      child: Container(
+        padding: const EdgeInsets.all(5),
+        decoration: BoxDecoration(
+            shape: BoxShape.circle, color: Theme.of(context).colorScheme.primaryContainer,
+            boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5), blurRadius: 5)]
+        ),
+        child: CircleAvatar(foregroundImage: photo, radius: 48),
       ),
-      child: CircleAvatar(foregroundImage: photoProvider, radius: 48),
-    );
-  }
-}
-
-class Header extends StatelessWidget {
-  final String name;
-  final String description;
-  final ImageProvider photoProvider;
-
-  const Header({super.key, required this.name, required this.description, required this.photoProvider});
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children:[
-        CirclePhoto(photoProvider: photoProvider),
-        Text(name, style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            color: Theme.of(context).colorScheme.background,
-            shadows: [Shadow(color: Theme.of(context).colorScheme.background, blurRadius: 2)]
-        )),
-        Text(description, style: Theme.of(context).textTheme.titleMedium?.copyWith(
-            color: Theme.of(context).colorScheme.background,
-            shadows: [Shadow(color: Theme.of(context).colorScheme.background, blurRadius: 2)]
-        ))
-      ],
     );
   }
 }

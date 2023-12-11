@@ -24,6 +24,14 @@ class InteractiveCV extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
         cardTheme: const CardTheme(margin: EdgeInsets.all(3), elevation: 2),
         listTileTheme: const ListTileThemeData(horizontalTitleGap: 0, contentPadding: EdgeInsets.all(5)),
+        appBarTheme: AppBarTheme(
+          titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+          toolbarTextStyle:  Theme.of(context).textTheme.titleSmall?.copyWith(
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+        )
         // useMaterial3: true,
       ),
       home: const MainPage(),
@@ -56,26 +64,41 @@ class MainPage extends StatelessWidget {
                   handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
                   sliver: SliverAppBar(
                     pinned: true,
+                    toolbarHeight: 100,
                     expandedHeight: 200,
                     forceElevated: innerBoxIsScrolled,
                     flexibleSpace: FlexibleSpaceBar(
-                      titlePadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-                      background: Align(
-                        alignment: const Alignment(0.33, 0.6),
-                        child: Text(
-                          shortDescription,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onPrimary,
-                          ),
-                        ),
-                      ),
-                      title: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CirclePhoto(photo: Image.asset(photoPath).image),
-                          const SizedBox(width: 5),
-                          const Text('$firstName $lastName'),
-                        ],
+                      titlePadding: const EdgeInsetsDirectional.symmetric(vertical: 10),
+                      title: LayoutBuilder(
+                        builder: (context, constraints) {
+                          return Align(
+                            alignment: const Alignment(0, 0.8),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                LimitedBox(
+                                  maxWidth: constraints.maxWidth * 0.25,
+                                  child: CirclePhoto(photo: Image.asset(photoPath).image),
+                                ),
+                                const SizedBox(width: 5),
+                                LimitedBox(
+                                  maxWidth: constraints.maxWidth * 0.7,
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      const Text('$firstName $lastName'),
+                                      Text(
+                                        shortDescription,
+                                        style: Theme.of(context).appBarTheme.toolbarTextStyle,
+                                      )
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          );
+                        }
                       ),
                     ),
                   ),

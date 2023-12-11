@@ -12,14 +12,9 @@ void main() {
   runApp(const InteractiveCV());
 }
 
-class InteractiveCV extends StatefulWidget {
+class InteractiveCV extends StatelessWidget {
+
   const InteractiveCV({super.key});
-
-  @override
-  State<InteractiveCV> createState() => _InteractiveCVState();
-}
-
-class _InteractiveCVState extends State<InteractiveCV> {
   
   @override
   Widget build(BuildContext context) {
@@ -29,45 +24,51 @@ class _InteractiveCVState extends State<InteractiveCV> {
       colorScheme: ColorScheme.fromSeed(seedColor: seedColor, brightness: Brightness.light),
       useMaterial3: useMaterial3,
     );
-    return MaterialApp(
-      title: 'Interactive CV',
-      theme: lightTheme,
-      darkTheme: ThemeData.dark().copyWith(
-        colorScheme: ColorScheme.fromSeed(seedColor: seedColor, brightness: Brightness.dark).copyWith(
-          shadow: Colors.white,
-        ),
-        useMaterial3: useMaterial3,
-      ),
-      themeMode: ThemeMode.system,
-      home: Builder(
-        builder: (context) {
-          final theme = Theme.of(context);
-          return Theme(
-            data: theme.copyWith(
-              cardTheme: theme.cardTheme.copyWith(
-                margin: const EdgeInsets.all(3), elevation: 2, shadowColor: theme.colorScheme.shadow,
-              ),
-              listTileTheme: theme.listTileTheme.copyWith(
-                horizontalTitleGap: 0, contentPadding: const EdgeInsets.all(5),
-              ),
-              appBarTheme: theme.appBarTheme.copyWith(
-                backgroundColor: theme.brightness == Brightness.dark ?
-                theme.colorScheme.secondaryContainer : theme.colorScheme.primary,
-                shadowColor: theme.colorScheme.shadow,
-                titleTextStyle: theme.textTheme.titleLarge?.copyWith(
-                  color: theme.brightness == Brightness.dark ?
-                  theme.appBarTheme.foregroundColor : theme.colorScheme.onPrimary,
-                ),
-                toolbarTextStyle: theme.textTheme.titleSmall?.copyWith(
-                  color: theme.brightness == Brightness.dark ?
-                  theme.appBarTheme.foregroundColor : theme.colorScheme.onPrimary,
-                ),
-              ),
+    final ValueNotifier<bool> themeNotifier = ValueNotifier(MediaQuery.platformBrightnessOf(context) == Brightness.dark);
+    return ValueListenableBuilder(
+      valueListenable: themeNotifier,
+      builder: (context, value, child) {
+        return MaterialApp(
+          title: 'Interactive CV',
+          theme: lightTheme,
+          darkTheme: ThemeData.dark().copyWith(
+            colorScheme: ColorScheme.fromSeed(seedColor: seedColor, brightness: Brightness.dark).copyWith(
+              shadow: Colors.white,
             ),
-            child: const MainPage(),
-          );
-        }
-      ),
+            useMaterial3: useMaterial3,
+          ),
+          themeMode: value ? ThemeMode.dark : ThemeMode.light,
+          home: Builder(
+            builder: (context) {
+              final theme = Theme.of(context);
+              return Theme(
+                data: theme.copyWith(
+                  cardTheme: theme.cardTheme.copyWith(
+                    margin: const EdgeInsets.all(3), elevation: 2, shadowColor: theme.colorScheme.shadow,
+                  ),
+                  listTileTheme: theme.listTileTheme.copyWith(
+                    horizontalTitleGap: 0, contentPadding: const EdgeInsets.all(5),
+                  ),
+                  appBarTheme: theme.appBarTheme.copyWith(
+                    backgroundColor: theme.brightness == Brightness.dark ?
+                    theme.colorScheme.secondaryContainer : theme.colorScheme.primary,
+                    shadowColor: theme.colorScheme.shadow,
+                    titleTextStyle: theme.textTheme.titleLarge?.copyWith(
+                      color: theme.brightness == Brightness.dark ?
+                      theme.appBarTheme.foregroundColor : theme.colorScheme.onPrimary,
+                    ),
+                    toolbarTextStyle: theme.textTheme.titleSmall?.copyWith(
+                      color: theme.brightness == Brightness.dark ?
+                      theme.appBarTheme.foregroundColor : theme.colorScheme.onPrimary,
+                    ),
+                  ),
+                ),
+                child: MainPage(themeNotifier: themeNotifier),
+              );
+            }
+          ),
+        );
+      }
     );
   }
 }
@@ -78,8 +79,9 @@ class MainPage extends StatelessWidget {
     Icons.person, Icons.school, Icons.work, FontAwesomeIcons.screwdriverWrench, FontAwesomeIcons.toolbox,
   ];
   static const List<Widget> tabs = [BasicInfoView(), EducationView(), WorkView(), ExperienceView(), ProjectsView()];
+  final ValueNotifier<bool> themeNotifier;
 
-  const MainPage({super.key});
+  const MainPage({super.key, required this.themeNotifier});
 
   @override
   Widget build(BuildContext context) {
@@ -100,6 +102,15 @@ class MainPage extends StatelessWidget {
                     toolbarHeight: 100,
                     expandedHeight: 200,
                     forceElevated: innerBoxIsScrolled,
+                    actions: [
+                      Padding(
+                        padding: const EdgeInsetsDirectional.only(end: 10),
+                        child: IconButton(
+                          icon: Icon(themeNotifier.value ? Icons.light_mode : Icons.dark_mode),
+                          onPressed: () => themeNotifier.value = !themeNotifier.value,
+                        ),
+                      )
+                    ],
                     flexibleSpace: FlexibleSpaceBar(
                       titlePadding: const EdgeInsetsDirectional.symmetric(vertical: 10),
                       title: LayoutBuilder(

@@ -12,29 +12,62 @@ void main() {
   runApp(const InteractiveCV());
 }
 
-class InteractiveCV extends StatelessWidget {
+class InteractiveCV extends StatefulWidget {
   const InteractiveCV({super.key});
 
-  // This widget is the root of your application.
+  @override
+  State<InteractiveCV> createState() => _InteractiveCVState();
+}
+
+class _InteractiveCVState extends State<InteractiveCV> {
+  
   @override
   Widget build(BuildContext context) {
+    const useMaterial3 = false;
+    const seedColor = Colors.blue;
+    final lightTheme = ThemeData.light().copyWith(
+      colorScheme: ColorScheme.fromSeed(seedColor: seedColor, brightness: Brightness.light),
+      useMaterial3: useMaterial3,
+    );
     return MaterialApp(
       title: 'Interactive CV',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blue),
-        cardTheme: const CardTheme(margin: EdgeInsets.all(3), elevation: 2),
-        listTileTheme: const ListTileThemeData(horizontalTitleGap: 0, contentPadding: EdgeInsets.all(5)),
-        appBarTheme: AppBarTheme(
-          titleTextStyle: Theme.of(context).textTheme.titleLarge?.copyWith(
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-          toolbarTextStyle:  Theme.of(context).textTheme.titleSmall?.copyWith(
-            color: Theme.of(context).colorScheme.onPrimary,
-          ),
-        )
-        // useMaterial3: true,
+      theme: lightTheme,
+      darkTheme: ThemeData.dark().copyWith(
+        colorScheme: ColorScheme.fromSeed(seedColor: seedColor, brightness: Brightness.dark).copyWith(
+          shadow: Colors.white,
+        ),
+        useMaterial3: useMaterial3,
       ),
-      home: const MainPage(),
+      themeMode: ThemeMode.system,
+      home: Builder(
+        builder: (context) {
+          final theme = Theme.of(context);
+          return Theme(
+            data: theme.copyWith(
+              cardTheme: theme.cardTheme.copyWith(
+                margin: const EdgeInsets.all(3), elevation: 2, shadowColor: theme.colorScheme.shadow,
+              ),
+              listTileTheme: theme.listTileTheme.copyWith(
+                horizontalTitleGap: 0, contentPadding: const EdgeInsets.all(5),
+              ),
+              appBarTheme: theme.appBarTheme.copyWith(
+                backgroundColor: theme.brightness == Brightness.dark ?
+                theme.colorScheme.secondaryContainer : theme.colorScheme.primary,
+                shadowColor: theme.colorScheme.shadow,
+                titleTextStyle: theme.textTheme.titleLarge?.copyWith(
+                  color: theme.brightness == Brightness.dark ?
+                  theme.appBarTheme.foregroundColor : theme.colorScheme.onPrimary,
+                ),
+                toolbarTextStyle: theme.textTheme.titleSmall?.copyWith(
+                  color: theme.brightness == Brightness.dark ?
+                  theme.appBarTheme.foregroundColor : theme.colorScheme.onPrimary,
+                ),
+              ),
+            ),
+            child: const MainPage(),
+          );
+        }
+      ),
     );
   }
 }
@@ -87,7 +120,10 @@ class MainPage extends StatelessWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      const Text('$firstName $lastName'),
+                                      Text(
+                                        '$firstName $lastName',
+                                        style: Theme.of(context).appBarTheme.titleTextStyle,
+                                      ),
                                       Text(
                                         shortDescription,
                                         style: Theme.of(context).appBarTheme.toolbarTextStyle,
@@ -118,7 +154,7 @@ class MainPage extends StatelessWidget {
               ),
             ),
             bottomNavigationBar: Material(
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).appBarTheme.backgroundColor,
               elevation: Theme.of(context).bottomAppBarTheme.elevation ?? 0,
               child: TabBar(
                 tabs: [for (var i=0; i<tabTitles.length; i++) Tab(text: tabTitles[i], icon: FaIcon(tabIcons[i]))],

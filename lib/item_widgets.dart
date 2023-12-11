@@ -376,7 +376,7 @@ class CertificationList extends StatelessWidget {
                   final imageProvider = MultiImageProvider(certifications, initialIndex: index);
                   await showImageViewerPager(
                     context, imageProvider, swipeDismissible: true, doubleTapZoomable: true,
-                    backgroundColor: Theme.of(context).colorScheme.background,
+                    backgroundColor: Theme.of(context).colorScheme.background.withOpacity(0.75),
                     closeButtonColor: Theme.of(context).colorScheme.onBackground,
                   );
                 },

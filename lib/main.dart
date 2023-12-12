@@ -12,6 +12,20 @@ void main() {
   runApp(const InteractiveCV());
 }
 
+class ThemeSettings {
+  static const List<Color> colors = [Colors.blue, Colors.green, Colors.red, Colors.brown, Colors.purple];
+  final int colorIndex;
+  final bool dark;
+
+  const ThemeSettings({required this.colorIndex, required this.dark});
+
+  Color get color => colors[colorIndex];
+  Brightness get brightness => dark ? Brightness.dark : Brightness.light;
+  ThemeMode get themeMode => dark ? ThemeMode.dark : ThemeMode.light;
+  ColorScheme get colorScheme => ColorScheme.fromSeed(seedColor: color, brightness: brightness);
+
+}
+
 class InteractiveCV extends StatelessWidget {
 
   const InteractiveCV({super.key});
@@ -19,25 +33,29 @@ class InteractiveCV extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     const useMaterial3 = false;
-    const seedColor = Colors.blue;
-    final lightTheme = ThemeData.light().copyWith(
-      colorScheme: ColorScheme.fromSeed(seedColor: seedColor, brightness: Brightness.light),
-      useMaterial3: useMaterial3,
+    final ValueNotifier<ThemeSettings> themeNotifier = ValueNotifier(
+      ThemeSettings(
+        colorIndex: 0, dark: MediaQuery.platformBrightnessOf(context) == Brightness.dark,
+      ),
     );
-    final ValueNotifier<bool> themeNotifier = ValueNotifier(MediaQuery.platformBrightnessOf(context) == Brightness.dark);
     return ValueListenableBuilder(
       valueListenable: themeNotifier,
-      builder: (context, value, child) {
+      builder: (context, settings, child) {
+        final lightThemeSettings = ThemeSettings(colorIndex: settings.colorIndex, dark: false);
+        final darkThemeSettings = ThemeSettings(colorIndex: settings.colorIndex, dark: true);
+        final lightTheme = ThemeData.light().copyWith(
+          colorScheme: lightThemeSettings.colorScheme,
+          useMaterial3: useMaterial3,
+        );
         return MaterialApp(
           title: 'Interactive CV',
           theme: lightTheme,
           darkTheme: ThemeData.dark().copyWith(
-            colorScheme: ColorScheme.fromSeed(seedColor: seedColor, brightness: Brightness.dark).copyWith(
-              shadow: Colors.white,
-            ),
+            colorScheme: darkThemeSettings.colorScheme.copyWith(shadow: Colors.white),
             useMaterial3: useMaterial3,
           ),
-          themeMode: value ? ThemeMode.dark : ThemeMode.light,
+          themeMode: settings.themeMode,
+          color: settings.color,
           home: Builder(
             builder: (context) {
               final theme = Theme.of(context);
@@ -79,7 +97,7 @@ class MainPage extends StatelessWidget {
     Icons.person, Icons.school, Icons.work, FontAwesomeIcons.screwdriverWrench, FontAwesomeIcons.toolbox,
   ];
   static const List<Widget> tabs = [BasicInfoView(), EducationView(), WorkView(), ExperienceView(), ProjectsView()];
-  final ValueNotifier<bool> themeNotifier;
+  final ValueNotifier<ThemeSettings> themeNotifier;
 
   const MainPage({super.key, required this.themeNotifier});
 
@@ -102,16 +120,11 @@ class MainPage extends StatelessWidget {
                     toolbarHeight: 100,
                     expandedHeight: 200,
                     forceElevated: innerBoxIsScrolled,
-                    actions: [
-                      Padding(
-                        padding: const EdgeInsetsDirectional.only(end: 10),
-                        child: IconButton(
-                          icon: Icon(themeNotifier.value ? Icons.light_mode : Icons.dark_mode),
-                          onPressed: () => themeNotifier.value = !themeNotifier.value,
-                        ),
-                      )
-                    ],
                     flexibleSpace: FlexibleSpaceBar(
+                      background: Container(
+                        alignment: AlignmentDirectional.topEnd,
+                        child: ColorSelection(themeNotifier: themeNotifier),
+                      ),
                       titlePadding: const EdgeInsetsDirectional.symmetric(vertical: 10),
                       title: LayoutBuilder(
                         builder: (context, constraints) {
@@ -195,6 +208,41 @@ class CirclePhoto extends StatelessWidget {
         ),
         child: CircleAvatar(foregroundImage: photo, radius: 48),
       ),
+    );
+  }
+}
+
+class ColorSelection extends StatelessWidget {
+  final ValueNotifier<ThemeSettings> themeNotifier;
+  const ColorSelection({super.key, required this.themeNotifier});
+
+  @override
+  Widget build(BuildContext context) {
+    return ButtonBar(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        for (var (index, color) in ThemeSettings.colors.indexed)
+          IconButton(
+            onPressed: () => themeNotifier.value = ThemeSettings(colorIndex: index, dark: themeNotifier.value.dark),
+            icon: DecoratedBox(
+              decoration: ShapeDecoration(
+                shape: const CircleBorder(),
+                shadows: [
+                  BoxShadow(color: Theme.of(context).colorScheme.shadow, blurRadius: 5, spreadRadius: 0.5),
+                ],
+              ),
+              child: CircleAvatar(backgroundColor: color),
+            ),
+          ),
+        IconButton(
+          icon: Icon(themeNotifier.value.dark ? Icons.light_mode : Icons.dark_mode),
+          onPressed: () {
+            themeNotifier.value = ThemeSettings(
+              colorIndex: themeNotifier.value.colorIndex, dark: !themeNotifier.value.dark,
+            );
+          },
+        )
+      ],
     );
   }
 }

@@ -130,7 +130,7 @@ class MainPage extends StatelessWidget {
                               child: Text(
                                 localization.lastUpdate(DateTime.parse(const String.fromEnvironment('LAST_UPDATE'))),
                                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).appBarTheme.titleTextStyle?.color
+                                  color: Theme.of(context).appBarTheme.titleTextStyle?.color?.withOpacity(0.5)
                                 ),
                               ),
                             ),
@@ -238,7 +238,7 @@ class ColorSelection extends StatelessWidget {
               decoration: ShapeDecoration(
                 shape: const CircleBorder(),
                 shadows: [
-                  BoxShadow(color: Theme.of(context).colorScheme.shadow, blurRadius: 5, spreadRadius: 0.5),
+                  BoxShadow(color: Theme.of(context).colorScheme.shadow.withOpacity(0.5), blurRadius: 3),
                 ],
               ),
               child: CircleAvatar(backgroundColor: color),

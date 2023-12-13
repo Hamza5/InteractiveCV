@@ -66,20 +66,16 @@ Widget imageLoadingBuilder(BuildContext context, Widget child, ImageChunkEvent? 
 
 class LocationItem extends StatelessWidget {
   final LatLng geoPosition;
-  final String country;
-  final String province;
-  final String city;
-  final String streetAddress;
+  final String fullAddress;
   final WeatherFactory weatherFactory;
   LocationItem({
-    super.key, required this.geoPosition, required this.country, required this.province, required this.city,
-    required this.streetAddress
+    super.key, required this.geoPosition, required this.fullAddress
   }) : weatherFactory = WeatherFactory(const String.fromEnvironment('OWM_API_KEY'));
 
   @override
   Widget build(BuildContext context) {
     final addressBar = BasicInfoItem(
-      icon: Icons.location_pin, title: '$streetAddress, $city, $province, $country',
+      icon: Icons.location_pin, title: fullAddress,
     );
     final weatherSection = FutureBuilder(
       future: weatherFactory.currentWeatherByLocation(geoPosition.latitude, geoPosition.longitude),

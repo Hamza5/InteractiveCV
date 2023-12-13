@@ -1,12 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'views.dart';
-
-const firstName = 'Hamza';
-const lastName = 'Abbad';
-const shortDescription = 'PhD student in computer science and artificial intelligence';
-const photoPath = 'images/Photo.jpg';
 
 void main() {
   runApp(const InteractiveCV());
@@ -34,9 +30,7 @@ class InteractiveCV extends StatelessWidget {
   Widget build(BuildContext context) {
     const useMaterial3 = false;
     final ValueNotifier<ThemeSettings> themeNotifier = ValueNotifier(
-      ThemeSettings(
-        colorIndex: 0, dark: MediaQuery.platformBrightnessOf(context) == Brightness.dark,
-      ),
+      ThemeSettings(colorIndex: 0, dark: MediaQuery.platformBrightnessOf(context) == Brightness.dark),
     );
     return ValueListenableBuilder(
       valueListenable: themeNotifier,
@@ -56,6 +50,9 @@ class InteractiveCV extends StatelessWidget {
           ),
           themeMode: settings.themeMode,
           color: settings.color,
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          locale: null,
           home: Builder(
             builder: (context) {
               final theme = Theme.of(context);
@@ -92,7 +89,6 @@ class InteractiveCV extends StatelessWidget {
 }
 
 class MainPage extends StatelessWidget {
-  static const List<String> tabTitles = ['Basic', 'Education', 'Work', 'Experience', 'Projects'];
   static const List<IconData> tabIcons = [
     Icons.person, Icons.school, Icons.work, FontAwesomeIcons.screwdriverWrench, FontAwesomeIcons.toolbox,
   ];
@@ -103,6 +99,10 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final localization = AppLocalizations.of(context)!;
+    final List<String> tabTitles = [
+      localization.basic , localization.education, localization.work, localization.experience, localization.projects
+    ];
     return Container(
       color: Theme.of(context).colorScheme.surface,
       alignment: Alignment.center,
@@ -121,9 +121,25 @@ class MainPage extends StatelessWidget {
                     expandedHeight: 200,
                     forceElevated: innerBoxIsScrolled,
                     flexibleSpace: FlexibleSpaceBar(
-                      background: Container(
-                        alignment: AlignmentDirectional.topEnd,
-                        child: ColorSelection(themeNotifier: themeNotifier),
+                      background: Stack(
+                        children: [
+                          Container(
+                            alignment: AlignmentDirectional.topStart,
+                            child: Padding(
+                              padding: const EdgeInsets.all(2),
+                              child: Text(
+                                localization.lastUpdate(DateTime.parse(const String.fromEnvironment('LAST_UPDATE'))),
+                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                  color: Theme.of(context).appBarTheme.titleTextStyle?.color
+                                ),
+                              ),
+                            ),
+                          ),
+                          Container(
+                            alignment: AlignmentDirectional.topEnd,
+                            child: ColorSelection(themeNotifier: themeNotifier),
+                          ),
+                        ],
                       ),
                       titlePadding: const EdgeInsetsDirectional.symmetric(vertical: 10),
                       title: LayoutBuilder(
@@ -135,7 +151,7 @@ class MainPage extends StatelessWidget {
                               children: [
                                 LimitedBox(
                                   maxWidth: constraints.maxWidth * 0.25,
-                                  child: CirclePhoto(photo: Image.asset(photoPath).image),
+                                  child: CirclePhoto(photo: Image.asset(localization.photoPath).image),
                                 ),
                                 const SizedBox(width: 5),
                                 LimitedBox(
@@ -144,14 +160,8 @@ class MainPage extends StatelessWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(
-                                        '$firstName $lastName',
-                                        style: Theme.of(context).appBarTheme.titleTextStyle,
-                                      ),
-                                      Text(
-                                        shortDescription,
-                                        style: Theme.of(context).appBarTheme.toolbarTextStyle,
-                                      )
+                                      Text(localization.fullName, style: Theme.of(context).appBarTheme.titleTextStyle),
+                                      Text(localization.shortDescription, style: Theme.of(context).appBarTheme.toolbarTextStyle)
                                     ],
                                   ),
                                 )

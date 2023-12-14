@@ -21,6 +21,13 @@ jobs:
         uses: actions/configure-pages@v4
         with:
           token: ${{ secrets.PAGES_TOKEN }}
+      - name: Project build cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            build/
+            .dart_tool/
+          key: ${{ runner.os }}-interactive-cv_build
       - name: Build the Web app
         run: |
           export LAST_UPDATE=`git ls-tree -r --name-only HEAD lib/ images/ web/ | while read filename; do echo "$(git log -1 --format=%ad --date=iso -- $filename) $filename"; done | sort -r | head -n 1 | cut -d' ' -f1`

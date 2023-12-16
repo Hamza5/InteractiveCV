@@ -3,11 +3,12 @@
   "shortDescription": "PhD student in computer science and artificial intelligence",
   "photoPath": "images/Photo.jpg",
   "email": "hamza.abbad@gmail.com",
-  "phone1": "+86 139 7165 4983",
-  "phone2": "+213 659 41 84 69",
+  "phone1": "+8613971654983",
+  "phone2": "+213659418469",
   "fullAddress": "Dayou Wenyuan, Dalian, Liaoning, China",
   "latitude": "38.8820",
   "longitude": "121.5022",
+  "timezone_hours": "8",
   "nationality": "\uD83C\uDDE9\uD83C\uDDFF Algerian",
   "religion": "☪ Islam",
   "github": "github.com/Hamza5",
@@ -15,7 +16,7 @@
   "stackOverflow": "stackoverflow.com/users/5008968/hamza-abbad",
   "contactInfo": "Contact information",
   "personal": "Personal",
-  "age": "{years} years{months, plural, =0{} =1{, 1 month} other{, {months} months}}{days, plural, =0{} =1{, 1 day} other{, {days} days}}",
+  "age": "{years} years{months, plural, =0{} =1{, 1 month} other{, {months} months}}{days, plural, =0{} =1{, and 1 day} other{, and {days} days}}",
   "@age" : {
     "placeholders": {
       "years": {"type": "int"},

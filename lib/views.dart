@@ -37,9 +37,25 @@ class BasicInfoView extends StatelessWidget {
         SectionTile(
           icon: Icons.contacts, text: localization.contactInfo, wrapped: large,
           items: [
-            BasicInfoItem(icon: Icons.email, title: localization.email, url: Uri.parse('mailto:${localization.email}'), shrink: large),
-            BasicInfoItem(icon: Icons.phone, title: localization.phone1, url: Uri.parse('tel:+8613971654983'), shrink: large),
-            BasicInfoItem(icon: Icons.phone, title: localization.phone2, url: Uri.parse('tel:+213659418469'), shrink: large),
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: BasicInfoItem(
+                icon: Icons.email, title: localization.email, url: Uri.parse('mailto:${localization.email}'),
+                shrink: large,
+              ),
+            ),
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: BasicInfoItem(
+                icon: Icons.phone, title: localization.phone1, url: Uri.parse('tel:+8613971654983'), shrink: large,
+              ),
+            ),
+            Directionality(
+              textDirection: TextDirection.ltr,
+              child: BasicInfoItem(
+                icon: Icons.phone, title: localization.phone2, url: Uri.parse('tel:+213659418469'), shrink: large,
+              ),
+            ),
           ],
         ),
         SectionTile(
@@ -82,15 +98,24 @@ class BasicInfoView extends StatelessWidget {
         ),
         SectionTile(icon: Icons.web, text: localization.web, wrapped: large,
             items: [
-              BasicInfoItem(
-                icon: FontAwesomeIcons.github, title: localization.github, url: Uri.parse('https://${localization.github}'), shrink: large,
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: BasicInfoItem(
+                  icon: FontAwesomeIcons.github, title: localization.github, url: Uri.parse('https://${localization.github}'), shrink: large,
+                ),
               ),
-              BasicInfoItem(
-                icon: FontAwesomeIcons.stackOverflow, title: localization.stackOverflow, url: Uri.parse('https://${localization.stackOverflow}'),
-                shrink: large,
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: BasicInfoItem(
+                  icon: FontAwesomeIcons.stackOverflow, title: localization.stackOverflow, url: Uri.parse('https://${localization.stackOverflow}'),
+                  shrink: large,
+                ),
               ),
-              BasicInfoItem(
-                icon: FontAwesomeIcons.linkedin, title: localization.linkedIn, url: Uri.parse('https://${localization.linkedIn}'), shrink: large,
+              Directionality(
+                textDirection: TextDirection.ltr,
+                child: BasicInfoItem(
+                  icon: FontAwesomeIcons.linkedin, title: localization.linkedIn, url: Uri.parse('https://${localization.linkedIn}'), shrink: large,
+                ),
               ),
             ]
         ),
@@ -196,7 +221,7 @@ class EducationView extends StatelessWidget {
           url: Uri.parse(localization.institution5Url),
           items: [
             FieldItem(
-              title: localization.institution5, trailing: localization.institution5Years1,
+              title: localization.institution5Speciality1, trailing: localization.institution5Years1,
               items: [
                 CertificationList(
                   certifications: [Image.asset(localization.institution5Certification1).image],
@@ -239,7 +264,7 @@ class WorkView extends StatelessWidget {
           url: Uri.parse(localization.institution7Url),
           items: [
             FieldItem(
-              title: localization.institution7, trailing: localization.institution7Years1,
+              title: localization.institution7Speciality1, trailing: localization.institution7Years1,
             ),
           ],
         ),

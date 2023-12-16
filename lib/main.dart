@@ -12,13 +12,15 @@ class ThemeSettings {
   static const List<Color> colors = [Colors.blue, Colors.green, Colors.red, Colors.brown, Colors.purple];
   final int colorIndex;
   final bool dark;
+  final String lang;
 
-  const ThemeSettings({required this.colorIndex, required this.dark});
+  const ThemeSettings({required this.colorIndex, required this.dark, required this.lang});
 
   Color get color => colors[colorIndex];
   Brightness get brightness => dark ? Brightness.dark : Brightness.light;
   ThemeMode get themeMode => dark ? ThemeMode.dark : ThemeMode.light;
   ColorScheme get colorScheme => ColorScheme.fromSeed(seedColor: color, brightness: brightness);
+  Locale get locale => Locale(lang);
 
 }
 
@@ -30,13 +32,20 @@ class InteractiveCV extends StatelessWidget {
   Widget build(BuildContext context) {
     const useMaterial3 = false;
     final ValueNotifier<ThemeSettings> themeNotifier = ValueNotifier(
-      ThemeSettings(colorIndex: 0, dark: MediaQuery.platformBrightnessOf(context) == Brightness.dark),
+      ThemeSettings(
+        colorIndex: 0, dark: MediaQuery.platformBrightnessOf(context) == Brightness.dark,
+        lang: 'en',
+      ),
     );
     return ValueListenableBuilder(
       valueListenable: themeNotifier,
       builder: (context, settings, child) {
-        final lightThemeSettings = ThemeSettings(colorIndex: settings.colorIndex, dark: false);
-        final darkThemeSettings = ThemeSettings(colorIndex: settings.colorIndex, dark: true);
+        final lightThemeSettings = ThemeSettings(
+          colorIndex: settings.colorIndex, dark: false, lang: settings.lang,
+        );
+        final darkThemeSettings = ThemeSettings(
+          colorIndex: settings.colorIndex, dark: true, lang: settings.lang
+        );
         final lightTheme = ThemeData.light().copyWith(
           colorScheme: lightThemeSettings.colorScheme,
           useMaterial3: useMaterial3,
@@ -52,7 +61,7 @@ class InteractiveCV extends StatelessWidget {
           color: settings.color,
           localizationsDelegates: AppLocalizations.localizationsDelegates,
           supportedLocales: AppLocalizations.supportedLocales,
-          locale: null,
+          locale: settings.locale,
           home: Builder(
             builder: (context) {
               final theme = Theme.of(context);
@@ -106,97 +115,128 @@ class MainPage extends StatelessWidget {
     return Container(
       color: Theme.of(context).colorScheme.surface,
       alignment: Alignment.center,
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 900),
-        child: DefaultTabController(
-          length: tabs.length,
-          child: Scaffold(
-            body: NestedScrollView(
-              headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) => [
-                SliverOverlapAbsorber(
-                  handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                  sliver: SliverAppBar(
-                    pinned: true,
-                    toolbarHeight: 100,
-                    expandedHeight: 200,
-                    forceElevated: innerBoxIsScrolled,
-                    flexibleSpace: FlexibleSpaceBar(
-                      background: Stack(
-                        children: [
-                          Container(
-                            alignment: AlignmentDirectional.topStart,
-                            child: Padding(
-                              padding: const EdgeInsets.all(2),
-                              child: Text(
-                                localization.lastUpdate(DateTime.parse(const String.fromEnvironment('LAST_UPDATE'))),
-                                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                  color: Theme.of(context).appBarTheme.titleTextStyle?.color?.withOpacity(0.5)
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          return Padding(
+            padding: EdgeInsets.symmetric(horizontal: constraints.maxWidth > 1000 ? 50 : 0),
+            child: DefaultTabController(
+              length: tabs.length,
+              child: Scaffold(
+                body: NestedScrollView(
+                  headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) => [
+                    SliverOverlapAbsorber(
+                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
+                      sliver: SliverAppBar(
+                        pinned: true,
+                        toolbarHeight: 100,
+                        expandedHeight: 200,
+                        forceElevated: innerBoxIsScrolled,
+                        flexibleSpace: FlexibleSpaceBar(
+                          background: Stack(
+                            children: [
+                              Container(
+                                alignment: AlignmentDirectional.topStart,
+                                child: Padding(
+                                  padding: const EdgeInsets.all(2),
+                                  child: Text(
+                                    localization.lastUpdate(DateTime.parse(const String.fromEnvironment('LAST_UPDATE'))),
+                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                      color: Theme.of(context).appBarTheme.titleTextStyle?.color?.withOpacity(0.5)
+                                    ),
+                                  ),
                                 ),
                               ),
-                            ),
-                          ),
-                          Container(
-                            alignment: AlignmentDirectional.topEnd,
-                            child: ColorSelection(themeNotifier: themeNotifier),
-                          ),
-                        ],
-                      ),
-                      titlePadding: const EdgeInsetsDirectional.symmetric(vertical: 10),
-                      title: LayoutBuilder(
-                        builder: (context, constraints) {
-                          return Align(
-                            alignment: const Alignment(0, 0.8),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                LimitedBox(
-                                  maxWidth: constraints.maxWidth * 0.25,
-                                  child: CirclePhoto(photo: Image.asset(localization.photoPath).image),
-                                ),
-                                const SizedBox(width: 5),
-                                LimitedBox(
-                                  maxWidth: constraints.maxWidth * 0.7,
-                                  child: Column(
+                              Container(
+                                alignment: AlignmentDirectional.topEnd,
+                                child: ColorSelection(themeNotifier: themeNotifier),
+                              ),
+                              Container(
+                                alignment: AlignmentDirectional.bottomEnd,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 5),
+                                  child: Row(
                                     mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
-                                      Text(localization.fullName, style: Theme.of(context).appBarTheme.titleTextStyle),
-                                      Text(localization.shortDescription, style: Theme.of(context).appBarTheme.toolbarTextStyle)
+                                      Text(
+                                        'Arabic',
+                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          color: Theme.of(context).appBarTheme.titleTextStyle?.color,
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      Switch(
+                                        value: Localizations.localeOf(context).languageCode == 'ar',
+                                        onChanged: (bool value) => themeNotifier.value = ThemeSettings(
+                                          colorIndex: themeNotifier.value.colorIndex, dark: themeNotifier.value.dark,
+                                          lang: value ? 'ar' : 'en',
+                                        ),
+                                      ),
                                     ],
                                   ),
-                                )
-                              ],
-                            ),
-                          );
-                        }
+                                ),
+                              )
+                            ],
+                          ),
+                          titlePadding: const EdgeInsetsDirectional.symmetric(vertical: 10),
+                          title: LayoutBuilder(
+                            builder: (context, constraints) {
+                              return Align(
+                                alignment: const Alignment(0, 0.8),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    LimitedBox(
+                                      maxWidth: constraints.maxWidth * 0.25,
+                                      child: CirclePhoto(photo: Image.asset(localization.photoPath).image),
+                                    ),
+                                    const SizedBox(width: 5),
+                                    LimitedBox(
+                                      maxWidth: constraints.maxWidth * 0.7,
+                                      child: SingleChildScrollView(
+                                        child: Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text(localization.fullName, style: Theme.of(context).appBarTheme.titleTextStyle),
+                                            Text(localization.shortDescription, style: Theme.of(context).appBarTheme.toolbarTextStyle)
+                                          ],
+                                        ),
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              );
+                            }
+                          ),
+                        ),
                       ),
                     ),
+                  ],
+                  body: TabBarView(
+                    children: [
+                      for(var tab in tabs) Builder(
+                        builder: (context) => CustomScrollView(
+                          slivers: [
+                            SliverOverlapInjector(handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
+                            tab,
+                          ],
+                        ),
+                      ),
+                    ]
                   ),
                 ),
-              ],
-              body: TabBarView(
-                children: [
-                  for(var tab in tabs) Builder(
-                    builder: (context) => CustomScrollView(
-                      slivers: [
-                        SliverOverlapInjector(handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
-                        tab,
-                      ],
-                    ),
+                bottomNavigationBar: Material(
+                  color: Theme.of(context).appBarTheme.backgroundColor,
+                  elevation: Theme.of(context).bottomAppBarTheme.elevation ?? 0,
+                  child: TabBar(
+                    tabs: [for (var i=0; i<tabTitles.length; i++) Tab(text: tabTitles[i], icon: FaIcon(tabIcons[i]))],
+                    isScrollable: MediaQuery.of(context).size.width < 500,
                   ),
-                ]
+                ),
               ),
             ),
-            bottomNavigationBar: Material(
-              color: Theme.of(context).appBarTheme.backgroundColor,
-              elevation: Theme.of(context).bottomAppBarTheme.elevation ?? 0,
-              child: TabBar(
-                tabs: [for (var i=0; i<tabTitles.length; i++) Tab(text: tabTitles[i], icon: FaIcon(tabIcons[i]))],
-                isScrollable: MediaQuery.of(context).size.width < 500,
-              ),
-            ),
-          ),
-        ),
+          );
+        }
       ),
     );
   }
@@ -228,12 +268,14 @@ class ColorSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ButtonBar(
+    return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         for (var (index, color) in ThemeSettings.colors.indexed)
           IconButton(
-            onPressed: () => themeNotifier.value = ThemeSettings(colorIndex: index, dark: themeNotifier.value.dark),
+            onPressed: () => themeNotifier.value = ThemeSettings(
+              colorIndex: index, dark: themeNotifier.value.dark, lang: themeNotifier.value.lang
+            ),
             icon: DecoratedBox(
               decoration: ShapeDecoration(
                 shape: const CircleBorder(),
@@ -241,14 +283,17 @@ class ColorSelection extends StatelessWidget {
                   BoxShadow(color: Theme.of(context).colorScheme.shadow.withOpacity(0.5), blurRadius: 3),
                 ],
               ),
-              child: CircleAvatar(backgroundColor: color),
+              child: CircleAvatar(backgroundColor: color, radius: 5),
             ),
+            padding: const EdgeInsets.all(0),
           ),
         IconButton(
+          padding: const EdgeInsets.all(0),
           icon: Icon(themeNotifier.value.dark ? Icons.light_mode : Icons.dark_mode),
           onPressed: () {
             themeNotifier.value = ThemeSettings(
               colorIndex: themeNotifier.value.colorIndex, dark: !themeNotifier.value.dark,
+              lang: themeNotifier.value.lang,
             );
           },
         )

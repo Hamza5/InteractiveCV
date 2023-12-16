@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
@@ -7,7 +9,8 @@ import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:weather/weather.dart';
+import 'package:http/http.dart' as http;
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 class BasicInfoItem extends StatelessWidget {
   final IconData? icon;
@@ -67,10 +70,10 @@ Widget imageLoadingBuilder(BuildContext context, Widget child, ImageChunkEvent? 
 class LocationItem extends StatelessWidget {
   final LatLng geoPosition;
   final String fullAddress;
-  final WeatherFactory weatherFactory;
-  LocationItem({
+  static const owmApiKey = String.fromEnvironment('OWM_API_KEY');
+  const LocationItem({
     super.key, required this.geoPosition, required this.fullAddress
-  }) : weatherFactory = WeatherFactory(const String.fromEnvironment('OWM_API_KEY'));
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -78,19 +81,31 @@ class LocationItem extends StatelessWidget {
       icon: Icons.location_pin, title: fullAddress,
     );
     final weatherSection = FutureBuilder(
-      future: weatherFactory.currentWeatherByLocation(geoPosition.latitude, geoPosition.longitude),
+      future: http.get(
+        Uri.parse(
+          'https://api.openweathermap.org/data/2.5/weather?lat=${geoPosition.latitude}&lon=${geoPosition.longitude}&'
+              'appid=$owmApiKey&units=metric&lang=${Localizations.localeOf(context).languageCode}',
+        ),
+      ).then((response) => json.decode(response.body) as Map<String, dynamic>),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return const SizedBox.shrink();
         } else if (snapshot.hasData) {
-          final weather = snapshot.requireData;
+          final currentWeather = snapshot.requireData;
+          final double windSpeed = (currentWeather['wind']['speed'] / 1000) / (1 / 3600);
+          final double windDegree = currentWeather['wind']['deg'];
+          final String iconName = currentWeather['weather'][0]['icon'];
+          final String description = currentWeather['weather'][0]['description'];
+          final double temperature = currentWeather['main']['temp'];
+          final double feelsLike = currentWeather['main']['feels_like'];
+          // final double humidity = currentWeather['main']['humidity'];
           return Container(
               decoration: BoxDecoration(
                 borderRadius: const BorderRadiusDirectional.only(topEnd: Radius.circular(5)),
                 color: Theme.of(context).colorScheme.surface.withOpacity(0.75),
               ),
               height: 100,
-              width: 200,
+              width: 250,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -98,10 +113,10 @@ class LocationItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.network(
-                        'https://openweathermap.org/img/wn/${weather.weatherIcon}@2x.png', height: 64, width: 64,
+                        'https://openweathermap.org/img/wn/${iconName}@2x.png', height: 64, width: 64,
                         fit: BoxFit.fill, loadingBuilder: imageLoadingBuilder,
                       ),
-                      Text(weather.weatherMain ?? '', style: Theme.of(context).textTheme.titleLarge),
+                      Text(description, style: Theme.of(context).textTheme.titleLarge),
                     ],
                   ),
                   Row(
@@ -112,7 +127,7 @@ class LocationItem extends StatelessWidget {
                         children: [
                           const FaIcon(FontAwesomeIcons.temperatureHalf),
                           const SizedBox(width: 5),
-                          Text('${weather.temperature?.celsius?.round()}°C'),
+                          Text('${temperature.round()}°C', textDirection: TextDirection.ltr),
                         ],
                       ),
                       Row(
@@ -120,18 +135,18 @@ class LocationItem extends StatelessWidget {
                         children: [
                           const Icon(Icons.face),
                           const SizedBox(width: 5),
-                          Text('${weather.tempFeelsLike?.celsius?.round()}°C'),
+                          Text('${feelsLike.round()}°C', textDirection: TextDirection.ltr),
                         ],
                       ),
                       Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Transform.rotate(
-                            angle: degToRadian((weather.windDegree ?? 45) - 45),
+                            angle: degToRadian(windDegree - 45),
                             child: const FaIcon(FontAwesomeIcons.locationArrow),
                           ),
                           const SizedBox(width: 5),
-                          Text('${weather.windSpeed?.round()}m/s'),
+                          Text('${windSpeed.round()}km/h'),
                         ],
                       ),
                     ],
@@ -145,22 +160,19 @@ class LocationItem extends StatelessWidget {
       },
     );
     final attributionWatermark = RichAttributionWidget(
+      alignment: Directionality.of(context) == TextDirection.rtl ?
+      AttributionAlignment.bottomLeft : AttributionAlignment.bottomRight,
       attributions: [
         TextSourceAttribution('Amap', onTap: () => launchUrl(Uri.parse('https://amap.com/'))),
         TextSourceAttribution('OpenWeatherMap', onTap: () => launchUrl(Uri.parse('https://openweathermap.org/'))),
       ],
     );
-    // Container(
-    //   padding: const EdgeInsets.all(3),
-    //   decoration: BoxDecoration(
-    //       borderRadius: const BorderRadiusDirectional.only(topStart: Radius.circular(5)),
-    //       color: Theme.of(context).colorScheme.surface.withOpacity(0.5)
-    //   ),
-    //   child: att,
-    // );
     final clock = AnalogClock(
       height: 150, width: 150, isLive: true, showDigitalClock: true, showAllNumbers: true,
-      datetime: DateTime.now().toUtc().add(const Duration(hours: 8)), textScaleFactor: 1.5,
+      datetime: DateTime.now().toUtc().add(
+        Duration(hours: int.parse(AppLocalizations.of(context)!.timezone_hours)),
+      ),
+      textScaleFactor: 1.5,
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.surface.withOpacity(0.75),
         borderRadius: const BorderRadiusDirectional.horizontal(end: Radius.circular(5))
@@ -257,8 +269,8 @@ class KnowledgeItem extends StatelessWidget {
                     ),
                     const SizedBox(width: 5)
                   ],
-                  SizedBox(
-                    width: 120,
+                  IntrinsicWidth(
+                    stepWidth: 5,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -280,6 +292,7 @@ class KnowledgeItem extends StatelessWidget {
               SizedBox(
                 width: 190,
                 child: StepProgressIndicator(
+                  progressDirection: TextDirection.rtl,
                   totalSteps: _totalSteps,
                   size: 10,
                   roundedEdges: const Radius.circular(5),

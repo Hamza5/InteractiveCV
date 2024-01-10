@@ -80,10 +80,12 @@ class InteractiveCV extends StatelessWidget {
                     titleTextStyle: theme.textTheme.titleLarge?.copyWith(
                       color: theme.brightness == Brightness.dark ?
                       theme.appBarTheme.foregroundColor : theme.colorScheme.onPrimary,
+                      height: 1.25,
                     ),
                     toolbarTextStyle: theme.textTheme.titleSmall?.copyWith(
                       color: theme.brightness == Brightness.dark ?
                       theme.appBarTheme.foregroundColor : theme.colorScheme.onPrimary,
+                      height: 1.25,
                     ),
                   ),
                 ),

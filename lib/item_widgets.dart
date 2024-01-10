@@ -4,6 +4,8 @@ import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:hijri/hijri_calendar.dart';
+import 'package:intl/intl.dart' show DateFormat;
 import 'package:one_clock/one_clock.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -113,7 +115,7 @@ class LocationItem extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Image.network(
-                        'https://openweathermap.org/img/wn/${iconName}@2x.png', height: 64, width: 64,
+                        'https://openweathermap.org/img/wn/$iconName@2x.png', height: 64, width: 64,
                         fit: BoxFit.fill, loadingBuilder: imageLoadingBuilder,
                       ),
                       Text(description, style: Theme.of(context).textTheme.titleLarge),
@@ -167,15 +169,31 @@ class LocationItem extends StatelessWidget {
         TextSourceAttribution('OpenWeatherMap', onTap: () => launchUrl(Uri.parse('https://openweathermap.org/'))),
       ],
     );
+    final currentTime = DateTime.now().toUtc().add(
+      Duration(hours: int.parse(AppLocalizations.of(context)!.timezone_hours)),
+    );
+    final clockColor = Theme.of(context).colorScheme.onSurface;
     final clock = AnalogClock(
       height: 150, width: 150, isLive: true, showDigitalClock: true, showAllNumbers: true,
-      datetime: DateTime.now().toUtc().add(
-        Duration(hours: int.parse(AppLocalizations.of(context)!.timezone_hours)),
-      ),
+      datetime: currentTime,
       textScaleFactor: 1.5,
-      decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface.withOpacity(0.75),
-        borderRadius: const BorderRadiusDirectional.horizontal(end: Radius.circular(5))
+      digitalClockColor: clockColor,
+      hourHandColor: clockColor,
+      minuteHandColor: clockColor,
+      numberColor: clockColor,
+    );
+    final locale = Localizations.localeOf(context);
+    HijriCalendar.setLocal(locale.languageCode);
+    final style = Theme.of(context).textTheme.titleSmall?.copyWith(color: clockColor, height: 1);
+    final dates = SizedBox(
+      height: 60,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          Text(DateFormat.EEEE(locale.languageCode).format(currentTime), style: style?.copyWith(fontWeight: FontWeight.bold)),
+          Text(HijriCalendar.fromDate(currentTime).toFormat('dd MMMM yyyy'), style: style),
+          Text(DateFormat.yMMMMd(locale.languageCode).format(currentTime), style: style),
+        ],
       ),
     );
     final map = FlutterMap(
@@ -186,7 +204,18 @@ class LocationItem extends StatelessWidget {
             tileProvider: CancellableNetworkTileProvider(),
           ),
           addressBar,
-          Padding(padding: const EdgeInsets.only(top: 60), child: clock),
+          Container(
+              margin: const EdgeInsets.only(top: 60),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.surface.withOpacity(0.75),
+                  borderRadius: const BorderRadiusDirectional.horizontal(end: Radius.circular(5))
+              ),
+              padding: const EdgeInsets.all(5),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [clock, const SizedBox(height: 5), dates],
+              ),
+          ),
           Align(alignment: AlignmentDirectional.bottomStart, child: weatherSection),
           Align(alignment: AlignmentDirectional.bottomEnd, child: attributionWatermark),
         ],
@@ -292,7 +321,7 @@ class KnowledgeItem extends StatelessWidget {
               SizedBox(
                 width: 190,
                 child: StepProgressIndicator(
-                  progressDirection: TextDirection.rtl,
+                  progressDirection: Directionality.of(context),
                   totalSteps: _totalSteps,
                   size: 10,
                   roundedEdges: const Radius.circular(5),

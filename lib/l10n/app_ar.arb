@@ -6,7 +6,7 @@
   "religion": "☪ الإسلام",
   "contactInfo": "معلومات الإتصال",
   "personal": "شخصي",
-  "age": "{years} سنة{months, plural, =0{} =1{، شهر واحد} =2{، شهران} other{، {months} شهور}}{days, plural, =0{} =1{، و يوم واحد} =2{، و يومان} other{، و {days} أيام}}",
+  "age": "{years} سنة{months, plural, =0{} =1{، شهر واحد} =2{، شهران} few{، {months} شهور} other{، {months} شهرا}}{days, plural, =0{} =1{، و يوم واحد} =2{، و يومان} few{، و {days} أيام} other{، و {days} يوما}}",
   "languages": "اللغات المتحدثة",
   "arabicName": "العربية",
   "arabicDesc": "اللغة الفصحى وأكثر اللهجات",

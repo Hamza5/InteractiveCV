@@ -71,7 +71,7 @@ class InteractiveCV extends StatelessWidget {
                     margin: const EdgeInsets.all(3), elevation: 2, shadowColor: theme.colorScheme.shadow,
                   ),
                   listTileTheme: theme.listTileTheme.copyWith(
-                    horizontalTitleGap: 0, contentPadding: const EdgeInsets.all(5),
+                    horizontalTitleGap: -5, contentPadding: const EdgeInsets.all(5),
                   ),
                   appBarTheme: theme.appBarTheme.copyWith(
                     backgroundColor: theme.brightness == Brightness.dark ?
@@ -156,25 +156,7 @@ class MainPage extends StatelessWidget {
                                 alignment: AlignmentDirectional.bottomEnd,
                                 child: Padding(
                                   padding: const EdgeInsets.symmetric(horizontal: 5),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        'Arabic',
-                                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                          color: Theme.of(context).appBarTheme.titleTextStyle?.color,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                      Switch(
-                                        value: Localizations.localeOf(context).languageCode == 'ar',
-                                        onChanged: (bool value) => themeNotifier.value = ThemeSettings(
-                                          colorIndex: themeNotifier.value.colorIndex, dark: themeNotifier.value.dark,
-                                          lang: value ? 'ar' : 'en',
-                                        ),
-                                      ),
-                                    ],
-                                  ),
+                                  child: LanguageSwitch(themeNotifier: themeNotifier),
                                 ),
                               )
                             ],
@@ -300,6 +282,37 @@ class ColorSelection extends StatelessWidget {
           },
         )
       ],
+    );
+  }
+}
+
+class LanguageSwitch extends StatelessWidget {
+
+  static const supportedLocalesFlagPaths = {
+    'ar': 'images/flags/arab-league.png',
+    'en': 'images/flags/united-states.png',
+    'fr': 'images/flags/france.png',
+    'zh': 'images/flags/china.png',
+  };
+  static String flagImageForLangCode(String langCode) {
+    return supportedLocalesFlagPaths[langCode] ?? '';
+  }
+
+  final ValueNotifier<ThemeSettings> themeNotifier;
+  const LanguageSwitch({super.key, required this.themeNotifier});
+
+  @override
+  Widget build(BuildContext context) {
+    final currentLocale = Localizations.localeOf(context);
+    final currentIndex = AppLocalizations.supportedLocales.indexOf(currentLocale);
+    return TextButton(
+      onPressed: () {
+        themeNotifier.value = ThemeSettings(
+          colorIndex: themeNotifier.value.colorIndex, dark: themeNotifier.value.dark,
+          lang: AppLocalizations.supportedLocales[(currentIndex + 1) % AppLocalizations.supportedLocales.length].languageCode,
+        );
+      },
+      child: Image.asset(flagImageForLangCode(currentLocale.languageCode), width: 50, height: 50),
     );
   }
 }

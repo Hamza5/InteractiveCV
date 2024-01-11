@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:ui' as ui;
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
@@ -114,11 +115,24 @@ class LocationItem extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Image.network(
-                        'https://openweathermap.org/img/wn/$iconName@2x.png', height: 64, width: 64,
-                        fit: BoxFit.fill, loadingBuilder: imageLoadingBuilder,
+                      Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          Image.network(
+                            'https://openweathermap.org/img/wn/$iconName@2x.png', height: 66, width: 66,
+                            fit: BoxFit.fill, loadingBuilder: imageLoadingBuilder,
+                            color: Theme.of(context).colorScheme.shadow.withOpacity(0.5),
+                          ),
+                          Image.network(
+                            'https://openweathermap.org/img/wn/$iconName@2x.png', height: 64, width: 64,
+                            fit: BoxFit.fill, loadingBuilder: imageLoadingBuilder,
+                          ),
+                        ],
                       ),
-                      Text(description, style: Theme.of(context).textTheme.titleLarge),
+                      Text(
+                        description.characters.first.toUpperCase() + description.substring(description.characters.first.length),
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
                     ],
                   ),
                   Row(

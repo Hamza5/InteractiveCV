@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:ui' as ui;
 
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
@@ -237,7 +236,7 @@ class LocationItem extends StatelessWidget {
     return LimitedBox(
       maxHeight: 400,
       child: Padding(
-        padding: const EdgeInsets.all(5),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
         child: map,
       ),
     );
@@ -258,7 +257,7 @@ class KnowledgeItem extends StatelessWidget {
   });
 
   int get _totalSteps => 10;
-  int get _currentStep => (progress * 10).round();
+  int get _currentStep => (progress * _totalSteps).round();
   Color get _progressColor {
     switch (_currentStep) {
       case 1:
@@ -312,8 +311,8 @@ class KnowledgeItem extends StatelessWidget {
                     ),
                     const SizedBox(width: 5)
                   ],
-                  IntrinsicWidth(
-                    stepWidth: 5,
+                  SizedBox(
+                    width: 120,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -340,6 +339,9 @@ class KnowledgeItem extends StatelessWidget {
                   size: 10,
                   roundedEdges: const Radius.circular(5),
                   customColor: (i) {
+                    if (Directionality.of(context) == TextDirection.rtl) {
+                      i = _totalSteps - i - 1;
+                    }
                     return i < _currentStep ? _progressColor : Theme.of(context).colorScheme.surfaceVariant;
                   },
                 ),
@@ -421,8 +423,9 @@ class CertificationList extends StatelessWidget {
               height: height,
               width: width,
               child: OutlinedButton(
-                style: const ButtonStyle(
-                    padding: MaterialStatePropertyAll(EdgeInsets.symmetric(vertical: 15, horizontal: 5))
+                style: ButtonStyle(
+                  padding: const MaterialStatePropertyAll(EdgeInsets.symmetric(vertical: 15, horizontal: 5)),
+                  shape: MaterialStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(5))),
                 ),
                 onPressed: () async {
                   final imageProvider = MultiImageProvider(certifications, initialIndex: index);

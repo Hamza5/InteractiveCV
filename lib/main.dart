@@ -30,7 +30,6 @@ class InteractiveCV extends StatelessWidget {
   
   @override
   Widget build(BuildContext context) {
-    const useMaterial3 = false;
     final ValueNotifier<ThemeSettings> themeNotifier = ValueNotifier(
       ThemeSettings(
         colorIndex: 0, dark: MediaQuery.platformBrightnessOf(context) == Brightness.dark,
@@ -48,14 +47,12 @@ class InteractiveCV extends StatelessWidget {
         );
         final lightTheme = ThemeData.light().copyWith(
           colorScheme: lightThemeSettings.colorScheme,
-          useMaterial3: useMaterial3,
         );
         return MaterialApp(
           title: 'Interactive CV',
           theme: lightTheme,
           darkTheme: ThemeData.dark().copyWith(
             colorScheme: darkThemeSettings.colorScheme.copyWith(shadow: Colors.white),
-            useMaterial3: useMaterial3,
           ),
           themeMode: settings.themeMode,
           color: settings.color,
@@ -69,9 +66,10 @@ class InteractiveCV extends StatelessWidget {
                 data: theme.copyWith(
                   cardTheme: theme.cardTheme.copyWith(
                     margin: const EdgeInsets.all(3), elevation: 2, shadowColor: theme.colorScheme.shadow,
+                    clipBehavior: Clip.hardEdge,
                   ),
                   listTileTheme: theme.listTileTheme.copyWith(
-                    horizontalTitleGap: -5, contentPadding: const EdgeInsets.all(5),
+                    horizontalTitleGap: 5, contentPadding: const EdgeInsets.all(5),
                   ),
                   appBarTheme: theme.appBarTheme.copyWith(
                     backgroundColor: theme.brightness == Brightness.dark ?
@@ -87,6 +85,12 @@ class InteractiveCV extends StatelessWidget {
                       theme.appBarTheme.foregroundColor : theme.colorScheme.onPrimary,
                       height: 1.25,
                     ),
+                  ),
+                  tabBarTheme: theme.tabBarTheme.copyWith(
+                    labelColor: theme.brightness == Brightness.dark ?
+                    theme.appBarTheme.foregroundColor : theme.colorScheme.onPrimary,
+                    unselectedLabelColor: (theme.brightness == Brightness.dark ?
+                    theme.appBarTheme.foregroundColor : theme.colorScheme.onPrimary)?.withOpacity(0.5),
                   ),
                 ),
                 child: MainPage(themeNotifier: themeNotifier),
@@ -215,6 +219,7 @@ class MainPage extends StatelessWidget {
                   child: TabBar(
                     tabs: [for (var i=0; i<tabTitles.length; i++) Tab(text: tabTitles[i], icon: FaIcon(tabIcons[i]))],
                     isScrollable: MediaQuery.of(context).size.width < 500,
+                    tabAlignment: MediaQuery.of(context).size.width < 500 ? TabAlignment.center : TabAlignment.fill,
                   ),
                 ),
               ),
@@ -298,21 +303,26 @@ class LanguageSwitch extends StatelessWidget {
     return supportedLocalesFlagPaths[langCode] ?? '';
   }
 
+  String nextLangCode(BuildContext context) {
+    final currentLocale = Localizations.localeOf(context);
+    final currentIndex = AppLocalizations.supportedLocales.indexOf(currentLocale);
+    return AppLocalizations.supportedLocales[(currentIndex + 1) % AppLocalizations.supportedLocales.length].languageCode;
+  }
+
   final ValueNotifier<ThemeSettings> themeNotifier;
   const LanguageSwitch({super.key, required this.themeNotifier});
 
   @override
   Widget build(BuildContext context) {
-    final currentLocale = Localizations.localeOf(context);
-    final currentIndex = AppLocalizations.supportedLocales.indexOf(currentLocale);
+
     return TextButton(
       onPressed: () {
         themeNotifier.value = ThemeSettings(
           colorIndex: themeNotifier.value.colorIndex, dark: themeNotifier.value.dark,
-          lang: AppLocalizations.supportedLocales[(currentIndex + 1) % AppLocalizations.supportedLocales.length].languageCode,
+          lang: nextLangCode(context),
         );
       },
-      child: Image.asset(flagImageForLangCode(currentLocale.languageCode), width: 50, height: 50),
+      child: Image.asset(flagImageForLangCode(nextLangCode(context)), width: 50, height: 50),
     );
   }
 }

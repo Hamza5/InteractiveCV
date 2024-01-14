@@ -319,11 +319,11 @@ class ExperienceView extends StatelessWidget {
             ),
             KnowledgeItem(
               image: Image.asset(localization.jsLogo).image, name: localization.js,
-              description: localization.jsDesc, progress: 0.5,
+              description: localization.jsDesc, progress: 0.6,
             ),
             KnowledgeItem(
               image: Image.asset(localization.javaLogo).image, name: localization.java,
-              description: localization.javaDesc, progress: 0.5,
+              description: localization.javaDesc, progress: 0.3,
             ),
             KnowledgeItem(
               image: Image.asset(localization.mdLogo).image, name: localization.md,
@@ -331,7 +331,7 @@ class ExperienceView extends StatelessWidget {
             ),
             KnowledgeItem(
               image: Image.asset(localization.htmlLogo).image, name: localization.html,
-              description: localization.htmlDesc, progress: 0.5,
+              description: localization.htmlDesc, progress: 0.7,
             ),
             KnowledgeItem(
               image: Image.asset(localization.latexLogo).image, name: localization.latex,
@@ -360,7 +360,7 @@ class ExperienceView extends StatelessWidget {
             ),
             KnowledgeItem(
               image: Image.asset(localization.djangoLogo).image, name: localization.django,
-              description: localization.djangoDesc, progress: 0.7,
+              description: localization.djangoDesc, progress: 0.6,
             ),
             KnowledgeItem(
               image: Image.asset(localization.fletLogo).image, name: localization.flet,
@@ -369,6 +369,18 @@ class ExperienceView extends StatelessWidget {
             KnowledgeItem(
               image: Image.asset(localization.pyqtLogo).image, name: localization.pyqt,
               description: localization.pyqtDesc, progress: 0.8,
+            ),
+            KnowledgeItem(
+              image: Image.asset(localization.jQueryLogo).image, name: localization.jQuery,
+              description: localization.jQueryDesc, progress: 0.5,
+            ),
+            KnowledgeItem(
+              image: Image.asset(localization.userScriptsLogo).image, name: localization.userScripts,
+              description: localization.userScriptsDesc, progress: 0.8,
+            ),
+            KnowledgeItem(
+              image: Image.asset(localization.bootstrapLogo).image, name: localization.bootstrap,
+              description: localization.bootstrapDesc, progress: 0.2,
             ),
           ],
         ),
@@ -427,7 +439,7 @@ class ExperienceView extends StatelessWidget {
             ),
             KnowledgeItem(
               image: Image.asset(localization.blenderLogo).image, name: localization.blender,
-              description: localization.blenderDesc, progress: 0.4,
+              description: localization.blenderDesc, progress: 0.3,
             ),
           ],
         ),

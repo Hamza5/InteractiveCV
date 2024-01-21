@@ -31,7 +31,7 @@ jobs:
       - name: Build the Web app
         run: |
           export LAST_UPDATE=`git ls-tree -r --name-only HEAD lib/ images/ web/ | while read filename; do echo "$(git log -1 --format=%ad --date=iso -- $filename) $filename"; done | sort -r | head -n 1 | cut -d' ' -f1`
-          flutter build web --base-href="${{ steps.pages.outputs.base_path }}/" --dart-define=OWM_API_KEY=${{ secrets.OWM_API_KEY }} --dart-define=LAST_UPDATE=$LAST_UPDATE --dart-define=GITHUB_PROFILE_TOKEN=${{ secrets.GITHUB_TOKEN }}
+          flutter build web --base-href="${{ steps.pages.outputs.base_path }}/" --dart-define=OWM_API_KEY=${{ secrets.OWM_API_KEY }} --dart-define=LAST_UPDATE=$LAST_UPDATE --dart-define=GITHUB_PROFILE_TOKEN=${{ secrets.GH_PROFILE_TOKEN }}
       - name: Upload the Web app
         uses: actions/upload-pages-artifact@v2
         with:

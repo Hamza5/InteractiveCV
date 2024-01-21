@@ -437,7 +437,6 @@ class GitHubCard extends StatelessWidget {
       future: GitHub().getProfileInfo(),
       builder: (context, snapshot) {
         if (snapshot.hasError) {
-          debugPrintStack(stackTrace: snapshot.error as StackTrace);
           return const SizedBox.shrink();
         } else if (snapshot.hasData) {
           final p = snapshot.requireData;

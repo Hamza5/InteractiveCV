@@ -77,9 +77,7 @@ class LocationItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final addressBar = BasicInfoItem(
-      icon: Icons.location_pin, title: fullAddress,
-    );
+    final addressBar = BasicInfoItem(icon: Icons.location_pin, title: fullAddress);
     final weatherSection = FutureBuilder(
       future: OpenWeatherMap(geoLocation: geoPosition, lang: Localizations.localeOf(context).languageCode).getWeather(),
       builder: (context, snapshot) {
@@ -426,6 +424,108 @@ class CertificationList extends StatelessWidget {
           )
         ],
       ),
+    );
+  }
+}
+
+class GitHubCard extends StatelessWidget {
+  const GitHubCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: GitHub().getProfileInfo(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          debugPrintStack(stackTrace: snapshot.error as StackTrace);
+          return const SizedBox.shrink();
+        } else if (snapshot.hasData) {
+          final p = snapshot.requireData;
+          return Stack(
+            children: [
+              Card(
+                child: InkWell(
+                  onTap: () => launchUrl(p.url),
+                  child: Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: Wrap(
+                      crossAxisAlignment: WrapCrossAlignment.center,
+                      alignment: WrapAlignment.center,
+                      runAlignment: WrapAlignment.center,
+                      spacing: 5,
+                      runSpacing: 5,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: CircleAvatar(
+                            backgroundImage: NetworkImage(p.avatarUrl),
+                            backgroundColor: Theme.of(context).colorScheme.surface,
+                            radius: 48,
+                          ),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(5),
+                          child: ConstrainedBox(
+                            constraints: BoxConstraints.loose(const Size.fromWidth(400)),
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(p.name, style: Theme.of(context).textTheme.titleLarge),
+                                Text(p.login, style: Theme.of(context).textTheme.labelLarge),
+                                Text(p.bio, overflow: TextOverflow.ellipsis, maxLines: 5),
+                                Padding(
+                                  padding: const EdgeInsets.all(10),
+                                  child: Wrap(
+                                    spacing: 20,
+                                    runSpacing: 10,
+                                    children: [
+                                      Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const FaIcon(FontAwesomeIcons.userGroup),
+                                            const SizedBox(width: 5),
+                                            Text('${p.followerCount}'),
+                                          ]
+                                      ),
+                                      Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const FaIcon(FontAwesomeIcons.book),
+                                            const SizedBox(width: 5),
+                                            Text('${p.repositoryCount}'),
+                                          ]
+                                      ),
+                                      Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            const FaIcon(FontAwesomeIcons.star),
+                                            const SizedBox(width: 5),
+                                            Text('${p.totalStars}'),
+                                          ]
+                                      ),
+                                    ],
+                                  ),
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+              const Positioned(
+                top: 5,
+                right: 5,
+                child: FaIcon(FontAwesomeIcons.github, size: 32),
+              ),
+            ],
+          );
+        } else {
+          return const CircularProgressIndicator();
+        }
+      },
     );
   }
 }

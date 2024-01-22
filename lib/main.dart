@@ -69,7 +69,7 @@ class InteractiveCV extends StatelessWidget {
                     clipBehavior: Clip.hardEdge,
                   ),
                   listTileTheme: theme.listTileTheme.copyWith(
-                    horizontalTitleGap: 5, contentPadding: const EdgeInsets.all(5),
+                    horizontalTitleGap: 10, contentPadding: const EdgeInsets.all(5),
                   ),
                   appBarTheme: theme.appBarTheme.copyWith(
                     backgroundColor: theme.brightness == Brightness.dark ?

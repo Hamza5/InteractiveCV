@@ -28,7 +28,9 @@ class BasicInfoItem extends StatelessWidget {
       subtitle: description != null ? Text(description!) : null,
       onTap: url != null ? () => launchUrl(url!) : null,
     );
-    return Card(child: shrink ? IntrinsicWidth(child: listTile) : listTile);
+    return Card(
+      child: Padding(padding: const EdgeInsets.all(5), child: shrink ? IntrinsicWidth(child: listTile) : listTile),
+    );
   }
 }
 
@@ -272,7 +274,7 @@ class KnowledgeItem extends StatelessWidget {
   Widget build(BuildContext context) {
     return Card(
       child: Padding(
-        padding: const EdgeInsets.all(3),
+        padding: const EdgeInsets.all(10),
         child: GestureDetector(
           onTap: url != null ? () => launchUrl(url!) : null,
           child: Column(
@@ -428,103 +430,159 @@ class CertificationList extends StatelessWidget {
   }
 }
 
+class ProfileCard extends StatelessWidget {
+  final IconData icon;
+  final String name;
+  final String about;
+  final String avatarUrl;
+  final Uri url;
+  final Map<IconData, int> stats;
+
+  const ProfileCard({
+    super.key,
+    required this.icon,
+    required this.name,
+    required this.about,
+    required this.avatarUrl,
+    required this.url,
+    this.stats = const {},
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final screenSize = MediaQuery.of(context).size;
+    final isLandscape = screenSize.width > screenSize.height;
+    return Stack(
+      children: [
+        Card(
+          child: InkWell(
+            onTap: () => launchUrl(url),
+            child: Padding(
+              padding: const EdgeInsets.all(5),
+              child: Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                alignment: WrapAlignment.center,
+                runAlignment: WrapAlignment.center,
+                spacing: 5,
+                runSpacing: 5,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: CircleAvatar(
+                      backgroundImage: NetworkImage(avatarUrl.toString()),
+                      backgroundColor: Theme.of(context).colorScheme.surface,
+                      radius: 48,
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(5),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints.loose(const Size.fromWidth(400)),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.all(5),
+                            child: Text(name, style: Theme.of(context).textTheme.titleLarge),
+                          ),
+                          Text(about, overflow: TextOverflow.ellipsis, maxLines: isLandscape ? 3 : 5),
+                          Padding(
+                            padding: const EdgeInsets.all(10),
+                            child: Wrap(
+                              spacing: 20,
+                              runSpacing: 10,
+                              children: [
+                                for (var entry in stats.entries)
+                                  Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      FaIcon(entry.key),
+                                      const SizedBox(width: 5),
+                                      Text('${entry.value}'),
+                                    ]
+                                  )
+                              ],
+                            ),
+                          )
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        Positioned(
+          top: 10,
+          right: 10,
+          child: FaIcon(icon, size: 32),
+        ),
+      ],
+    );
+  }
+}
+
+class LoadingProfileCard extends StatelessWidget {
+  final ProfileCard Function(dynamic) profileCardBuilder;
+  final Function() getProfileInfoMethod;
+  const LoadingProfileCard({super.key, required this.getProfileInfoMethod, required this.profileCardBuilder});
+
+  @override
+  Widget build(BuildContext context) {
+    return IntrinsicHeight(
+      child: FutureBuilder(
+        future: getProfileInfoMethod(),
+        builder: (context, snapshot) {
+          if (snapshot.hasError) {
+            return const SizedBox.shrink();
+          } else if (snapshot.hasData) {
+            return profileCardBuilder(snapshot.requireData!);
+          } else {
+            return const CircularProgressIndicator();
+          }
+        },
+      ),
+    );
+  }
+}
+
 class GitHubCard extends StatelessWidget {
   const GitHubCard({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: GitHub().getProfileInfo(),
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return const SizedBox.shrink();
-        } else if (snapshot.hasData) {
-          final p = snapshot.requireData;
-          return Stack(
-            children: [
-              Card(
-                child: InkWell(
-                  onTap: () => launchUrl(p.url),
-                  child: Padding(
-                    padding: const EdgeInsets.all(5),
-                    child: Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      alignment: WrapAlignment.center,
-                      runAlignment: WrapAlignment.center,
-                      spacing: 5,
-                      runSpacing: 5,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: CircleAvatar(
-                            backgroundImage: NetworkImage(p.avatarUrl),
-                            backgroundColor: Theme.of(context).colorScheme.surface,
-                            radius: 48,
-                          ),
-                        ),
-                        Padding(
-                          padding: const EdgeInsets.all(5),
-                          child: ConstrainedBox(
-                            constraints: BoxConstraints.loose(const Size.fromWidth(400)),
-                            child: Column(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(p.name, style: Theme.of(context).textTheme.titleLarge),
-                                Text(p.login, style: Theme.of(context).textTheme.labelLarge),
-                                Text(p.bio, overflow: TextOverflow.ellipsis, maxLines: 5),
-                                Padding(
-                                  padding: const EdgeInsets.all(10),
-                                  child: Wrap(
-                                    spacing: 20,
-                                    runSpacing: 10,
-                                    children: [
-                                      Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const FaIcon(FontAwesomeIcons.userGroup),
-                                            const SizedBox(width: 5),
-                                            Text('${p.followerCount}'),
-                                          ]
-                                      ),
-                                      Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const FaIcon(FontAwesomeIcons.book),
-                                            const SizedBox(width: 5),
-                                            Text('${p.repositoryCount}'),
-                                          ]
-                                      ),
-                                      Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            const FaIcon(FontAwesomeIcons.star),
-                                            const SizedBox(width: 5),
-                                            Text('${p.totalStars}'),
-                                          ]
-                                      ),
-                                    ],
-                                  ),
-                                )
-                              ],
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ),
-              const Positioned(
-                top: 5,
-                right: 5,
-                child: FaIcon(FontAwesomeIcons.github, size: 32),
-              ),
-            ],
-          );
-        } else {
-          return const CircularProgressIndicator();
-        }
-      },
+    return LoadingProfileCard(
+      getProfileInfoMethod: GitHub().getProfileInfo,
+      profileCardBuilder: (p) => ProfileCard(
+        icon: FontAwesomeIcons.github, name: p.name, about: p.bio, avatarUrl: p.avatarUrl.toString(), url: p.url,
+        stats: {
+          FontAwesomeIcons.star: p.totalStars,
+          FontAwesomeIcons.userGroup: p.followerCount,
+          FontAwesomeIcons.book: p.repositoryCount,
+        },
+      )
     );
   }
 }
+
+class StackOverflowCard extends StatelessWidget {
+  const StackOverflowCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return LoadingProfileCard(
+      getProfileInfoMethod: StackOverflow().getProfileInfo,
+      profileCardBuilder: (p) => ProfileCard(
+        icon: FontAwesomeIcons.stackOverflow, name: p.displayName, about: p.aboutMe, avatarUrl: p.profileImage.toString(), url: p.link,
+        stats: {
+          FontAwesomeIcons.medal: p.reputation,
+          FontAwesomeIcons.certificate: p.goldBadgeCount + p.silverBadgeCount + p.bronzeBadgeCount,
+          FontAwesomeIcons.circleQuestion: p.questionCount,
+          FontAwesomeIcons.message: p.answerCount,
+        },
+      ),
+    );
+  }
+}
+

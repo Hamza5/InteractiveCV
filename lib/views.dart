@@ -102,12 +102,9 @@ class BasicInfoView extends StatelessWidget {
                 textDirection: TextDirection.ltr,
                 child: GitHubCard(),
               ),
-              Directionality(
+              const Directionality(
                 textDirection: TextDirection.ltr,
-                child: BasicInfoItem(
-                  icon: FontAwesomeIcons.stackOverflow, title: localization.stackOverflow, url: Uri.parse('https://${localization.stackOverflow}'),
-                  shrink: large,
-                ),
+                child: StackOverflowCard(),
               ),
               Directionality(
                 textDirection: TextDirection.ltr,
@@ -354,7 +351,7 @@ class ExperienceView extends StatelessWidget {
             ),
             KnowledgeItem(
               image: Image.asset(localization.scrapyLogo).image, name: localization.scrapy,
-              description: localization.scrapyDesc, progress: 0.8,
+              description: localization.scrapyDesc, progress: 0.7,
             ),
             KnowledgeItem(
               image: Image.asset(localization.djangoLogo).image, name: localization.django,

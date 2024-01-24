@@ -355,15 +355,18 @@ class ExperienceView extends StatelessWidget {
             ),
             KnowledgeItem(
               image: Image.asset(localization.djangoLogo).image, name: localization.django,
-              description: localization.djangoDesc, progress: 0.6,
+              description: localization.djangoDesc, progress: 0.7,
             ),
-            KnowledgeItem(
-              image: Image.asset(localization.fletLogo).image, name: localization.flet,
-              description: localization.fletDesc, progress: 0.9,
+            KnowledgeItem(image: Image.asset(localization.pillowLogo).image, name: localization.pillow,
+              description: localization.pillowDesc, progress: 0.8,
             ),
             KnowledgeItem(
               image: Image.asset(localization.pyqtLogo).image, name: localization.pyqt,
               description: localization.pyqtDesc, progress: 0.8,
+            ),
+            KnowledgeItem(
+              image: Image.asset(localization.fletLogo).image, name: localization.flet,
+              description: localization.fletDesc, progress: 0.9,
             ),
             KnowledgeItem(
               image: Image.asset(localization.jQueryLogo).image, name: localization.jQuery,

@@ -360,6 +360,9 @@ class ExperienceView extends StatelessWidget {
             KnowledgeItem(image: Image.asset(localization.pillowLogo).image, name: localization.pillow,
               description: localization.pillowDesc, progress: 0.8,
             ),
+            KnowledgeItem(image: Image.asset(localization.seleniumLogo).image, name: localization.selenium,
+              description: localization.seleniumDesc, progress: 0.9,
+            ),
             KnowledgeItem(
               image: Image.asset(localization.pyqtLogo).image, name: localization.pyqt,
               description: localization.pyqtDesc, progress: 0.8,

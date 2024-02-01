@@ -6,6 +6,8 @@ on:
 env:
   GITHUB_PROFILE_TOKEN: ${{ secrets.GH_PROFILE_TOKEN }}
   LINKEDIN_PROFILE_URL: "https://www.linkedin.com/in/hamza-abbad/"
+  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  MOZ_HEADLESS: 1
 jobs:
   Scrap:
     runs-on: ubuntu-latest
@@ -17,11 +19,12 @@ jobs:
         with:
           firefox-version: 'latest'
       - name: Install Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10.x'
+          cache: 'pip'
       - name: Checking cache of WebDriverManager
-        uses: actions/cache@v2
+        uses: actions/cache@v4
         with:
           path: ~/.wdm
           key: ${{ runner.os }}-wdm-drivers

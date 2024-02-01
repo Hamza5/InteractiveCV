@@ -50,17 +50,15 @@ class LinkedInProfileScraper:
         return self.driver.get_cookies()
 
     def load_cookies(self):
-        """Load cookies from GitHub variables"""
-        linkedin_cookies_var = self.repository.get_variable('LINKEDIN_COOKIES')
-        linkedin_cookies = json.loads(linkedin_cookies_var.value)
+        """Load cookies from a GitHub environment variable loaded from GitHub secrets"""
+        linkedin_cookies = json.loads(os.environ['LINKEDIN_COOKIES'])
         self.set_cookies(linkedin_cookies)
         self.logger.info(f"Loaded {len(linkedin_cookies)} cookies")
 
     def save_cookies(self):
-        """Save cookies to GitHub variables"""
+        """Save cookies to GitHub secrets"""
         cookies = self.get_cookies()
-        linkedin_cookies_var = self.repository.get_variable('LINKEDIN_COOKIES')
-        linkedin_cookies_var.edit(json.dumps(cookies))
+        self.repository.create_secret('LINKEDIN_COOKIES', json.dumps(cookies))
         self.logger.info(f"Saved {len(cookies)} cookies")
 
     def scrap_profile(self, url: str):

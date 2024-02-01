@@ -8,6 +8,7 @@ env:
   LINKEDIN_PROFILE_URL: "https://www.linkedin.com/in/hamza-abbad/"
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   MOZ_HEADLESS: 1
+  LINKEDIN_COOKIES: ${{ secrets.LINKEDIN_COOKIES }}
 jobs:
   Scrap:
     runs-on: ubuntu-latest

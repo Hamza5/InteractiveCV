@@ -1,0 +1,31 @@
+name: Scraping of a LinkedIn profile
+on:
+  schedule:
+    - cron: '15 9 * * *'
+  workflow_dispatch:
+env:
+  GITHUB_PROFILE_TOKEN: ${{ secrets.GH_PROFILE_TOKEN }}
+  LINKEDIN_PROFILE_URL: "https://www.linkedin.com/in/hamza-abbad/"
+jobs:
+  Scrap:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      - name: Install Firefox
+        uses: browser-actions/setup-firefox@latest
+        with:
+          firefox-version: 'latest'
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10.x'
+      - name: Checking cache of WebDriverManager
+        uses: actions/cache@v2
+        with:
+          path: ~/.wdm
+          key: ${{ runner.os }}-wdm-drivers
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+      - name: Run the script
+        run: python linkedin_profile_scraper.py

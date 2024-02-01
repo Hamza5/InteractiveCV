@@ -1,6 +1,8 @@
 name: CI/CD
 on:
-  push
+  push:
+    branches:
+      - master
 jobs:
   Build:
     runs-on: ubuntu-latest

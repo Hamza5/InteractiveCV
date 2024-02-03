@@ -165,7 +165,17 @@ class EducationView extends StatelessWidget {
             logo: Image.asset(localization.institution2Logo).image, title: localization.institution2,
             url: Uri.parse(localization.institution2Url),
             items: [
-              FieldItem(title: localization.institution2Speciality1, trailing: localization.institution2Years1),
+              FieldItem(
+                title: localization.institution2Speciality1, trailing: localization.institution2Years1,
+                items: [
+                  CertificationList(
+                    height: 500,
+                    certifications: [
+                      Image.asset(localization.institution2Certification3).image,
+                    ],
+                  ),
+                ],
+              ),
               FieldItem(
                 title: localization.institution2Speciality2, trailing: localization.institution2Years2,
                 items: [
@@ -258,6 +268,12 @@ class WorkView extends StatelessWidget {
           items: [
             FieldItem(
               title: localization.institution7Speciality1, trailing: localization.institution7Years1,
+              items: [
+                CertificationList(
+                  certifications: [Image.asset(localization.institution7Certification1).image],
+                  height: 500,
+                )
+              ],
             ),
           ],
         ),

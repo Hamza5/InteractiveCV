@@ -11,9 +11,6 @@
   "timezone_hours": "8",
   "nationality": "\uD83C\uDDE9\uD83C\uDDFF Algerian",
   "religion": "☪ Islam",
-  "github": "github.com/Hamza5",
-  "linkedIn": "linkedin.com/in/hamza-abbad/",
-  "stackOverflow": "stackoverflow.com/users/5008968/hamza-abbad",
   "contactInfo": "Contact information",
   "personal": "Personal",
   "age": "{years} years{months, plural, =0{} =1{, 1 month} other{, {months} months}}{days, plural, =0{} =1{, and 1 day} other{, and {days} days}}",
@@ -41,6 +38,14 @@
   "russianFlag": "images/flags/russia.png",
   "russianDesc": "Basic words and sentences",
   "web": "Online profiles (live data)",
+  "dataSource": "{source, select, api{API} scrap{Web scraping} other{Unknown}}",
+  "@dataSource": {
+      "placeholders": {
+      "source": {
+        "type": "String"
+      }
+    }
+  },
   "physical": "Physical presence",
   "institution1": "University of Science and Technology Houari Boumediene (USTHB)",
   "institution1Logo": "images/logos/usthb_logo.png",

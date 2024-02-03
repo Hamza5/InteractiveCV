@@ -97,20 +97,18 @@ class BasicInfoView extends StatelessWidget {
           wrapped: true,
         ),
         SectionTile(icon: Icons.web, text: localization.web, wrapped: large,
-            items: [
-              const Directionality(
+            items: const [
+              Directionality(
                 textDirection: TextDirection.ltr,
                 child: GitHubCard(),
               ),
-              const Directionality(
+              Directionality(
                 textDirection: TextDirection.ltr,
                 child: StackOverflowCard(),
               ),
               Directionality(
                 textDirection: TextDirection.ltr,
-                child: BasicInfoItem(
-                  icon: FontAwesomeIcons.linkedin, title: localization.linkedIn, url: Uri.parse('https://${localization.linkedIn}'), shrink: large,
-                ),
+                child: LinkedInCard(),
               ),
             ]
         ),

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
 
@@ -57,7 +58,7 @@ class OpenWeatherMap {
 
 }
 
-class GitHubProfileInfo {
+class GitHubProfile {
   final String name;
   final String login;
   final Uri avatarUrl;
@@ -67,7 +68,7 @@ class GitHubProfileInfo {
   final int totalStars;
   final Uri url;
 
-  GitHubProfileInfo({
+  GitHubProfile({
     required this.name,
     required this.login,
     required this.avatarUrl,
@@ -86,7 +87,7 @@ class GitHub {
 
   GitHub();
 
-  Future<GitHubProfileInfo> getProfileInfo() async {
+  Future<GitHubProfile> getProfileInfo() async {
     const String query = """
       query {
         viewer {
@@ -115,7 +116,7 @@ class GitHub {
     );
     if (response.statusCode == 200) {
       final Map<String, dynamic> profileInfo = jsonDecode(response.body)['data']['viewer'];
-      return GitHubProfileInfo(
+      return GitHubProfile(
         name: profileInfo['name'],
         login: profileInfo['login'],
         avatarUrl: Uri.parse(profileInfo['avatarUrl']),
@@ -131,7 +132,7 @@ class GitHub {
   }
 }
 
-class StackOverflowProfileInfo {
+class StackOverflowProfile {
   final String displayName;
   final String aboutMe;
   final Uri link;
@@ -144,7 +145,7 @@ class StackOverflowProfileInfo {
   final int answerCount;
   final int viewCount;
 
-  StackOverflowProfileInfo({
+  StackOverflowProfile({
     required this.displayName,
     required this.aboutMe,
     required this.link,
@@ -166,11 +167,11 @@ class StackOverflow {
 
   StackOverflow();
 
-  Future<StackOverflowProfileInfo> getProfileInfo() async {
+  Future<StackOverflowProfile> getProfileInfo() async {
     final response = await http.get(Uri.parse(meEndpoint));
     if (response.statusCode == 200) {
       final Map<String, dynamic> profileInfo = jsonDecode(response.body)['items'][0];
-      return StackOverflowProfileInfo(
+      return StackOverflowProfile(
         displayName: profileInfo['display_name'],
         aboutMe: profileInfo['about_me'].replaceAll(RegExp(r'<[^>]*>'), ''),
         link: Uri.parse(profileInfo['link']),
@@ -182,6 +183,56 @@ class StackOverflow {
         questionCount: profileInfo['question_count'],
         answerCount: profileInfo['answer_count'],
         viewCount: profileInfo['view_count'],
+      );
+    } else {
+      throw Exception('Failed to load profile info');
+    }
+  }
+}
+
+class LinkedInProfile {
+  final String name;
+  final String headline;
+  final Uri profilePicture;
+  final Uint8List profilePictureBytes;
+  final Uri url;
+  final int connectionsCount;
+
+  LinkedInProfile({
+    required this.name,
+    required this.headline,
+    required this.profilePicture,
+    required this.profilePictureBytes,
+    required this.url,
+    required this.connectionsCount,
+  });
+}
+
+class LinkedIn {
+  static const repoProfileVariableEndpoint = 'https://api.github.com/repos/${const String.fromEnvironment("GITHUB_REPOSITORY")}/actions/variables/LINKEDIN_PROFILE';
+  static const profileURL = String.fromEnvironment('LINKEDIN_PROFILE_URL');
+  static const headers = {
+    ...GitHub.headers,
+    'Accept': 'application/vnd.github+json',
+    'X-GitHub-Api-Version': '2022-11-28'
+  };
+
+  LinkedIn();
+
+  Future<LinkedInProfile> getProfileInfo() async {
+    final response = await http.get(
+      Uri.parse(repoProfileVariableEndpoint),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> profileInfo = jsonDecode(jsonDecode(response.body)['value']);
+      return LinkedInProfile(
+        name: profileInfo['name'],
+        headline: profileInfo['about'],
+        profilePicture: Uri.parse(profileInfo['profile_picture_url']),
+        profilePictureBytes: base64Decode(profileInfo['profile_picture_base64']),
+        url: Uri.parse(profileURL),
+        connectionsCount: profileInfo['connection_count'],
       );
     } else {
       throw Exception('Failed to load profile info');

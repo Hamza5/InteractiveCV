@@ -19,6 +19,7 @@
   "russianName": "الروسية",
   "russianDesc": "كلمات وجمل أساسية",
   "web": "الملفات الشخصيّة على الويب (بيانات حية)",
+  "dataSource": "{source, select, api{واجهة برمجة التطبيقات} scrap{كشط الويب} other{غير معروف}}",
   "physical": "الحضور الحسي",
   "institution1": "جامعة العلوم والتكنلوجيا هواري بومدين",
   "institution1Speciality1": "ليسانس في علوم الحاسوب",

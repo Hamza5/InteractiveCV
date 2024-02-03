@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:easy_image_viewer/easy_image_viewer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map_cancellable_tile_provider/flutter_map_cancellable_tile_provider.dart';
@@ -11,6 +13,7 @@ import 'package:url_launcher/url_launcher.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:transparent_image/transparent_image.dart';
 
 class BasicInfoItem extends StatelessWidget {
   final IconData? icon;
@@ -26,10 +29,12 @@ class BasicInfoItem extends StatelessWidget {
       leading: icon != null ? FaIcon(icon) : null,
       title: Text(title),
       subtitle: description != null ? Text(description!) : null,
-      onTap: url != null ? () => launchUrl(url!) : null,
     );
     return Card(
-      child: Padding(padding: const EdgeInsets.all(5), child: shrink ? IntrinsicWidth(child: listTile) : listTile),
+      child: InkWell(
+        onTap: url != null ? () => launchUrl(url!) : null,
+        child: Padding(padding: const EdgeInsets.all(5), child: shrink ? IntrinsicWidth(child: listTile) : listTile),
+      ),
     );
   }
 }
@@ -434,8 +439,10 @@ class ProfileCard extends StatelessWidget {
   final IconData icon;
   final String name;
   final String about;
-  final String avatarUrl;
+  final Uri avatarUrl;
+  final Uint8List? avatarBytes;
   final Uri url;
+  final bool scraped;
   final Map<IconData, int> stats;
 
   const ProfileCard({
@@ -445,7 +452,9 @@ class ProfileCard extends StatelessWidget {
     required this.about,
     required this.avatarUrl,
     required this.url,
+    required this.scraped,
     this.stats = const {},
+    this.avatarBytes,
   });
 
   @override
@@ -469,7 +478,8 @@ class ProfileCard extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.all(5),
                     child: CircleAvatar(
-                      backgroundImage: NetworkImage(avatarUrl.toString()),
+                      backgroundImage: MemoryImage(avatarBytes ?? kTransparentImage),
+                      foregroundImage: NetworkImage(avatarUrl.toString()),
                       backgroundColor: Theme.of(context).colorScheme.surface,
                       radius: 48,
                     ),
@@ -503,7 +513,16 @@ class ProfileCard extends StatelessWidget {
                                   )
                               ],
                             ),
-                          )
+                          ),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.end,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const FaIcon(FontAwesomeIcons.wifi, size: 12),
+                              const SizedBox(width: 5),
+                              Text(AppLocalizations.of(context)!.dataSource(scraped ? 'scrap' : 'api'), style: Theme.of(context).textTheme.labelSmall),
+                            ],
+                          ),
                         ],
                       ),
                     ),
@@ -535,6 +554,7 @@ class LoadingProfileCard extends StatelessWidget {
         future: getProfileInfoMethod(),
         builder: (context, snapshot) {
           if (snapshot.hasError) {
+            debugPrint(snapshot.error.toString());
             return const SizedBox.shrink();
           } else if (snapshot.hasData) {
             return profileCardBuilder(snapshot.requireData!);
@@ -554,14 +574,18 @@ class GitHubCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return LoadingProfileCard(
       getProfileInfoMethod: GitHub().getProfileInfo,
-      profileCardBuilder: (p) => ProfileCard(
-        icon: FontAwesomeIcons.github, name: p.name, about: p.bio, avatarUrl: p.avatarUrl.toString(), url: p.url,
-        stats: {
-          FontAwesomeIcons.star: p.totalStars,
-          FontAwesomeIcons.userGroup: p.followerCount,
-          FontAwesomeIcons.book: p.repositoryCount,
-        },
-      )
+      profileCardBuilder: (p) {
+        p = p as GitHubProfile;
+        return ProfileCard(
+          icon: FontAwesomeIcons.github, name: p.name, about: p.bio, avatarUrl: p.avatarUrl, url: p.url,
+          scraped: false,
+          stats: {
+            FontAwesomeIcons.star: p.totalStars,
+            FontAwesomeIcons.userGroup: p.followerCount,
+            FontAwesomeIcons.book: p.repositoryCount,
+          },
+        );
+      }
     );
   }
 }
@@ -573,16 +597,40 @@ class StackOverflowCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return LoadingProfileCard(
       getProfileInfoMethod: StackOverflow().getProfileInfo,
-      profileCardBuilder: (p) => ProfileCard(
-        icon: FontAwesomeIcons.stackOverflow, name: p.displayName, about: p.aboutMe, avatarUrl: p.profileImage.toString(), url: p.link,
-        stats: {
-          FontAwesomeIcons.medal: p.reputation,
-          FontAwesomeIcons.certificate: p.goldBadgeCount + p.silverBadgeCount + p.bronzeBadgeCount,
-          FontAwesomeIcons.circleQuestion: p.questionCount,
-          FontAwesomeIcons.message: p.answerCount,
-        },
-      ),
+      profileCardBuilder: (p) {
+        p = p as StackOverflowProfile;
+        return ProfileCard(
+          icon: FontAwesomeIcons.stackOverflow, name: p.displayName, about: p.aboutMe, avatarUrl: p.profileImage, url: p.link,
+          scraped: false,
+          stats: {
+            FontAwesomeIcons.medal: p.reputation,
+            FontAwesomeIcons.certificate: p.goldBadgeCount + p.silverBadgeCount + p.bronzeBadgeCount,
+            FontAwesomeIcons.circleQuestion: p.questionCount,
+            FontAwesomeIcons.message: p.answerCount,
+          },
+        );
+      },
     );
   }
 }
 
+class LinkedInCard extends StatelessWidget {
+  const LinkedInCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return LoadingProfileCard(
+      getProfileInfoMethod: LinkedIn().getProfileInfo,
+      profileCardBuilder: (p) {
+        p = p as LinkedInProfile;
+        return ProfileCard(
+          icon: FontAwesomeIcons.linkedin, name: p.name, about: p.headline, avatarUrl: p.profilePicture, url: p.url,
+          scraped: true, avatarBytes: p.profilePictureBytes,
+          stats: {
+            FontAwesomeIcons.userGroup: p.connectionsCount
+          },
+        );
+      },
+    );
+  }
+}

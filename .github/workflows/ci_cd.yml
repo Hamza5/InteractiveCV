@@ -42,7 +42,9 @@ jobs:
             --dart-define=OWM_API_KEY=${{ secrets.OWM_API_KEY }} --dart-define=LAST_UPDATE=$LAST_UPDATE \
             --dart-define=GITHUB_PROFILE_TOKEN=${{ secrets.GH_PROFILE_TOKEN }} \
             --dart-define=STACKEXCHANGE_ACCESS_TOKEN="${{ secrets.STACKEXCHANGE_ACCESS_TOKEN }}" \
-            --dart-define=STACKEXCHANGE_KEY="${{ secrets.STACKEXCHANGE_KEY }}"
+            --dart-define=STACKEXCHANGE_KEY="${{ secrets.STACKEXCHANGE_KEY }}" \
+            --dart-define=GITHUB_REPOSITORY=${{ github.repository }} \
+            --dart-define=LINKEDIN_PROFILE_URL=${{ vars.LINKEDIN_PROFILE_URL }}
       - name: Upload the Web app
         uses: actions/upload-pages-artifact@v2
         with:

@@ -3,6 +3,9 @@ on:
   push:
     branches:
       - master
+    paths:
+      - '.github/workflows/ci_cd.yml'
+      - 'pubspec.yaml'
 jobs:
   Build:
     runs-on: ubuntu-latest

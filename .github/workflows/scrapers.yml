@@ -1,16 +1,15 @@
-name: Scraping of a LinkedIn profile
+name: Scrapers
 on:
   schedule:
     - cron: '15 9 * * *'
   workflow_dispatch:
 env:
   GITHUB_PROFILE_TOKEN: ${{ secrets.GH_PROFILE_TOKEN }}
-  LINKEDIN_PROFILE_URL: "https://www.linkedin.com/in/hamza-abbad/"
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   MOZ_HEADLESS: 1
   LINKEDIN_COOKIES: ${{ secrets.LINKEDIN_COOKIES }}
 jobs:
-  Scrap:
+  Scrapers:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -32,4 +31,4 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
       - name: Run the script
-        run: python linkedin_profile_scraper.py
+        run: python scrapers.py

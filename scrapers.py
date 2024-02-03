@@ -1,5 +1,7 @@
 import json
 import os
+from base64 import b64encode
+from urllib.request import urlopen
 from logging import getLogger, basicConfig
 
 from selenium.webdriver import Firefox
@@ -87,9 +89,15 @@ class LinkedInProfileScraper:
 
     def to_json(self):
         """Convert profile data to a JSON object"""
+        with urlopen(self.profile_picture_url) as f:
+            profile_picture_base64 = b64encode(f.read()).decode()
+        for affiliation in self.affiliations:
+            with urlopen(affiliation['logo_url']) as f:
+                affiliation['logo_base64'] = b64encode(f.read()).decode()
         return {
             "name": self.name,
             "profile_picture_url": self.profile_picture_url,
+            "profile_picture_base64": profile_picture_base64,
             "about": self.about,
             "connection_count": self.connection_count,
             "affiliations": self.affiliations

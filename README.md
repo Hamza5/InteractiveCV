@@ -6,6 +6,7 @@
 ![Lines of code](https://tokei.rs/b1/github/Hamza5/InteractiveCV?category=code&style=for-the-badge)
 [![Website](https://img.shields.io/website?url=https://hamza5.github.io/InteractiveCV/&label=Web%20app&style=for-the-badge)](https://hamza5.github.io/InteractiveCV/)
 [![CI/CD](https://github.com/Hamza5/InteractiveCV/actions/workflows/ci_cd.yml/badge.svg?style=for-the-badge)](https://github.com/Hamza5/InteractiveCV/actions/workflows/ci_cd.yml)
+[![Scrapers](https://github.com/Hamza5/InteractiveCV/actions/workflows/scrapers.yml/badge.svg?style=for-the-badge)](https://github.com/Hamza5/InteractiveCV/actions/workflows/scrapers.yml)
 
 ## Description
 

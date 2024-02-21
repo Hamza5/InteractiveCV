@@ -52,7 +52,7 @@ class OpenWeatherMap {
         humidity: currentWeather['main']['humidity'],
       );
     } else {
-      throw Exception('Failed to load weather');
+      throw Exception('Failed to load OpenWeatherMap weather info');
     }
   }
 
@@ -127,7 +127,7 @@ class GitHub {
         url: Uri.parse(profileInfo['url']),
       );
     } else {
-      throw Exception('Failed to load profile info');
+      throw Exception('Failed to load GitHub profile info');
     }
   }
 }
@@ -185,7 +185,7 @@ class StackOverflow {
         viewCount: profileInfo['view_count'],
       );
     } else {
-      throw Exception('Failed to load profile info');
+      throw Exception('Failed to load StackOverflow profile info');
     }
   }
 }
@@ -235,7 +235,7 @@ class LinkedIn {
         connectionsCount: profileInfo['connection_count'],
       );
     } else {
-      throw Exception('Failed to load profile info');
+      throw Exception('Failed to load LinkedIn profile info');
     }
   }
 }

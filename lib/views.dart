@@ -356,26 +356,41 @@ class ExperienceView extends StatelessWidget {
               description: localization.jupyterDesc, progress: 0.8,
             ),
             KnowledgeItem(
+              image: Image.asset(localization.numpyLogo).image, name: localization.numpy,
+              description: localization.numpyDesc, progress: 0.8,
+            ),
+            KnowledgeItem(
               image: Image.asset(localization.mplLogo).image, name: localization.mpl,
               description: localization.mplDesc, progress: 0.6,
+            ),
+            KnowledgeItem(
+              image: Image.asset(localization.pandasLogo).image, name: localization.pandas,
+              description: localization.pandasDesc, progress: 0.5,
             ),
             KnowledgeItem(
               image: Image.asset(localization.tfLogo).image, name: localization.tf,
               description: localization.tfDesc, progress: 0.8,
             ),
             KnowledgeItem(
-              image: Image.asset(localization.scrapyLogo).image, name: localization.scrapy,
-              description: localization.scrapyDesc, progress: 0.7,
-            ),
-            KnowledgeItem(
               image: Image.asset(localization.djangoLogo).image, name: localization.django,
               description: localization.djangoDesc, progress: 0.7,
+            ),
+            KnowledgeItem(
+              image: Image.asset(localization.flaskLogo).image, name: localization.flask,
+              description: localization.flaskDesc, progress: 0.3,
             ),
             KnowledgeItem(image: Image.asset(localization.pillowLogo).image, name: localization.pillow,
               description: localization.pillowDesc, progress: 0.8,
             ),
+            KnowledgeItem(image: Image.asset(localization.opencvLogo).image, name: localization.opencv,
+              description: localization.opencvDesc, progress: 0.6,
+            ),
             KnowledgeItem(image: Image.asset(localization.seleniumLogo).image, name: localization.selenium,
               description: localization.seleniumDesc, progress: 0.9,
+            ),
+            KnowledgeItem(
+              image: Image.asset(localization.scrapyLogo).image, name: localization.scrapy,
+              description: localization.scrapyDesc, progress: 0.7,
             ),
             KnowledgeItem(
               image: Image.asset(localization.pyqtLogo).image, name: localization.pyqt,

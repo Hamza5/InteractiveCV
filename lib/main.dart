@@ -140,18 +140,19 @@ class MainPage extends StatelessWidget {
                         flexibleSpace: FlexibleSpaceBar(
                           background: Stack(
                             children: [
-                              Container(
-                                alignment: AlignmentDirectional.topStart,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(2),
-                                  child: Text(
-                                    localization.lastUpdate(DateTime.parse(const String.fromEnvironment('LAST_UPDATE'))),
-                                    style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                      color: Theme.of(context).appBarTheme.titleTextStyle?.color?.withOpacity(0.5)
+                              if (const bool.hasEnvironment('LAST_UPDATE'))
+                                Container(
+                                  alignment: AlignmentDirectional.topStart,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(2),
+                                    child: Text(
+                                      localization.lastUpdate(DateTime.parse(const String.fromEnvironment('LAST_UPDATE'))),
+                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                                        color: Theme.of(context).appBarTheme.titleTextStyle?.color?.withOpacity(0.5)
+                                      ),
                                     ),
                                   ),
                                 ),
-                              ),
                               Container(
                                 alignment: AlignmentDirectional.topEnd,
                                 child: ColorSelection(themeNotifier: themeNotifier),

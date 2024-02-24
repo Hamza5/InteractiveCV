@@ -1,9 +1,13 @@
 import json
 import os
+import sys
+from abc import ABC, abstractmethod
 from base64 import b64encode
 from urllib.request import urlopen
 from logging import getLogger, basicConfig
 
+import requests
+from bs4 import BeautifulSoup
 from selenium.webdriver import Firefox
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service as FirefoxService
@@ -15,20 +19,42 @@ from github import Github
 basicConfig(format='%(asctime)s %(name)s: [%(levelname)s] %(message)s', level=os.environ.get('LOG_LEVEL', 'INFO'))
 
 
-class LinkedInProfileScraper:
+class Scraper(ABC):
+
+    def __init__(self):
+        self.logger = getLogger(self.__class__.__qualname__)
+        self.repository = Github(os.environ['GITHUB_PROFILE_TOKEN']).get_repo(os.environ['GITHUB_REPOSITORY'])
+
+    def save_to_github(self, variable_name: str):
+        """Save profile data as JSON to a GitHub variable"""
+        profile_var = self.repository.get_variable(variable_name)
+        profile_var.edit(json.dumps(self.to_json()))
+        self.logger.info(f"Saved profile data to GitHub variable \"{profile_var.name}\"")
+
+    @abstractmethod
+    def to_json(self):
+        """Convert profile data to a JSON object"""
+        raise NotImplementedError
+
+    @abstractmethod
+    def scrap_profile(self, url: str):
+        """Scrap profile data from profile page at `url`"""
+        raise NotImplementedError
+
+
+class LinkedInProfileScraper(Scraper):
     """
     A LinkedIn profile scraper that uses Selenium and Firefox to scrape profile data from LinkedIn profile pages.
     """
 
     def __init__(self):
+        super().__init__()
         self.driver = Firefox(service=FirefoxService(GeckoDriverManager().install()))
         self.name = None
         self.profile_picture_url = None
         self.connection_count = None
         self.about = None
         self.affiliations = None
-        self.logger = getLogger(__class__.__qualname__)
-        self.repository = Github(os.environ['GITHUB_PROFILE_TOKEN']).get_repo(os.environ['GITHUB_REPOSITORY'])
 
     @staticmethod
     def get_element(root: WebElement, selector: str):
@@ -103,12 +129,6 @@ class LinkedInProfileScraper:
             "affiliations": self.affiliations
         }
 
-    def save_to_github(self):
-        """Save profile data as JSON to a GitHub variable"""
-        profile_var = self.repository.get_variable('LINKEDIN_PROFILE')
-        profile_var.edit(json.dumps(self.to_json()))
-        self.logger.info(f"Saved profile data to GitHub variable \"{profile_var.name}\"")
-
     def close(self):
         self.driver.quit()
 
@@ -119,8 +139,78 @@ class LinkedInProfileScraper:
         return f"{self.name} ({self.connection_count})\n{self.profile_picture_url}\n{self.about}"
 
 
-if __name__ == '__main__':
+class HsoubAcademyScraper(Scraper):
+    """
+    A HsoubAcademy profile scraper that scraps profile data from HsoubAcademy profile.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.name = None
+        self.profile_picture_url = None
+        self.level = None
+        self.postCount = None
+        self.reputation = None
+        self.bestAnswerCount = None
+
+    def scrap_profile(self, url: str):
+        """Scrap profile data from HsoubAcademy profile page at `url`"""
+        self.logger.info(f"Getting profile for {url}")
+        response = requests.get(
+            url,
+            headers={
+                'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0',
+            }
+        )
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        self.name = soup.find("h1").text.strip()
+        self.profile_picture_url = soup.find("div", id="elProfilePhoto").find("img")['src']
+        self.postCount = int(soup.find("div", id="elProfileStats").find("h4").nextSibling.text.strip())
+        achievements_section = soup.find("div", class_="cProfileAchievements")
+        self.level = achievements_section.find("img").attrs['alt']
+        self.reputation = int(achievements_section.find("p", class_="cProfileRepScore").text)
+        self.bestAnswerCount = int(achievements_section.find("p", class_="cProfileSolutions").text)
+        self.logger.info(f"Got profile data for \"{self.name}\"")
+        self.logger.info(f"Level: {self.level}")
+        self.logger.info(f"Post count: {self.postCount}")
+        self.logger.info(f"Reputation: {self.reputation}")
+        self.logger.info(f"Best answer count: {self.bestAnswerCount}")
+
+    def to_json(self):
+        with urlopen(self.profile_picture_url) as f:
+            profile_picture_base64 = b64encode(f.read()).decode()
+        return {
+            "name": self.name,
+            "profile_picture_url": self.profile_picture_url,
+            "profile_picture_base64": profile_picture_base64,
+            "level": self.level,
+            "postCount": self.postCount,
+            "reputation": self.reputation,
+            "bestAnswerCount": self.bestAnswerCount
+        }
+
+
+def run_hsoub_academy_scraper():
+    profile_scraper = HsoubAcademyScraper()
+    profile_scraper.scrap_profile(os.environ['HSOUB_ACADEMY_PROFILE_URL'])
+    profile_scraper.save_to_github('HSOUB_ACADEMY_PROFILE')
+
+
+def run_linkedin_scraper():
     profile_scraper = LinkedInProfileScraper()
     profile_scraper.scrap_profile(os.environ['LINKEDIN_PROFILE_URL'])
     profile_scraper.close()
-    profile_scraper.save_to_github()
+    profile_scraper.save_to_github('LINKEDIN_PROFILE')
+
+
+if __name__ == '__main__':
+    if len(sys.argv) == 2:
+        match sys.argv[1]:
+            case 'linkedin':
+                run_linkedin_scraper()
+            case 'hsoub_academy':
+                run_hsoub_academy_scraper()
+    else:
+        run_linkedin_scraper()
+        run_hsoub_academy_scraper()

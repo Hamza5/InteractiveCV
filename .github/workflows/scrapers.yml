@@ -18,7 +18,7 @@ env:
   LINKEDIN_PROFILE_URL: ${{ vars.LINKEDIN_PROFILE_URL }}
   HSOUB_ACADEMY_PROFILE_URL: ${{ vars.HSOUB_ACADEMY_PROFILE_URL }}
 jobs:
-  BrowserSetup:
+  Scrapers:
     runs-on: ubuntu-latest
     steps:
       - name: Install Firefox
@@ -30,9 +30,6 @@ jobs:
         with:
           path: ~/.wdm
           key: ${{ runner.os }}-wdm-drivers
-  PythonSetup:
-    runs-on: ubuntu-latest
-    steps:
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Install Python
@@ -42,24 +39,9 @@ jobs:
           cache: 'pip'
       - name: Install dependencies
         run: pip install -r requirements.txt
-  LinkedInScraper:
-    if: ${{ github.event.inputs.scrapers == 'linkedin' || github.event.inputs.scrapers == 'all' || github.event_name == 'schedule' }}
-    needs:
-        - BrowserSetup
-        - PythonSetup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Run the script
+      - name: Scrap LinkedIn profile
         run: python scrapers.py linkedin
-  HsoubAcademyScraper:
-    if: ${{ github.event.inputs.scrapers == 'hsoub_academy' || github.event.inputs.scrapers == 'all' || github.event_name == 'schedule' }}
-    needs:
-        - PythonSetup
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-      - name: Run the script
+        if: ${{ github.event.inputs.scrapers == 'linkedin' || github.event.inputs.scrapers == 'all' || github.event_name == 'schedule' }}
+      - name: Scrap Hsoub Academy profile
         run: python scrapers.py hsoub_academy
+        if: ${{ github.event.inputs.scrapers == 'hsoub_academy' || github.event.inputs.scrapers == 'all' || github.event_name == 'schedule' }}

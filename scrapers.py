@@ -143,6 +143,9 @@ class HsoubAcademyScraper(Scraper):
     """
     A HsoubAcademy profile scraper that scraps profile data from HsoubAcademy profile.
     """
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0',
+    }
 
     def __init__(self):
         super().__init__()
@@ -156,12 +159,7 @@ class HsoubAcademyScraper(Scraper):
     def scrap_profile(self, url: str):
         """Scrap profile data from HsoubAcademy profile page at `url`"""
         self.logger.info(f"Getting profile for {url}")
-        response = requests.get(
-            url,
-            headers={
-                'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0',
-            }
-        )
+        response = requests.get(url, headers=self.headers)
         response.raise_for_status()
         soup = BeautifulSoup(response.text, 'html.parser')
         self.name = soup.find("h1").text.strip()
@@ -178,8 +176,8 @@ class HsoubAcademyScraper(Scraper):
         self.logger.info(f"Best answer count: {self.bestAnswerCount}")
 
     def to_json(self):
-        with urlopen(self.profile_picture_url) as f:
-            profile_picture_base64 = b64encode(f.read()).decode()
+        response = requests.get(self.profile_picture_url, headers=self.headers)
+        profile_picture_base64 = b64encode(response.content).decode()
         return {
             "name": self.name,
             "profile_picture_url": self.profile_picture_url,

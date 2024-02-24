@@ -28,7 +28,7 @@ class Scraper(ABC):
     def save_to_github(self, variable_name: str):
         """Save profile data as JSON to a GitHub variable"""
         profile_var = self.repository.get_variable(variable_name)
-        profile_var.edit(json.dumps(self.to_json()))
+        profile_var.edit(json.dumps(self.to_json(), ensure_ascii=False))
         self.logger.info(f"Saved profile data to GitHub variable \"{profile_var.name}\"")
 
     @abstractmethod

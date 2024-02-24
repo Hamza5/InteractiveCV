@@ -47,13 +47,15 @@ class BasicInfoView extends StatelessWidget {
             Directionality(
               textDirection: TextDirection.ltr,
               child: BasicInfoItem(
-                icon: Icons.phone, title: localization.phone1, url: Uri.parse('tel:+8613971654983'), shrink: large,
+                icon: Icons.phone, title: displayPhone(localization.phone1), url: Uri.parse('tel:+8613971654983'),
+                shrink: large,
               ),
             ),
             Directionality(
               textDirection: TextDirection.ltr,
               child: BasicInfoItem(
-                icon: Icons.phone, title: localization.phone2, url: Uri.parse('tel:+213659418469'), shrink: large,
+                icon: Icons.phone, title: displayPhone(localization.phone2), url: Uri.parse('tel:+213659418469'),
+                shrink: large,
               ),
             ),
           ],
@@ -109,6 +111,10 @@ class BasicInfoView extends StatelessWidget {
               Directionality(
                 textDirection: TextDirection.ltr,
                 child: LinkedInCard(),
+              ),
+              Directionality(
+                textDirection: TextDirection.rtl,
+                child: HsoubAcademyCard(),
               ),
             ]
         ),

@@ -532,9 +532,9 @@ class ProfileCard extends StatelessWidget {
             ),
           ),
         ),
-        Positioned(
+        PositionedDirectional(
           top: 10,
-          right: 10,
+          end: 10,
           child: FaIcon(icon, size: 32),
         ),
       ],
@@ -628,6 +628,30 @@ class LinkedInCard extends StatelessWidget {
           scraped: true, avatarBytes: p.profilePictureBytes,
           stats: {
             FontAwesomeIcons.userGroup: p.connectionsCount
+          },
+        );
+      },
+    );
+  }
+}
+
+class HsoubAcademyCard extends StatelessWidget {
+  const HsoubAcademyCard({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return LoadingProfileCard(
+      getProfileInfoMethod: HsoubAcademy().getProfileInfo,
+      profileCardBuilder: (p) {
+        p = p as HsoubAcademyProfile;
+        return ProfileCard(
+          icon: FontAwesomeIcons.graduationCap, name: p.name, about: p.level, avatarUrl: p.profilePicture, url: p.url,
+          avatarBytes: p.profilePictureBytes,
+          scraped: true,
+          stats: {
+            FontAwesomeIcons.rankingStar: p.reputation,
+            FontAwesomeIcons.circleCheck: p.bestAnswerCount,
+            FontAwesomeIcons.message: p.postCount,
           },
         );
       },

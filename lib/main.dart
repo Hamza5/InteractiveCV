@@ -65,8 +65,12 @@ class InteractiveCV extends StatelessWidget {
               return Theme(
                 data: theme.copyWith(
                   cardTheme: theme.cardTheme.copyWith(
-                    margin: const EdgeInsets.all(3), elevation: 2, shadowColor: theme.colorScheme.shadow,
+                    margin: const EdgeInsets.all(5), elevation: 1, shadowColor: theme.colorScheme.shadow,
                     clipBehavior: Clip.hardEdge,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      side: BorderSide(color: theme.colorScheme.shadow.withOpacity(0.25), width: 1),
+                    ),
                   ),
                   listTileTheme: theme.listTileTheme.copyWith(
                     horizontalTitleGap: 10, contentPadding: const EdgeInsets.all(5),

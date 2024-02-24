@@ -44,7 +44,8 @@ jobs:
             --dart-define=STACKEXCHANGE_ACCESS_TOKEN="${{ secrets.STACKEXCHANGE_ACCESS_TOKEN }}" \
             --dart-define=STACKEXCHANGE_KEY="${{ secrets.STACKEXCHANGE_KEY }}" \
             --dart-define=GITHUB_REPOSITORY=${{ github.repository }} \
-            --dart-define=LINKEDIN_PROFILE_URL=${{ vars.LINKEDIN_PROFILE_URL }}
+            --dart-define=LINKEDIN_PROFILE_URL=${{ vars.LINKEDIN_PROFILE_URL }} \
+            --dart-define=HSOUB_ACADEMY_PROFILE_URL=${{ vars.HSOUB_ACADEMY_PROFILE_URL }}
       - name: Upload the Web app
         uses: actions/upload-pages-artifact@v2
         with:

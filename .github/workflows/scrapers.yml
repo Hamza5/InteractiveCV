@@ -28,8 +28,6 @@ jobs:
   PythonSetup:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
       - name: Install Python
         uses: actions/setup-python@v5
         with:
@@ -49,6 +47,8 @@ jobs:
         - PythonSetup
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Run the script
         run: python scrapers.py linkedin
   HsoubAcademyScraper:
@@ -57,5 +57,7 @@ jobs:
         - PythonSetup
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
       - name: Run the script
         run: python scrapers.py hsoub_academy

@@ -436,7 +436,7 @@ class CertificationList extends StatelessWidget {
 }
 
 class ProfileCard extends StatelessWidget {
-  final IconData icon;
+  final Widget icon;
   final String name;
   final String about;
   final Uri avatarUrl;
@@ -535,7 +535,7 @@ class ProfileCard extends StatelessWidget {
         PositionedDirectional(
           top: 10,
           end: 10,
-          child: FaIcon(icon, size: 32),
+          child: SizedBox.square(dimension: 32, child: FittedBox(child: icon)),
         ),
       ],
     );
@@ -577,7 +577,7 @@ class GitHubCard extends StatelessWidget {
       profileCardBuilder: (p) {
         p = p as GitHubProfile;
         return ProfileCard(
-          icon: FontAwesomeIcons.github, name: p.name, about: p.bio, avatarUrl: p.avatarUrl, url: p.url,
+          icon: const FaIcon(FontAwesomeIcons.github), name: p.name, about: p.bio, avatarUrl: p.avatarUrl, url: p.url,
           scraped: false,
           stats: {
             FontAwesomeIcons.star: p.totalStars,
@@ -600,8 +600,8 @@ class StackOverflowCard extends StatelessWidget {
       profileCardBuilder: (p) {
         p = p as StackOverflowProfile;
         return ProfileCard(
-          icon: FontAwesomeIcons.stackOverflow, name: p.displayName, about: p.aboutMe, avatarUrl: p.profileImage, url: p.link,
-          scraped: false,
+          icon: const FaIcon(FontAwesomeIcons.stackOverflow), name: p.displayName, about: p.aboutMe,
+          avatarUrl: p.profileImage, url: p.link, scraped: false,
           stats: {
             FontAwesomeIcons.medal: p.reputation,
             FontAwesomeIcons.certificate: p.goldBadgeCount + p.silverBadgeCount + p.bronzeBadgeCount,
@@ -624,8 +624,8 @@ class LinkedInCard extends StatelessWidget {
       profileCardBuilder: (p) {
         p = p as LinkedInProfile;
         return ProfileCard(
-          icon: FontAwesomeIcons.linkedin, name: p.name, about: p.headline, avatarUrl: p.profilePicture, url: p.url,
-          scraped: true, avatarBytes: p.profilePictureBytes,
+          icon: const FaIcon(FontAwesomeIcons.linkedin), name: p.name, about: p.headline, avatarUrl: p.profilePicture,
+          url: p.url, scraped: true, avatarBytes: p.profilePictureBytes,
           stats: {
             FontAwesomeIcons.userGroup: p.connectionsCount
           },
@@ -645,9 +645,8 @@ class HsoubAcademyCard extends StatelessWidget {
       profileCardBuilder: (p) {
         p = p as HsoubAcademyProfile;
         return ProfileCard(
-          icon: FontAwesomeIcons.graduationCap, name: p.name, about: p.level, avatarUrl: p.profilePicture, url: p.url,
-          avatarBytes: p.profilePictureBytes,
-          scraped: true,
+          icon: ImageIcon(Image.asset('images/logos/Hsoub_academy.png').image), name: p.name, about: p.level,
+          avatarUrl: p.profilePicture, url: p.url, avatarBytes: p.profilePictureBytes, scraped: true,
           stats: {
             FontAwesomeIcons.rankingStar: p.reputation,
             FontAwesomeIcons.circleCheck: p.bestAnswerCount,

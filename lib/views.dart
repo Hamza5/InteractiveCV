@@ -283,6 +283,15 @@ class WorkView extends StatelessWidget {
             ),
           ],
         ),
+        InstitutionItem(
+          logo: Image.asset(localization.institution8Logo).image, title: localization.institution8,
+          url: Uri.parse(localization.institution8Url),
+          items: [
+            FieldItem(
+              title: localization.institution8Speciality1, trailing: localization.institution8Years1,
+            ),
+          ],
+        ),
       ],
     );
   }
@@ -363,7 +372,7 @@ class ExperienceView extends StatelessWidget {
             ),
             KnowledgeItem(
               image: Image.asset(localization.numpyLogo).image, name: localization.numpy,
-              description: localization.numpyDesc, progress: 0.8,
+              description: localization.numpyDesc, progress: 0.7,
             ),
             KnowledgeItem(
               image: Image.asset(localization.mplLogo).image, name: localization.mpl,
@@ -375,21 +384,21 @@ class ExperienceView extends StatelessWidget {
             ),
             KnowledgeItem(
               image: Image.asset(localization.tfLogo).image, name: localization.tf,
-              description: localization.tfDesc, progress: 0.8,
+              description: localization.tfDesc, progress: 0.7,
             ),
             KnowledgeItem(
               image: Image.asset(localization.djangoLogo).image, name: localization.django,
-              description: localization.djangoDesc, progress: 0.7,
+              description: localization.djangoDesc, progress: 0.8,
             ),
             KnowledgeItem(
               image: Image.asset(localization.flaskLogo).image, name: localization.flask,
-              description: localization.flaskDesc, progress: 0.3,
+              description: localization.flaskDesc, progress: 0.6,
             ),
             KnowledgeItem(image: Image.asset(localization.pillowLogo).image, name: localization.pillow,
               description: localization.pillowDesc, progress: 0.8,
             ),
             KnowledgeItem(image: Image.asset(localization.opencvLogo).image, name: localization.opencv,
-              description: localization.opencvDesc, progress: 0.6,
+              description: localization.opencvDesc, progress: 0.5,
             ),
             KnowledgeItem(image: Image.asset(localization.seleniumLogo).image, name: localization.selenium,
               description: localization.seleniumDesc, progress: 0.9,
@@ -416,7 +425,11 @@ class ExperienceView extends StatelessWidget {
             ),
             KnowledgeItem(
               image: Image.asset(localization.bootstrapLogo).image, name: localization.bootstrap,
-              description: localization.bootstrapDesc, progress: 0.2,
+              description: localization.bootstrapDesc, progress: 0.7,
+            ),
+            KnowledgeItem(
+              image: Image.asset(localization.reactLogo).image, name: localization.react,
+              description: localization.reactDesc, progress: 0.6,
             ),
           ],
         ),
@@ -475,7 +488,7 @@ class ExperienceView extends StatelessWidget {
             ),
             KnowledgeItem(
               image: Image.asset(localization.blenderLogo).image, name: localization.blender,
-              description: localization.blenderDesc, progress: 0.3,
+              description: localization.blenderDesc, progress: 0.2,
             ),
           ],
         ),
@@ -514,6 +527,11 @@ class ProjectsView extends StatelessWidget {
               title: localization.mld,
               description: localization.mldDesc,
               url: Uri.parse(localization.mldUrl),
+            ),
+            BasicInfoItem(
+              title: localization.mdwn,
+              description: localization.mdwnDesc,
+              url: Uri.parse(localization.mdwnUrl),
             ),
           ],
         ),

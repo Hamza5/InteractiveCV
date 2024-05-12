@@ -9,6 +9,10 @@ on:
 jobs:
   Build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -26,8 +30,6 @@ jobs:
       - name: Configure GitHub Pages
         id: pages
         uses: actions/configure-pages@v4
-        with:
-          token: ${{ secrets.PAGES_TOKEN }}
       - name: Project build cache
         uses: actions/cache@v3
         with:

@@ -155,6 +155,7 @@ class HsoubAcademyScraper(Scraper):
         self.postCount = None
         self.reputation = None
         self.bestAnswerCount = None
+        self.about = None
 
     def scrap_profile(self, url: str):
         """Scrap profile data from HsoubAcademy profile page at `url`"""
@@ -169,11 +170,14 @@ class HsoubAcademyScraper(Scraper):
         self.level = achievements_section.find("img").attrs['alt']
         self.reputation = int(achievements_section.find("p", class_="cProfileRepScore").text)
         self.bestAnswerCount = int(achievements_section.find("p", class_="cProfileSolutions").text)
+        personal_info_section = soup.find('div', id='elFollowers').find_next_sibling('div')
+        self.about = personal_info_section.find('li').find('div').text.strip()
         self.logger.info(f"Got profile data for \"{self.name}\"")
         self.logger.info(f"Level: {self.level}")
         self.logger.info(f"Post count: {self.postCount}")
         self.logger.info(f"Reputation: {self.reputation}")
         self.logger.info(f"Best answer count: {self.bestAnswerCount}")
+        self.logger.info(f"About: {self.about}")
 
     def to_json(self):
         response = requests.get(self.profile_picture_url, headers=self.headers)
@@ -185,7 +189,8 @@ class HsoubAcademyScraper(Scraper):
             "level": self.level,
             "postCount": self.postCount,
             "reputation": self.reputation,
-            "bestAnswerCount": self.bestAnswerCount
+            "bestAnswerCount": self.bestAnswerCount,
+            "about": self.about
         }
 
 
@@ -210,5 +215,5 @@ if __name__ == '__main__':
             case 'hsoub_academy':
                 run_hsoub_academy_scraper()
     else:
-        run_linkedin_scraper()
         run_hsoub_academy_scraper()
+        run_linkedin_scraper()

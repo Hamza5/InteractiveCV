@@ -250,6 +250,7 @@ class HsoubAcademyProfile {
   final int reputation;
   final int bestAnswerCount;
   final String level;
+  final String about;
 
   HsoubAcademyProfile({
     required this.name,
@@ -260,6 +261,7 @@ class HsoubAcademyProfile {
     required this.reputation,
     required this.bestAnswerCount,
     required this.level,
+    required this.about,
   });
 }
 
@@ -286,6 +288,7 @@ class HsoubAcademy {
         reputation: profileInfo['reputation'],
         bestAnswerCount: profileInfo['bestAnswerCount'],
         level: profileInfo['level'],
+        about: profileInfo['about']
       );
     } else {
       throw Exception('Failed to load Hsoub Academy profile info');

@@ -39,9 +39,9 @@ jobs:
           cache: 'pip'
       - name: Install dependencies
         run: pip install -r requirements.txt
-      - name: Scrap LinkedIn profile
-        run: python scrapers.py linkedin
-        if: ${{ github.event.inputs.scrapers == 'linkedin' || github.event.inputs.scrapers == 'all' || github.event_name == 'schedule' }}
       - name: Scrap Hsoub Academy profile
         run: python scrapers.py hsoub_academy
         if: ${{ github.event.inputs.scrapers == 'hsoub_academy' || github.event.inputs.scrapers == 'all' || github.event_name == 'schedule' }}
+      - name: Scrap LinkedIn profile
+        run: python scrapers.py linkedin
+        if: ${{ github.event.inputs.scrapers == 'linkedin' || github.event.inputs.scrapers == 'all' || github.event_name == 'schedule' }}

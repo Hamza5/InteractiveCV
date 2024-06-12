@@ -645,7 +645,7 @@ class HsoubAcademyCard extends StatelessWidget {
       profileCardBuilder: (p) {
         p = p as HsoubAcademyProfile;
         return ProfileCard(
-          icon: ImageIcon(Image.asset('images/logos/Hsoub_academy.png').image), name: p.name, about: p.level,
+          icon: ImageIcon(Image.asset('images/logos/Hsoub_academy.png').image), name: p.name, about: p.about,
           avatarUrl: p.profilePicture, url: p.url, avatarBytes: p.profilePictureBytes, scraped: true,
           stats: {
             FontAwesomeIcons.rankingStar: p.reputation,

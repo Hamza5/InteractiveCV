@@ -42,6 +42,9 @@ jobs:
       - name: Scrap Hsoub Academy profile
         run: python scrapers.py hsoub_academy
         if: ${{ github.event.inputs.scrapers == 'hsoub_academy' || github.event.inputs.scrapers == 'all' || github.event_name == 'schedule' }}
+      - name: Scrap Mostaql reviews
+        run: python scrapers.py mostaql_reviews
+        if: ${{ github.event.inputs.scrapers == 'mostaql_reviews' || github.event.inputs.scrapers == 'all' || github.event_name == 'schedule' }}
       - name: Scrap LinkedIn profile
         run: python scrapers.py linkedin
         if: ${{ github.event.inputs.scrapers == 'linkedin' || github.event.inputs.scrapers == 'all' || github.event_name == 'schedule' }}

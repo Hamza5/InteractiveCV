@@ -21,6 +21,22 @@ basicConfig(format='%(asctime)s %(name)s: [%(levelname)s] %(message)s', level=os
 
 class Scraper(ABC):
 
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:126.0) Gecko/20100101 Firefox/126.0',
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br, zstd',
+        'DNT': '1',
+        'Sec-GPC': '1',
+        'Connection': 'keep-alive',
+        'Upgrade-Insecure-Requests': '1',
+        'Sec-Fetch-Dest': 'document',
+        'Sec-Fetch-Mode': 'navigate',
+        'Sec-Fetch-Site': 'none',
+        'Sec-Fetch-User': '?1',
+        'Priority': 'u=1',
+    }
+
     def __init__(self):
         self.logger = getLogger(self.__class__.__qualname__)
         self.repository = Github(os.environ['GITHUB_PROFILE_TOKEN']).get_repo(os.environ['GITHUB_REPOSITORY'])
@@ -143,9 +159,6 @@ class HsoubAcademyScraper(Scraper):
     """
     A HsoubAcademy profile scraper that scraps profile data from HsoubAcademy profile.
     """
-    headers = {
-        'User-Agent': 'Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:123.0) Gecko/20100101 Firefox/123.0',
-    }
 
     def __init__(self):
         super().__init__()
@@ -194,10 +207,88 @@ class HsoubAcademyScraper(Scraper):
         }
 
 
+class MostaqlReviewsScraper(Scraper):
+    """
+    A Mostaql reviews scraper that scraps reviews data from profile reviews page.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.average_proficiency = None
+        self.average_contact = None
+        self.average_quality = None
+        self.average_experience = None
+        self.average_timing = None
+        self.average_repeat = None
+        self.reviews = []
+
+    def scrap_profile(self, url: str):
+        """Scrap reviews data from Mostaql profile reviews page at `url`"""
+        self.logger.info(f"Getting reviews for {url}")
+        response = requests.get(url, headers=self.headers)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        average_rating_section = soup.find("div", class_="review--factors_container")
+        review_factors = average_rating_section.find_all("div", class_="pdn--bs")
+
+        def get_review_factor_value(factor):
+            if text_value := factor.find(class_="pull-left").text.strip():
+                return float(text_value)
+            return len(factor.find(class_="pull-left").find_all("i", class_="fa fa-star clr-amber rating-star"))
+
+        self.average_proficiency = get_review_factor_value(review_factors[0])
+        self.average_contact = get_review_factor_value(review_factors[1])
+        self.average_quality = get_review_factor_value(review_factors[2])
+        self.average_experience = get_review_factor_value(review_factors[3])
+        self.average_timing = get_review_factor_value(review_factors[4])
+        self.average_repeat = get_review_factor_value(review_factors[5])
+
+        for review_section in soup.find_all("div", class_="review"):
+            project_title = review_section.find(class_="project__title").text.strip()
+            review_factors = review_section.find_all("div", class_="pdn--bs")
+            proficiency = get_review_factor_value(review_factors[0])
+            contact = get_review_factor_value(review_factors[1])
+            quality = get_review_factor_value(review_factors[2])
+            experience = get_review_factor_value(review_factors[3])
+            timing = get_review_factor_value(review_factors[4])
+            repeat = get_review_factor_value(review_factors[5])
+            review_author = review_section.find(class_="profile__name").text.strip()
+            review_text = '\n'.join(review_section.find("div", class_="review__details").stripped_strings)
+            self.reviews.append({
+                "project_title": project_title,
+                "proficiency": proficiency,
+                "contact": contact,
+                "quality": quality,
+                "experience": experience,
+                "timing": timing,
+                "repeat": repeat,
+                "author": review_author,
+                "text": review_text
+            })
+            self.logger.info(f"Got review for \"{project_title}\" by \"{review_author}\"")
+
+    def to_json(self):
+        return {
+            "average_proficiency": self.average_proficiency,
+            "average_contact": self.average_contact,
+            "average_quality": self.average_quality,
+            "average_experience": self.average_experience,
+            "average_timing": self.average_timing,
+            "average_repeat": self.average_repeat,
+            "reviews": self.reviews
+        }
+
+
 def run_hsoub_academy_scraper():
     profile_scraper = HsoubAcademyScraper()
     profile_scraper.scrap_profile(os.environ['HSOUB_ACADEMY_PROFILE_URL'])
     profile_scraper.save_to_github('HSOUB_ACADEMY_PROFILE')
+
+
+def run_mostaql_reviews_scraper():
+    reviews_scraper = MostaqlReviewsScraper()
+    reviews_scraper.scrap_profile(os.environ['MOSTAQL_REVIEWS_URL'])
+    reviews_scraper.save_to_github('MOSTAQL_REVIEWS')
 
 
 def run_linkedin_scraper():
@@ -214,6 +305,9 @@ if __name__ == '__main__':
                 run_linkedin_scraper()
             case 'hsoub_academy':
                 run_hsoub_academy_scraper()
+            case 'mostaql_reviews':
+                run_mostaql_reviews_scraper()
     else:
         run_hsoub_academy_scraper()
+        run_mostaql_reviews_scraper()
         run_linkedin_scraper()

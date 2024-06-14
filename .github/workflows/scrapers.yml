@@ -10,6 +10,8 @@ on:
         options:
           - 'linkedin'
           - 'hsoub_academy'
+          - 'mostaql_reviews'
+          - 'khamsat_reviews'
 env:
   GITHUB_PROFILE_TOKEN: ${{ secrets.GH_PROFILE_TOKEN }}
   GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -18,6 +20,7 @@ env:
   LINKEDIN_PROFILE_URL: ${{ vars.LINKEDIN_PROFILE_URL }}
   HSOUB_ACADEMY_PROFILE_URL: ${{ vars.HSOUB_ACADEMY_PROFILE_URL }}
   MOSTAQL_REVIEWS_URL: ${{ vars.MOSTAQL_REVIEWS_URL }}
+  KHAMSAT_REVIEWS_URL: ${{ vars.KHAMSAT_REVIEWS_URL }}
 jobs:
   Scrapers:
     runs-on: ubuntu-latest
@@ -46,6 +49,9 @@ jobs:
       - name: Scrap Mostaql reviews
         run: python scrapers.py mostaql_reviews
         if: ${{ github.event.inputs.scrapers == 'mostaql_reviews' || github.event.inputs.scrapers == 'all' || github.event_name == 'schedule' }}
+      - name: Scrap Khamsat reviews
+        run: python scrapers.py khamsat_reviews
+        if: ${{ github.event.inputs.scrapers == 'khamsat_reviews' || github.event.inputs.scrapers == 'all' || github.event_name == 'schedule' }}
       - name: Scrap LinkedIn profile
         run: python scrapers.py linkedin
         if: ${{ github.event.inputs.scrapers == 'linkedin' || github.event.inputs.scrapers == 'all' || github.event_name == 'schedule' }}

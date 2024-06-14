@@ -244,7 +244,7 @@ class MostaqlReviewsScraper(Scraper):
         self.average_repeat = get_review_factor_value(review_factors[5])
 
         for review_section in soup.find_all("div", class_="review"):
-            project_title = review_section.find(class_="project__title").text.strip()
+            title = review_section.find(class_="project__title").text.strip()
             review_factors = review_section.find_all("div", class_="pdn--bs")
             proficiency = get_review_factor_value(review_factors[0])
             contact = get_review_factor_value(review_factors[1])
@@ -255,7 +255,7 @@ class MostaqlReviewsScraper(Scraper):
             review_author = review_section.find(class_="profile__name").text.strip()
             review_text = '\n'.join(review_section.find("div", class_="review__details").stripped_strings)
             self.reviews.append({
-                "project_title": project_title,
+                "title": title,
                 "proficiency": proficiency,
                 "contact": contact,
                 "quality": quality,
@@ -265,7 +265,7 @@ class MostaqlReviewsScraper(Scraper):
                 "author": review_author,
                 "text": review_text
             })
-            self.logger.info(f"Got review for \"{project_title}\" by \"{review_author}\"")
+            self.logger.info(f"Got review for \"{title}\" by \"{review_author}\"")
 
     def to_json(self):
         return {
@@ -275,6 +275,63 @@ class MostaqlReviewsScraper(Scraper):
             "average_experience": self.average_experience,
             "average_timing": self.average_timing,
             "average_repeat": self.average_repeat,
+            "reviews": self.reviews
+        }
+
+
+class KhamsatReviewsScraper(Scraper):
+    """
+    A Khamsat reviews scraper that scraps reviews data from profile reviews page.
+    """
+
+    def __init__(self):
+        super().__init__()
+        self.average_contact = None
+        self.average_quality = None
+        self.average_timing = None
+        self.reviews = []
+
+    def scrap_profile(self, url: str):
+        """Scrap reviews data from Khamsat profile reviews page at `url`"""
+        self.logger.info(f"Getting reviews for {url}")
+        response = requests.get(url, headers=self.headers)
+        response.raise_for_status()
+        soup = BeautifulSoup(response.text, 'html.parser')
+        average_rating_section = soup.find("div", id="reviews-section").find("div", class_="card-body")
+        review_factors = average_rating_section.find_all("div", class_="text-end")
+
+        def get_review_factor_value(factor):
+            if numeric_value := factor.find(class_="numeric_rate"):
+                return float(numeric_value.text.strip())
+            return len(factor.find_all("i", class_="fa fa-star"))
+
+        self.average_contact = get_review_factor_value(review_factors[0])
+        self.average_quality = get_review_factor_value(review_factors[1])
+        self.average_timing = get_review_factor_value(review_factors[2])
+
+        for review_section in soup.find_all("div", class_="review_section"):
+            title = review_section.find(class_="details-head").find('a').text.strip()
+            review_factors = review_section.find_all("div", class_="text-end")
+            contact = get_review_factor_value(review_factors[0])
+            quality = get_review_factor_value(review_factors[1])
+            timing = get_review_factor_value(review_factors[2])
+            review_author = review_section.find(class_="meta--user").text.strip()
+            review_text = review_section.find("p").text.strip()
+            self.reviews.append({
+                "title": title,
+                "contact": contact,
+                "quality": quality,
+                "timing": timing,
+                "author": review_author,
+                "text": review_text
+            })
+            self.logger.info(f"Got review for \"{title}\" by \"{review_author}\"")
+
+    def to_json(self):
+        return {
+            "average_contact": self.average_contact,
+            "average_quality": self.average_quality,
+            "average_timing": self.average_timing,
             "reviews": self.reviews
         }
 
@@ -289,6 +346,12 @@ def run_mostaql_reviews_scraper():
     reviews_scraper = MostaqlReviewsScraper()
     reviews_scraper.scrap_profile(os.environ['MOSTAQL_REVIEWS_URL'])
     reviews_scraper.save_to_github('MOSTAQL_REVIEWS')
+
+
+def run_khamsat_reviews_scraper():
+    reviews_scraper = KhamsatReviewsScraper()
+    reviews_scraper.scrap_profile(os.environ['KHAMSAT_REVIEWS_URL'])
+    reviews_scraper.save_to_github('KHAMSAT_REVIEWS')
 
 
 def run_linkedin_scraper():
@@ -307,7 +370,10 @@ if __name__ == '__main__':
                 run_hsoub_academy_scraper()
             case 'mostaql_reviews':
                 run_mostaql_reviews_scraper()
+            case 'khamsat_reviews':
+                run_khamsat_reviews_scraper()
     else:
         run_hsoub_academy_scraper()
         run_mostaql_reviews_scraper()
+        run_khamsat_reviews_scraper()
         run_linkedin_scraper()

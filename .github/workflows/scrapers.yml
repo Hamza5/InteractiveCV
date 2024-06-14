@@ -17,6 +17,7 @@ env:
   LINKEDIN_COOKIES: ${{ secrets.LINKEDIN_COOKIES }}
   LINKEDIN_PROFILE_URL: ${{ vars.LINKEDIN_PROFILE_URL }}
   HSOUB_ACADEMY_PROFILE_URL: ${{ vars.HSOUB_ACADEMY_PROFILE_URL }}
+  MOSTAQL_REVIEWS_URL: ${{ vars.MOSTAQL_REVIEWS_URL }}
 jobs:
   Scrapers:
     runs-on: ubuntu-latest

@@ -2,27 +2,22 @@ import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'views.dart';
+import 'appbar/circle_photo.dart';
+import 'appbar/color_selection.dart';
+import 'appbar/language_switch.dart';
+import 'appbar/theme_settings.dart';
+import 'views/basic_info_view.dart';
+import 'views/education_view.dart';
+import 'views/experience_view.dart';
+import 'views/project_view.dart';
+import 'views/reviews_view.dart';
+import 'views/work_view.dart';
+
 
 void main() {
   runApp(const InteractiveCV());
 }
 
-class ThemeSettings {
-  static const List<Color> colors = [Colors.blue, Colors.green, Colors.red, Colors.brown, Colors.purple];
-  final int colorIndex;
-  final bool dark;
-  final String lang;
-
-  const ThemeSettings({required this.colorIndex, required this.dark, required this.lang});
-
-  Color get color => colors[colorIndex];
-  Brightness get brightness => dark ? Brightness.dark : Brightness.light;
-  ThemeMode get themeMode => dark ? ThemeMode.dark : ThemeMode.light;
-  ColorScheme get colorScheme => ColorScheme.fromSeed(seedColor: color, brightness: brightness);
-  Locale get locale => Locale(lang);
-
-}
 
 class InteractiveCV extends StatelessWidget {
 
@@ -156,7 +151,7 @@ class MainPage extends StatelessWidget {
                                     child: Text(
                                       localization.lastUpdate(DateTime.parse(const String.fromEnvironment('LAST_UPDATE'))),
                                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: Theme.of(context).appBarTheme.titleTextStyle?.color?.withOpacity(0.5)
+                                        color: Theme.of(context).appBarTheme.titleTextStyle?.color?.withOpacity(0.5),
                                       ),
                                     ),
                                   ),
@@ -194,8 +189,14 @@ class MainPage extends StatelessWidget {
                                           mainAxisSize: MainAxisSize.min,
                                           crossAxisAlignment: CrossAxisAlignment.start,
                                           children: [
-                                            Text(localization.fullName, style: Theme.of(context).appBarTheme.titleTextStyle),
-                                            Text(localization.shortDescription, style: Theme.of(context).appBarTheme.toolbarTextStyle)
+                                            Text(
+                                              localization.fullName,
+                                              style: Theme.of(context).appBarTheme.titleTextStyle,
+                                            ),
+                                            Text(
+                                              localization.shortDescription,
+                                              style: Theme.of(context).appBarTheme.toolbarTextStyle,
+                                            )
                                           ],
                                         ),
                                       ),
@@ -240,98 +241,8 @@ class MainPage extends StatelessWidget {
   }
 }
 
-class CirclePhoto extends StatelessWidget {
-  final ImageProvider photo;
 
-  const CirclePhoto({super.key, required this.photo});
 
-  @override
-  Widget build(BuildContext context) {
-    return FittedBox(
-      child: Container(
-        padding: const EdgeInsets.all(5),
-        decoration: BoxDecoration(
-            shape: BoxShape.circle, color: Theme.of(context).colorScheme.primaryContainer,
-            boxShadow: [BoxShadow(color: Theme.of(context).colorScheme.primaryContainer.withOpacity(0.5), blurRadius: 5)]
-        ),
-        child: CircleAvatar(foregroundImage: photo, radius: 48),
-      ),
-    );
-  }
-}
 
-class ColorSelection extends StatelessWidget {
-  final ValueNotifier<ThemeSettings> themeNotifier;
-  const ColorSelection({super.key, required this.themeNotifier});
 
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        for (var (index, color) in ThemeSettings.colors.indexed)
-          IconButton(
-            onPressed: () => themeNotifier.value = ThemeSettings(
-              colorIndex: index, dark: themeNotifier.value.dark, lang: themeNotifier.value.lang
-            ),
-            icon: DecoratedBox(
-              decoration: ShapeDecoration(
-                shape: const CircleBorder(),
-                shadows: [
-                  BoxShadow(color: Theme.of(context).colorScheme.shadow.withOpacity(0.5), blurRadius: 3),
-                ],
-              ),
-              child: CircleAvatar(backgroundColor: color, radius: 5),
-            ),
-            padding: const EdgeInsets.all(0),
-          ),
-        IconButton(
-          padding: const EdgeInsets.all(0),
-          icon: Icon(themeNotifier.value.dark ? Icons.light_mode : Icons.dark_mode),
-          onPressed: () {
-            themeNotifier.value = ThemeSettings(
-              colorIndex: themeNotifier.value.colorIndex, dark: !themeNotifier.value.dark,
-              lang: themeNotifier.value.lang,
-            );
-          },
-        )
-      ],
-    );
-  }
-}
 
-class LanguageSwitch extends StatelessWidget {
-
-  static const supportedLocalesFlagPaths = {
-    'ar': 'images/flags/arab-league.png',
-    'en': 'images/flags/united-states.png',
-    'fr': 'images/flags/france.png',
-    'zh': 'images/flags/china.png',
-  };
-  static String flagImageForLangCode(String langCode) {
-    return supportedLocalesFlagPaths[langCode] ?? '';
-  }
-
-  String nextLangCode(BuildContext context) {
-    final currentLocale = Localizations.localeOf(context);
-    final currentIndex = AppLocalizations.supportedLocales.indexOf(currentLocale);
-    return AppLocalizations.supportedLocales[(currentIndex + 1) % AppLocalizations.supportedLocales.length].languageCode;
-  }
-
-  final ValueNotifier<ThemeSettings> themeNotifier;
-  const LanguageSwitch({super.key, required this.themeNotifier});
-
-  @override
-  Widget build(BuildContext context) {
-
-    return TextButton(
-      onPressed: () {
-        themeNotifier.value = ThemeSettings(
-          colorIndex: themeNotifier.value.colorIndex, dark: themeNotifier.value.dark,
-          lang: nextLangCode(context),
-        );
-      },
-      child: Image.asset(flagImageForLangCode(nextLangCode(context)), width: 50, height: 50),
-    );
-  }
-}

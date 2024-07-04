@@ -110,8 +110,11 @@ class InteractiveCV extends StatelessWidget {
 class MainPage extends StatelessWidget {
   static const List<IconData> tabIcons = [
     Icons.person, Icons.school, Icons.work, FontAwesomeIcons.screwdriverWrench, FontAwesomeIcons.toolbox,
+    Icons.reviews
   ];
-  static const List<Widget> tabs = [BasicInfoView(), EducationView(), WorkView(), ExperienceView(), ProjectsView()];
+  static const List<Widget> tabs = [
+    BasicInfoView(), EducationView(), WorkView(), ExperienceView(), ProjectsView(), ReviewsView()
+  ];
   final ValueNotifier<ThemeSettings> themeNotifier;
 
   const MainPage({super.key, required this.themeNotifier});
@@ -120,7 +123,8 @@ class MainPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final localization = AppLocalizations.of(context)!;
     final List<String> tabTitles = [
-      localization.basic , localization.education, localization.work, localization.experience, localization.projects
+      localization.basic , localization.education, localization.work, localization.experience, localization.projects,
+      localization.reviews
     ];
     return Container(
       color: Theme.of(context).colorScheme.surface,

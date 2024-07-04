@@ -295,3 +295,122 @@ class HsoubAcademy {
     }
   }
 }
+
+abstract class ReviewData {
+  final String author;
+  final String title;
+  final String text;
+  final List<double> ratings;
+  final Uri? link;
+
+  ReviewData({
+    required this.author, required this.title, required this.text,
+    required this.ratings, this.link,
+  });
+
+  double get averageRating => ratings.fold(0.0, (previousValue, element) => previousValue + element) / ratings.length;
+
+  bool get isRTL => text.contains(RegExp(r'[\u0590-\u05FF\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\u1EE00-\u1EEFF]'));
+
+}
+
+class MostaqlReview extends ReviewData {
+  final double proficiency;
+  final double contact;
+  final double quality;
+  final double experience;
+  final double timing;
+  final double repeat;
+  
+  MostaqlReview({
+    required String author,
+    required String title,
+    required String text,
+    required this.proficiency,
+    required this.contact,
+    required this.quality,
+    required this.experience,
+    required this.timing,
+    required this.repeat,
+    Uri? link,
+  }) : super(
+      author: author, title: title, text: text, link: link,
+      ratings: [proficiency, contact, quality, experience, timing, repeat]
+  );
+
+}
+
+abstract class ReviewsData {
+  List<ReviewData> reviews;
+  List<double> ratings;
+
+  ReviewsData({
+    required this.reviews,
+    required this.ratings,
+  });
+
+  double get averageRating => ratings.fold(0.0, (previousValue, element) => previousValue + element) / ratings.length;
+
+  int get authorCount => reviews.map((review) => review.author).toSet().length;
+}
+
+abstract class ReviewsService {
+  Future<ReviewsData> getReviews();
+}
+
+class MostaqlReviews extends ReviewsData {
+
+  MostaqlReviews({
+    required reviews,
+    required averageProficiency,
+    required averageContact,
+    required averageQuality,
+    required averageExperience,
+    required averageTiming,
+    required averageRepeat,
+  }) : super(
+    reviews: reviews,
+    ratings: [averageProficiency, averageContact, averageQuality, averageExperience, averageTiming, averageRepeat]
+  );
+}
+
+class Mostaql implements ReviewsService {
+  static const repoReviewsVariableEndpoint = 'https://api.github.com/repos/${const String.fromEnvironment("GITHUB_REPOSITORY")}/actions/variables/MOSTAQL_REVIEWS';
+  static const reviewsURL = String.fromEnvironment('MOSTAQL_REVIEWS_URL');
+  static const headers = LinkedIn.headers;
+  
+  Mostaql();
+  
+  @override
+  Future<MostaqlReviews> getReviews() async {
+    final response = await http.get(
+      Uri.parse(repoReviewsVariableEndpoint),
+      headers: headers,
+    );
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> reviewsData = jsonDecode(jsonDecode(response.body)['value']);
+      return MostaqlReviews(
+        averageProficiency: reviewsData['average_proficiency'],
+        averageContact: reviewsData['average_contact'],
+        averageQuality: reviewsData['average_quality'],
+        averageExperience: reviewsData['average_experience'],
+        averageTiming: reviewsData['average_timing'],
+        averageRepeat: reviewsData['average_repeat'],
+        reviews: (reviewsData['reviews'] as List).map((review) => MostaqlReview(
+          title: review['title'],
+          text: review['text'],
+          author: review['author'],
+          proficiency: review['proficiency'],
+          contact: review['contact'],
+          quality: review['quality'],
+          experience: review['experience'],
+          timing: review['timing'],
+          repeat: review['repeat'],
+          link: Uri.parse(reviewsURL),
+      )).toList(),
+      );
+    } else {
+      throw Exception('Failed to load Mostaql reviews');
+    }
+  }
+}

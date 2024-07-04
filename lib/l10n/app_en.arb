@@ -254,6 +254,7 @@
   "work": "Work",
   "experience": "Experience",
   "projects": "Projects",
+  "reviews": "Reviews",
   "lastUpdate": "Last update: {date}",
   "@lastUpdate": {
     "placeholders": {
@@ -262,5 +263,7 @@
         "format": "yMMMMd"
       }
     }
-  }
+  },
+  "clientReviews": "What clients say",
+  "mostaql": "Mostaql"
 }

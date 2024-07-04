@@ -57,5 +57,8 @@
   "work": "عمل",
   "experience": "خبرة",
   "projects": "مشاريع",
-  "lastUpdate": "آخر تعديل: {date}"
+  "reviews": "المراجعات",
+  "lastUpdate": "آخر تعديل: {date}",
+  "clientReviews": "ماذا يقول العملاء",
+  "mostaql": "مستقل"
 }

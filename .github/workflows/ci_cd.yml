@@ -49,7 +49,8 @@ jobs:
             --dart-define=LINKEDIN_PROFILE_URL=${{ vars.LINKEDIN_PROFILE_URL }} \
             --dart-define=HSOUB_ACADEMY_PROFILE_URL=${{ vars.HSOUB_ACADEMY_PROFILE_URL }} \
             --dart-define=MOSTAQL_REVIEWS_URL=${{ vars.MOSTAQL_REVIEWS_URL }} \
-            --dart-define=KHAMSAT_REVIEWS_URL=${{ vars.KHAMSAT_REVIEWS_URL }}
+            --dart-define=KHAMSAT_REVIEWS_URL=${{ vars.KHAMSAT_REVIEWS_URL }} \
+            --web-renderer html
       - name: Upload the Web app
         uses: actions/upload-pages-artifact@v2
         with:

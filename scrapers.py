@@ -310,6 +310,7 @@ class KhamsatReviewsScraper(Scraper):
         self.average_timing = get_review_factor_value(review_factors[2])
 
         for review_section in soup.find_all("div", class_="review_section"):
+            review_id = review_section.attrs['id'].split('-')[-1]
             title = review_section.find(class_="details-head").find('a').text.strip()
             review_factors = review_section.find_all("div", class_="text-end")
             contact = get_review_factor_value(review_factors[0])
@@ -323,7 +324,8 @@ class KhamsatReviewsScraper(Scraper):
                 "quality": quality,
                 "timing": timing,
                 "author": review_author,
-                "text": review_text
+                "text": review_text,
+                "link": f"{url}/{review_id}"
             })
             self.logger.info(f"Got review for \"{title}\" by \"{review_author}\"")
 
@@ -351,7 +353,8 @@ def run_mostaql_reviews_scraper():
 def run_khamsat_reviews_scraper():
     reviews_scraper = KhamsatReviewsScraper()
     reviews_scraper.scrap_profile(os.environ['KHAMSAT_REVIEWS_URL'])
-    reviews_scraper.save_to_github('KHAMSAT_REVIEWS')
+    print(json.dumps(reviews_scraper.to_json(), indent=2, ensure_ascii=False))
+    # reviews_scraper.save_to_github('KHAMSAT_REVIEWS')
 
 
 def run_linkedin_scraper():

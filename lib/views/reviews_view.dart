@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
+import '../api/khamsat.dart';
 import '../api/mostaql.dart';
 import '../item_widgets/reviews_source.dart';
 
@@ -20,6 +21,10 @@ class ReviewsView extends StatelessWidget {
           ReviewsSource(
             icon: ImageIcon(Image.asset('images/logos/mostaql_logo.png').image), name: localization.mostaql,
             reviewsSource: Mostaql(),
+          ),
+          ReviewsSource(
+            icon: ImageIcon(Image.asset('images/logos/Khamsat_logo.png').image), name: localization.khamsat,
+            reviewsSource: Khamsat(),
           )
         ]
     );

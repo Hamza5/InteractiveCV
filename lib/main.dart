@@ -240,9 +240,3 @@ class MainPage extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-

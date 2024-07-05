@@ -12,8 +12,6 @@ abstract class ReviewData {
 
   double get averageRating => ratings.fold(0.0, (previousValue, element) => previousValue + element) / ratings.length;
 
-  bool get isRTL => text.contains(RegExp(r'[\u0590-\u05FF\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\u1EE00-\u1EEFF]'));
-
 }
 
 abstract class ReviewsData {

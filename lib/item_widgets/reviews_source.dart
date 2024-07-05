@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:intl/intl.dart' show NumberFormat;
 
 import '../api/reviews.dart';
 
@@ -30,12 +31,9 @@ class ReviewsSource extends StatelessWidget {
               return const SizedBox.shrink();
             } else if (snapshot.hasData) {
               final reviewsData = snapshot.requireData;
-              final reviews = reviewsData.reviews.cast<ReviewData>().map((r) => Directionality(
-                textDirection: r.isRTL ? TextDirection.rtl : TextDirection.ltr,
-                child: Review(
-                    author: r.author, title: r.title, content: r.text, rating: r.averageRating,
-                    link: r.link
-                ),
+              final reviews = reviewsData.reviews.cast<ReviewData>().map((r) => Review(
+                  author: r.author, title: r.title, content: r.text, rating: r.averageRating,
+                  link: r.link
               )).toList();
               return ExpansionTile(
                 tilePadding: const EdgeInsets.all(10),
@@ -75,23 +73,11 @@ class ReviewsSource extends StatelessWidget {
                     Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Chip(
-                          label: Text(reviewsData.reviews.length.toString()),
-                          avatar: const Icon(Icons.rate_review, size: 18),
-                          labelStyle: Theme.of(context).textTheme.titleMedium,
-                        ),
+                        StatIconChip(icon: Icons.rate_review, value: reviewsData.reviews.length),
                         const SizedBox(width: 5),
-                        Chip(
-                          label: Text(reviewsData.averageRating.toStringAsFixed(1)),
-                          labelStyle: Theme.of(context).textTheme.titleMedium,
-                          avatar: const Icon(Icons.star, size: 18),
-                        ),
+                        StatIconChip(icon: Icons.star, value: reviewsData.averageRating),
                         const SizedBox(width: 5),
-                        Chip(
-                          label: Text(reviewsData.authorCount.toString()),
-                          labelStyle: Theme.of(context).textTheme.titleMedium,
-                          avatar: const Icon(Icons.person, size: 18),
-                        ),
+                        StatIconChip(icon: Icons.person, value: reviewsData.authorCount),
                       ],
                     )
                   ],
@@ -130,52 +116,73 @@ class Review extends StatelessWidget {
     this.link,
   });
 
+  bool get isRTL => content.startsWith(
+    RegExp(r'[\u0590-\u05FF\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\uFB50-\uFDFF\uFE70-\uFEFF\u1EE00-\u1EEFF]'),
+  );
+
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: InkWell(
-        onTap: link != null ? () => launchUrl(link!) : null,
-        child: ListTile(
-          contentPadding: const EdgeInsets.symmetric(horizontal: 10),
-          title: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 5),
-                          child: Text(title, style: Theme.of(context).textTheme.titleMedium),
-                        ),
-                        Text(author, style: Theme.of(context).textTheme.titleSmall),
-                      ],
+    return Directionality(
+      textDirection: isRTL ? TextDirection.rtl : TextDirection.ltr,
+      child: Card(
+        child: InkWell(
+          onTap: link != null ? () => launchUrl(link!) : null,
+          child: ListTile(
+            contentPadding: const EdgeInsets.symmetric(horizontal: 10),
+            title: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 5),
+                            child: Text(title, style: Theme.of(context).textTheme.titleMedium),
+                          ),
+                          Text(author, style: Theme.of(context).textTheme.titleSmall),
+                        ],
+                      ),
                     ),
-                  ),
-                  Chip(
-                    label: Text(rating.toStringAsFixed(1)),
-                    labelStyle: Theme.of(context).textTheme.titleMedium,
-                    avatar: const Icon(Icons.star, size: 24),
-                  )
-                ],
-              ),
-              const Divider()
-            ],
-          ),
-          subtitle: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 5),
-                child: Text(content, style: Theme.of(context).textTheme.bodyLarge),
-              ),
-            ],
+                    StatIconChip(icon: Icons.star, value: rating),
+                  ],
+                ),
+                const Divider()
+              ],
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 5),
+                  child: Text(content, style: Theme.of(context).textTheme.bodyLarge),
+                ),
+              ],
+            ),
           ),
         ),
       ),
+    );
+  }
+}
+
+
+class StatIconChip extends StatelessWidget {
+
+  final IconData icon;
+  final num value;
+
+  const StatIconChip({super.key, required this.icon, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    return Chip(
+      label: Text(NumberFormat("#.#").format(value), textDirection: TextDirection.ltr),
+      labelStyle: Theme.of(context).textTheme.titleMedium,
+      avatar: Icon(icon, size: 20),
     );
   }
 }

@@ -1,10 +1,10 @@
+import 'package:universal_html/html.dart' show window;
+
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
-import 'appbar/circle_photo.dart';
-import 'appbar/color_selection.dart';
-import 'appbar/language_switch.dart';
+import 'appbar/appbar.dart';
 import 'appbar/theme_settings.dart';
 import 'views/basic_info_view.dart';
 import 'views/education_view.dart';
@@ -102,7 +102,7 @@ class InteractiveCV extends StatelessWidget {
   }
 }
 
-class MainPage extends StatelessWidget {
+class MainPage extends StatefulWidget {
   static const List<IconData> tabIcons = [
     Icons.person, Icons.school, Icons.work, FontAwesomeIcons.screwdriverWrench, FontAwesomeIcons.toolbox,
     Icons.reviews
@@ -113,6 +113,36 @@ class MainPage extends StatelessWidget {
   final ValueNotifier<ThemeSettings> themeNotifier;
 
   const MainPage({super.key, required this.themeNotifier});
+
+  @override
+  State<MainPage> createState() => _MainPageState();
+}
+
+class _MainPageState extends State<MainPage> with SingleTickerProviderStateMixin {
+
+  late final TabController _tabController;
+
+  int getCurrentTabFromUri() {
+    final uri = Uri.base;
+    final tab = uri.queryParameters['tab'];
+    final tabIndex = tab != null ? int.tryParse(tab) ?? 0 : 0;
+    return tabIndex.clamp(0, MainPage.tabs.length - 1);
+  }
+
+  void setCurrentTabToUri(int index) {
+    final uri = Uri.base;
+    final newUri = uri.replace(queryParameters: {'tab': index.toString()});
+    window.history.replaceState(null, '', newUri.toString());
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: MainPage.tabs.length, vsync: this, initialIndex: getCurrentTabFromUri());
+    _tabController.addListener(() {
+      setCurrentTabToUri(_tabController.index);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -128,109 +158,35 @@ class MainPage extends StatelessWidget {
         builder: (context, constraints) {
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: constraints.maxWidth > 1000 ? 50 : 0),
-            child: DefaultTabController(
-              length: tabs.length,
-              child: Scaffold(
-                body: NestedScrollView(
-                  headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) => [
-                    SliverOverlapAbsorber(
-                      handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context),
-                      sliver: SliverAppBar(
-                        pinned: true,
-                        toolbarHeight: 100,
-                        expandedHeight: 200,
-                        forceElevated: innerBoxIsScrolled,
-                        flexibleSpace: FlexibleSpaceBar(
-                          background: Stack(
-                            children: [
-                              if (const bool.hasEnvironment('LAST_UPDATE'))
-                                Container(
-                                  alignment: AlignmentDirectional.topStart,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(2),
-                                    child: Text(
-                                      localization.lastUpdate(DateTime.parse(const String.fromEnvironment('LAST_UPDATE'))),
-                                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                        color: Theme.of(context).appBarTheme.titleTextStyle?.color?.withOpacity(0.5),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              Container(
-                                alignment: AlignmentDirectional.topEnd,
-                                child: ColorSelection(themeNotifier: themeNotifier),
-                              ),
-                              Container(
-                                alignment: AlignmentDirectional.bottomEnd,
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(horizontal: 5),
-                                  child: LanguageSwitch(themeNotifier: themeNotifier),
-                                ),
-                              )
-                            ],
-                          ),
-                          titlePadding: const EdgeInsetsDirectional.symmetric(vertical: 10),
-                          title: LayoutBuilder(
-                            builder: (context, constraints) {
-                              return Align(
-                                alignment: const Alignment(0, 0.8),
-                                child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    LimitedBox(
-                                      maxWidth: constraints.maxWidth * 0.25,
-                                      child: CirclePhoto(photo: Image.asset(localization.photoPath).image),
-                                    ),
-                                    const SizedBox(width: 5),
-                                    LimitedBox(
-                                      maxWidth: constraints.maxWidth * 0.7,
-                                      child: SingleChildScrollView(
-                                        child: Column(
-                                          mainAxisSize: MainAxisSize.min,
-                                          crossAxisAlignment: CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                              localization.fullName,
-                                              style: Theme.of(context).appBarTheme.titleTextStyle,
-                                            ),
-                                            Text(
-                                              localization.shortDescription,
-                                              style: Theme.of(context).appBarTheme.toolbarTextStyle,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              );
-                            }
-                          ),
-                        ),
+            child: Scaffold(
+              body: NestedScrollView(
+                headerSliverBuilder: (BuildContext context, bool innerBoxIsScrolled) => [
+                  buildAppBar(context, innerBoxIsScrolled, widget.themeNotifier),
+                ],
+                body: TabBarView(
+                  controller: _tabController,
+                  children: [
+                    for(var tab in MainPage.tabs) Builder(
+                      builder: (context) => CustomScrollView(
+                        slivers: [
+                          SliverOverlapInjector(handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
+                          tab,
+                        ],
                       ),
                     ),
-                  ],
-                  body: TabBarView(
-                    children: [
-                      for(var tab in tabs) Builder(
-                        builder: (context) => CustomScrollView(
-                          slivers: [
-                            SliverOverlapInjector(handle: NestedScrollView.sliverOverlapAbsorberHandleFor(context)),
-                            tab,
-                          ],
-                        ),
-                      ),
-                    ]
-                  ),
+                  ]
                 ),
-                bottomNavigationBar: Material(
-                  color: Theme.of(context).appBarTheme.backgroundColor,
-                  elevation: Theme.of(context).bottomAppBarTheme.elevation ?? 0,
-                  child: TabBar(
-                    tabs: [for (var i=0; i<tabTitles.length; i++) Tab(text: tabTitles[i], icon: FaIcon(tabIcons[i]))],
-                    isScrollable: MediaQuery.of(context).size.width < 500,
-                    tabAlignment: MediaQuery.of(context).size.width < 500 ? TabAlignment.center : TabAlignment.fill,
-                  ),
+              ),
+              bottomNavigationBar: Material(
+                color: Theme.of(context).appBarTheme.backgroundColor,
+                elevation: Theme.of(context).bottomAppBarTheme.elevation ?? 0,
+                child: TabBar(
+                  controller: _tabController,
+                  tabs: [for (var i=0; i<tabTitles.length; i++)
+                    Tab(text: tabTitles[i], icon: FaIcon(MainPage.tabIcons[i]))
+                  ],
+                  isScrollable: MediaQuery.of(context).size.width < 500,
+                  tabAlignment: MediaQuery.of(context).size.width < 500 ? TabAlignment.center : TabAlignment.fill,
                 ),
               ),
             ),

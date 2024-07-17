@@ -109,7 +109,7 @@ class LocationItem extends StatelessWidget {
       alignment: Directionality.of(context) == TextDirection.rtl ?
       AttributionAlignment.bottomLeft : AttributionAlignment.bottomRight,
       attributions: [
-        TextSourceAttribution('Amap', onTap: () => launchUrl(Uri.parse('https://amap.com/'))),
+        TextSourceAttribution('OpenStreetMap', onTap: () => launchUrl(Uri.parse('https://www.openstreetmap.org/'))),
         TextSourceAttribution('OpenWeatherMap', onTap: () => launchUrl(Uri.parse('https://openweathermap.org/'))),
       ],
     );
@@ -144,7 +144,7 @@ class LocationItem extends StatelessWidget {
       options: MapOptions(initialCenter: geoPosition, initialZoom: 15, maxZoom: 17, minZoom: 9),
       children: [
         TileLayer(
-          urlTemplate: 'https://webrd01.is.autonavi.com/appmaptile?lang=en&size=1&scale=1&style=8&x={x}&y={y}&z={z}',
+          urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
           tileProvider: CancellableNetworkTileProvider(),
         ),
         addressBar,

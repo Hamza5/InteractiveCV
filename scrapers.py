@@ -3,6 +3,7 @@ import os
 import sys
 from abc import ABC, abstractmethod
 from base64 import b64encode
+from typing import Union
 from urllib.request import urlopen
 from logging import getLogger, basicConfig
 
@@ -11,6 +12,7 @@ from bs4 import BeautifulSoup
 from selenium.webdriver import Firefox
 from selenium.webdriver.common.by import By
 from selenium.webdriver.firefox.service import Service as FirefoxService
+from selenium.webdriver.firefox.webdriver import WebDriver
 from selenium.webdriver.remote.webelement import WebElement
 from webdriver_manager.firefox import GeckoDriverManager
 from github import Github
@@ -73,7 +75,7 @@ class LinkedInProfileScraper(Scraper):
         self.affiliations = None
 
     @staticmethod
-    def get_element(root: WebElement, selector: str):
+    def get_element(root: Union[WebElement, WebDriver], selector: str):
         return root.find_element(By.CSS_SELECTOR, selector)
 
     @staticmethod
@@ -353,8 +355,7 @@ def run_mostaql_reviews_scraper():
 def run_khamsat_reviews_scraper():
     reviews_scraper = KhamsatReviewsScraper()
     reviews_scraper.scrap_profile(os.environ['KHAMSAT_REVIEWS_URL'])
-    print(json.dumps(reviews_scraper.to_json(), indent=2, ensure_ascii=False))
-    # reviews_scraper.save_to_github('KHAMSAT_REVIEWS')
+    reviews_scraper.save_to_github('KHAMSAT_REVIEWS')
 
 
 def run_linkedin_scraper():

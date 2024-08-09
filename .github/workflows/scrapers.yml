@@ -14,8 +14,6 @@ on:
           - 'khamsat_reviews'
 env:
   GITHUB_PROFILE_TOKEN: ${{ secrets.GH_PROFILE_TOKEN }}
-  GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  MOZ_HEADLESS: 1
   LINKEDIN_COOKIES: ${{ secrets.LINKEDIN_COOKIES }}
   LINKEDIN_PROFILE_URL: ${{ vars.LINKEDIN_PROFILE_URL }}
   HSOUB_ACADEMY_PROFILE_URL: ${{ vars.HSOUB_ACADEMY_PROFILE_URL }}
@@ -25,15 +23,13 @@ jobs:
   Scrapers:
     runs-on: ubuntu-latest
     steps:
-      - name: Install Firefox
-        uses: browser-actions/setup-firefox@latest
-        with:
-          firefox-version: 'latest'
-      - name: Checking cache of WebDriverManager
+      - name: Checking cache of Playwright
         uses: actions/cache@v4
         with:
-          path: ~/.wdm
-          key: ${{ runner.os }}-wdm-drivers
+          path: ~/.cache/ms-playwright/
+          key: ${{ runner.os }}-playwright
+      - name: Install browser
+        run: python -m playwright install --with-deps chromium
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Install Python

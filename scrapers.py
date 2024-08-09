@@ -3,18 +3,12 @@ import os
 import sys
 from abc import ABC, abstractmethod
 from base64 import b64encode
-from typing import Union
 from urllib.request import urlopen
 from logging import getLogger, basicConfig
 
 import requests
 from bs4 import BeautifulSoup
-from selenium.webdriver import Firefox
-from selenium.webdriver.common.by import By
-from selenium.webdriver.firefox.service import Service as FirefoxService
-from selenium.webdriver.firefox.webdriver import WebDriver
-from selenium.webdriver.remote.webelement import WebElement
-from webdriver_manager.firefox import GeckoDriverManager
+from playwright.sync_api import sync_playwright
 from github import Github
 
 # Show the date/time, logger name, level, and message of the log
@@ -62,44 +56,38 @@ class Scraper(ABC):
 
 class LinkedInProfileScraper(Scraper):
     """
-    A LinkedIn profile scraper that uses Selenium and Firefox to scrape profile data from LinkedIn profile pages.
+    A LinkedIn profile scraper that uses Playwright to scrape profile data from LinkedIn profile pages.
     """
 
     def __init__(self):
         super().__init__()
-        self.driver = Firefox(service=FirefoxService(GeckoDriverManager().install()))
+        playwright = sync_playwright().start()
+        browser = playwright.chromium.launch()
+        self.context = browser.new_context()
+        self.context.add_init_script(
+            'Object.defineProperty(navigator, "webdriver", {get: () => undefined})'
+        )
         self.name = None
         self.profile_picture_url = None
         self.connection_count = None
         self.about = None
         self.affiliations = None
 
-    @staticmethod
-    def get_element(root: Union[WebElement, WebDriver], selector: str):
-        return root.find_element(By.CSS_SELECTOR, selector)
-
-    @staticmethod
-    def get_elements(root: WebElement, selector: str):
-        return root.find_elements(By.CSS_SELECTOR, selector)
-
     def set_cookies(self, cookies: list[dict]):
-        self.driver.get("https://www.linkedin.com/")
-        self.driver.delete_all_cookies()
         for cookie in cookies:
             cookie['sameSite'] = cookie['sameSite'].capitalize()
             if cookie['sameSite'] not in ["Strict", "Lax"]:
                 cookie['sameSite'] = 'None'
-            if 'www.linkedin.com' in cookie['domain']:
-                self.driver.add_cookie(cookie)
+        self.context.add_cookies(cookies)
 
     def get_cookies(self):
-        return self.driver.get_cookies()
+        return self.context.cookies('https://www.linkedin.com/')
 
     def load_cookies(self):
         """Load cookies from a GitHub environment variable loaded from GitHub secrets"""
         linkedin_cookies = json.loads(os.environ['LINKEDIN_COOKIES'])
         self.set_cookies(linkedin_cookies)
-        self.logger.info(f"Loaded {len(linkedin_cookies)} cookies")
+        self.logger.info(f"Loaded {len(self.get_cookies())} cookies")
 
     def save_cookies(self):
         """Save cookies to GitHub secrets"""
@@ -111,19 +99,20 @@ class LinkedInProfileScraper(Scraper):
         """Scrap profile data from LinkedIn profile page at `url`"""
         self.logger.info(f"Getting profile for {url}")
         self.load_cookies()
-        self.driver.get(url)
-        self.logger.info(f"Loaded profile page at {url}")
-        main_section = self.get_element(self.driver, "main section")
-        self.name = self.get_element(main_section, "h1").text.strip()
-        self.profile_picture_url = self.get_element(main_section, ".profile-photo-edit img").get_attribute("src")
-        self.about = self.get_element(main_section, ".text-body-medium").text.strip()
-        self.connection_count = int(self.get_element(main_section, "a[href*='connections'] .t-bold").text.strip())
+        page = self.context.new_page()
+        page.goto(url)
+        self.logger.info(f"Loaded page: {page.title()}")
+        main_section = page.locator("main section")
+        self.name = main_section.locator("h1").text_content().strip()
+        self.profile_picture_url = main_section.locator(".profile-photo-edit img").get_attribute("src")
+        self.about = main_section.locator(".text-body-medium").text_content().strip()
+        self.connection_count = int(main_section.locator("a[href*='connections'] .t-bold").text_content().strip())
         self.affiliations = [
             {
-                "name": affiliation.text.strip(),
-                "logo_url": self.get_element(affiliation, "img").get_attribute("src")
+                "name": affiliation.text_content().strip(),
+                "logo_url": affiliation.locator("img").get_attribute("src")
             }
-            for affiliation in self.get_elements(main_section, ".mt2 ul li")
+            for affiliation in main_section.locator(".mt2 ul li").all()
         ]
         self.logger.info(f"Got profile data for \"{self.name}\"")
         self.logger.info(f"About: {self.about}")
@@ -148,7 +137,8 @@ class LinkedInProfileScraper(Scraper):
         }
 
     def close(self):
-        self.driver.quit()
+        self.context.close()
+        self.context.browser.close()
 
     def __repr__(self):
         return f'<{__class__.__name__} name="{self.name}" about="{self.about}" connection_count={self.connection_count}>'

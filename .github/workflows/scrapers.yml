@@ -23,13 +23,6 @@ jobs:
   Scrapers:
     runs-on: ubuntu-latest
     steps:
-      - name: Checking cache of Playwright
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/ms-playwright/
-          key: ${{ runner.os }}-playwright
-      - name: Install browser
-        run: python -m playwright install --with-deps chromium
       - name: Checkout repository
         uses: actions/checkout@v4
       - name: Install Python
@@ -39,6 +32,13 @@ jobs:
           cache: 'pip'
       - name: Install dependencies
         run: pip install -r requirements.txt
+      - name: Checking cache of Playwright
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright/
+          key: ${{ runner.os }}-playwright
+      - name: Install browser
+        run: python -m playwright install --with-deps chromium
       - name: Scrap Hsoub Academy profile
         run: python scrapers.py hsoub_academy
         if: ${{ github.event.inputs.scrapers == 'hsoub_academy' || github.event.inputs.scrapers == 'all' || github.event_name == 'schedule' }}

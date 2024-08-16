@@ -78,6 +78,11 @@ class LinkedInProfileScraper(Scraper):
             cookie['sameSite'] = cookie['sameSite'].capitalize()
             if cookie['sameSite'] not in ["Strict", "Lax"]:
                 cookie['sameSite'] = 'None'
+            if 'expirationDate' in cookie:
+                cookie['expires'] = cookie['expirationDate']
+            for key in cookie.copy().keys():
+                if key not in ['name', 'value', 'domain', 'path', 'expires', 'httpOnly', 'secure', 'sameSite']:
+                    del cookie[key]
         self.context.add_cookies(cookies)
 
     def get_cookies(self):

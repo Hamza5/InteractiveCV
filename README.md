@@ -2,7 +2,9 @@
 
 #### Personal *Curriculum Vitae* (CV), with interactivity, dynamic data, and animation. 
 
-![Flutter Badge](https://img.shields.io/badge/Flutter-02569B?logo=flutter&logoColor=fff&style=for-the-badge)
+![Dart](https://img.shields.io/badge/dart-%230175C2.svg?style=for-the-badge&logo=dart&logoColor=white)
+![Flutter](https://img.shields.io/badge/Flutter-02569B?logo=flutter&logoColor=fff&style=for-the-badge)
+![Python](https://img.shields.io/badge/python-3670A0?style=for-the-badge&logo=python&logoColor=ffdd54)
 ![Lines of code](https://tokei.rs/b1/github/Hamza5/InteractiveCV?category=code&style=for-the-badge)
 [![Website](https://img.shields.io/website?url=https://hamza5.github.io/InteractiveCV/&label=Web%20app&style=for-the-badge)](https://hamza5.github.io/InteractiveCV/)
 [![CI/CD](https://github.com/Hamza5/InteractiveCV/actions/workflows/ci_cd.yml/badge.svg?style=for-the-badge)](https://github.com/Hamza5/InteractiveCV/actions/workflows/ci_cd.yml)

@@ -251,6 +251,9 @@ class MostaqlReviewsScraper(Scraper):
             repeat = get_review_factor_value(review_factors[5])
             review_author = review_section.find(class_="profile__name").text.strip()
             review_text = '\n'.join(review_section.find("div", class_="review__details").stripped_strings)
+            author_avatar = review_section.find(class_='profile-card--avatar').find("img")['src']
+            with urlopen(author_avatar) as f:
+                author_avatar_base64 = b64encode(f.read()).decode()
             self.reviews.append({
                 "title": title,
                 "proficiency": proficiency,
@@ -260,7 +263,9 @@ class MostaqlReviewsScraper(Scraper):
                 "timing": timing,
                 "repeat": repeat,
                 "author": review_author,
-                "text": review_text
+                "text": review_text,
+                "avatar_url": author_avatar,
+                "avatar_base64": author_avatar_base64
             })
             self.logger.info(f"Got review for \"{title}\" by \"{review_author}\"")
 
@@ -315,6 +320,9 @@ class KhamsatReviewsScraper(Scraper):
             timing = get_review_factor_value(review_factors[2])
             review_author = review_section.find(class_="meta--user").text.strip()
             review_text = review_section.find("p").text.strip()
+            author_avatar = review_section.find(class_="meta--avatar").find("img")['src']
+            with urlopen(author_avatar) as f:
+                author_avatar_base64 = b64encode(f.read()).decode()
             self.reviews.append({
                 "title": title,
                 "contact": contact,
@@ -322,7 +330,9 @@ class KhamsatReviewsScraper(Scraper):
                 "timing": timing,
                 "author": review_author,
                 "text": review_text,
-                "link": f"{url}/{review_id}"
+                "link": f"{url}/{review_id}",
+                "avatar_url": author_avatar,
+                "avatar_base64": author_avatar_base64
             })
             self.logger.info(f"Got review for \"{title}\" by \"{review_author}\"")
 

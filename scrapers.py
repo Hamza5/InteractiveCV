@@ -110,7 +110,7 @@ class LinkedInProfileScraper(Scraper):
         main_section = page.locator("main section")
         self.name = main_section.locator("h1").text_content().strip()
         self.profile_picture_url = main_section.locator(".profile-photo-edit img").get_attribute("src")
-        self.about = main_section.locator(".text-body-medium").text_content().strip()
+        self.about = main_section.locator("div.text-body-medium").text_content().strip()
         self.connection_count = int(main_section.locator("a[href*='connections'] .t-bold").text_content().strip())
         self.affiliations = [
             {
